@@ -145,14 +145,29 @@ import me.mrCookieSlime.Slimefun.api.inventory.UniversalBlockMenu;
  */
 public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
-    private static final Pattern MINECRAFT_VERSION_PATTERN = Pattern.compile("1\\.(\\d+)(?:\\.(\\d+))?");
+    /**
+     * Matches Minecraft version strings in both the old "1.x.y" format and the
+     * new year-based "YY.D[.H]" format (e.g. "26.1", "26.1.2", "27.3").
+     *
+     * <p>Groups:
+     * <ol>
+     *   <li>Major/year number (e.g. {@literal 21} or {@literal 26})</li>
+     *   <li>Drop/minor number (e.g. {@literal 1} or {@literal 2})</li>
+     *   <li>Optional hotfix/patch number (e.g. {@literal 2} in {@literal 26.1.2})</li>
+     * </ol>
+     *
+     * <p>Note: the old "1." prefix is retained as an alternative branch so that
+     * any legacy version string in fallback sources still parses correctly.
+     */
+    private static final Pattern MINECRAFT_VERSION_PATTERN = Pattern.compile(
+        "(?:1\\.(\\d+)(?:\\.(\\d+))?|(\\d{2,})\\.(\\d+)(?:\\.(\\d+))?)");
 
     /**
      * This is the Java version we recommend server owners to use.
      * This does not necessarily mean that it's the minimum version
      * required to run Slimefun.
      */
-    private static final int RECOMMENDED_JAVA_VERSION = 21;
+    private static final int RECOMMENDED_JAVA_VERSION = 25;
 
     /**
      * Our static instance of {@link Slimefun}.
@@ -532,12 +547,36 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
                 return true;
             }
 
-            // Now check the actual Version of Minecraft
-            int version = PaperLib.getMinecraftVersion();
-            int patchVersion = normalizeMinecraftPatchVersion(version, PaperLib.getMinecraftPatchVersion());
+            // Now check the actual Version of Minecraft.
+            // Try Bukkit.getMinecraftVersion() first — it works reliably on Paper 26.x
+            // even when PaperLib's shaded internals throw a LinkageError.
+            int version = -1;
+            int patchVersion = -1;
+
+            try {
+                String directVersion = Bukkit.getMinecraftVersion(); // e.g. "26.2" or "26.1.2"
+                if (directVersion != null && !directVersion.isBlank()) {
+                    Matcher directMatcher = MINECRAFT_VERSION_PATTERN.matcher(directVersion);
+                    if (directMatcher.find()) {
+                        int[] parts = extractVersionParts(directMatcher);
+                        version = parts[0];
+                        patchVersion = parts[1];
+                    }
+                }
+            } catch (NoSuchMethodError | Exception ignored) {
+                // Bukkit.getMinecraftVersion() not available on this server build — fall through.
+            }
+
+            // Fall back to PaperLib if Bukkit direct parse did not give us a version.
+            if (version < 0) {
+                version = PaperLib.getMinecraftVersion();
+                patchVersion = normalizeMinecraftPatchVersion(version, PaperLib.getMinecraftPatchVersion());
+            } else {
+                // We got version from Bukkit directly; still normalize patch against all reported strings.
+                patchVersion = normalizeMinecraftPatchVersion(version, patchVersion);
+            }
 
             if (version > 0) {
-                // Check the explicitly supported server versions for this build.
                 for (MinecraftVersion supportedVersion : getSupportedVersionTargets()) {
                     if (supportedVersion.isMinecraftVersion(version, patchVersion)) {
                         minecraftVersion = supportedVersion;
@@ -545,7 +584,6 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
                     }
                 }
 
-                // Looks like you are using an unsupported Minecraft Version
                 StartupWarnings.invalidMinecraftVersion(getLogger(), version, getDescription().getVersion());
                 return true;
             } else {
@@ -593,6 +631,34 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         return versions;
     }
 
+    /**
+     * Extracts the [majorVersion, patchVersion] pair from a regex {@link Matcher}
+     * that has already found a match against {@link #MINECRAFT_VERSION_PATTERN}.
+     *
+     * <p>The pattern has two branches:
+     * <ul>
+     *   <li>Old "1.x[.y]" — groups 1 (minor) and 2 (patch, nullable)</li>
+     *   <li>New "YY.D[.H]" — groups 3 (year), 4 (drop), 5 (hotfix, nullable)</li>
+     * </ul>
+     *
+     * @return int[]{majorVersion, patchVersion} where patchVersion is 0 when absent
+     */
+    private static int[] extractVersionParts(@Nonnull Matcher matcher) {
+        if (matcher.group(1) != null) {
+            // Old "1.x[.y]" branch — group(1) is the minor (treated as "major" by our enum)
+            int major = Integer.parseInt(matcher.group(1));
+            String patch = matcher.group(2);
+            return new int[] { major, patch == null ? 0 : Integer.parseInt(patch) };
+        } else {
+            // New "YY.D[.H]" branch — group(3) is the year, group(4) is the drop
+            int major = Integer.parseInt(matcher.group(3));
+            int drop  = Integer.parseInt(matcher.group(4));
+            String hotfix = matcher.group(5);
+            // patchVersion here is the drop number; hotfix is available if needed in future
+            return new int[] { major, drop };
+        }
+    }
+
     private int parseMinecraftPatchVersion(@Nullable String versionString, int expectedMajorVersion) {
         if (versionString == null) {
             return -1;
@@ -601,14 +667,14 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         Matcher matcher = MINECRAFT_VERSION_PATTERN.matcher(versionString);
 
         while (matcher.find()) {
-            int majorVersion = Integer.parseInt(matcher.group(1));
+            int[] parts = extractVersionParts(matcher);
+            int majorVersion = parts[0];
 
             if (majorVersion != expectedMajorVersion) {
                 continue;
             }
 
-            String patchVersion = matcher.group(2);
-            return patchVersion == null ? 0 : Integer.parseInt(patchVersion);
+            return parts[1];
         }
 
         return -1;
@@ -639,7 +705,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
     }
 
     private static @Nonnull Collection<MinecraftVersion> getSupportedVersionTargets() {
-        return List.of(MinecraftVersion.MINECRAFT_1_21);
+        return List.of(MinecraftVersion.MINECRAFT_26);
     }
 
     /**

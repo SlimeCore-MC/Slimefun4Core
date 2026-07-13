@@ -23,17 +23,17 @@
         <!-- Compatibility: use a stable per-build session stamp for the short YYNN build-number generator. -->
         <maven.build.timestamp.format>yyyyMMddHHmmssSSS</maven.build.timestamp.format>
         <!-- Compatibility: jar names use a short YYNN build number such as 2601. -->
-        <short.build.number>2600</short.build.number>
+        <short.build.number>2708</short.build.number>
 
-        <!-- Target Java 21 -->
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <!-- Run tests using java 21 -->
-        <maven.compiler.testSource>21</maven.compiler.testSource>
-        <maven.compiler.testTarget>21</maven.compiler.testTarget>
+        <!-- Target Java 25 -->
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+        <!-- Run tests using java 25 -->
+        <maven.compiler.testSource>25</maven.compiler.testSource>
+        <maven.compiler.testTarget>25</maven.compiler.testTarget>
 
         <!-- Spigot properties -->
-        <paper.version>1.21.11</paper.version>
+        <paper.version>26.2</paper.version>
         <paper.javadocs>https://hub.spigotmc.org/javadocs/spigot/</paper.javadocs>
 
         <!-- Default settings for sonarcloud.io -->
@@ -471,11 +471,15 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Paper -->
+        <!-- Paper: pinned to the latest stable 26.x build available (2026-06-19).
+             26.2 builds are alpha-only as of 2026-06-30 — bump to a 26.2.build.N-stable
+             version here (and update <paper.version> above) once Paper publishes one.
+             Maven does not support glob/wildcard version matching outside of SNAPSHOT
+             resolution, so an exact build version is required. -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>${paper.version}-R0.1-SNAPSHOT</version>
+            <version>26.1.2.build.72-stable</version>
             <scope>provided</scope>
         </dependency>
 
@@ -499,9 +503,9 @@
         </dependency>
         <!-- This needs to be before Spigot because MockBukkit will fail otherwise. -->
         <dependency>
-            <groupId>com.github.seeseemelk</groupId>
-            <artifactId>MockBukkit-v1.21</artifactId>
-            <version>3.133.2</version>
+            <groupId>org.mockbukkit.mockbukkit</groupId>
+            <artifactId>mockbukkit-v1.21</artifactId>
+            <version>4.110.0</version>
             <scope>test</scope>
 
             <exclusions>

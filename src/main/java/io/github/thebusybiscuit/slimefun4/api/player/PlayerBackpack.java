@@ -225,10 +225,23 @@ public class PlayerBackpack {
     /**
      * This method marks the backpack dirty, it will then be queued for an autosave
      * using {@link PlayerBackpack#save()}
+     *
+     * <p>For legacy backpacks the owning {@link PlayerProfile} is kept as a direct
+     * reference. For new-style backpacks (loaded via
+     * {@link PlayerBackpack#load(UUID, int, int, HashMap)}) that reference is
+     * {@code null}, so we fall back to a registry lookup and call
+     * {@link PlayerProfile#markBackpackDirty()} which sets <em>both</em> the
+     * profile-level dirty flag and the
+     * {@code PlayerData.backpacksDirty} flag that storage backends inspect.
      */
     public void markDirty() {
         if (profile != null) {
-            profile.markDirty();
+            // Legacy path – profile reference is still alive
+            profile.markBackpackDirty();
+        } else {
+            // New-style path – look up the in-memory profile and mark it dirty
+            PlayerProfile.find(Bukkit.getOfflinePlayer(ownerId))
+                .ifPresent(PlayerProfile::markBackpackDirty);
         }
     }
 

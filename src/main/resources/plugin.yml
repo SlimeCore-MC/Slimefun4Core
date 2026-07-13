@@ -9,7 +9,7 @@ description: Slimefun basically turns your entire Server into a FTB modpack with
 
 # Technical settings
 main: io.github.thebusybiscuit.slimefun4.implementation.Slimefun
-api-version: '1.21'
+api-version: '26.1'
 
 # (Soft) dependencies of Slimefun, we hook into these plugins.
 softdepend:

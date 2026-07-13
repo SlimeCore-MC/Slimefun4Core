@@ -171,7 +171,23 @@ public final class AddonService {
                     }
 
                     boolean present = configManager.addonJarExists(definition);
-                    AddonCacheEntry cache = configManager.getCacheEntry(definition.key()).orElse(null);
+                    Optional<AddonCacheEntry> cacheOpt = configManager.getCacheEntry(definition.key());
+
+                    // Discard stale cache entries whose version tag no longer matches the current server's tags.
+                    if (cacheOpt.isPresent()) {
+                        String cachedVersion = cacheOpt.get().version();
+                        List<String> validTags = VersionTagResolver.resolveTags(Slimefun.getMinecraftVersion());
+                        if (cachedVersion != null && !validTags.contains(cachedVersion)) {
+                            plugin.getLogger().warning(
+                                "AddonManager: discarding stale cache entry for '" + definition.key() +
+                                "' (cached tag '" + cachedVersion + "' not valid for this server). " +
+                                "It will be re-evaluated on next download."
+                            );
+                            cacheOpt = Optional.empty();
+                        }
+                    }
+
+                    AddonCacheEntry cache = cacheOpt.orElse(null);
 
                     if (!present) {
                         AddonOperationResult result = downloadService.download(definition, updateChecker.inspect(definition, cache));

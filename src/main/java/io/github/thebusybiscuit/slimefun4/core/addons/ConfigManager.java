@@ -334,7 +334,8 @@ public final class ConfigManager {
             || section.contains("auto-update")
             || section.contains("sha256")
             || section.contains("checksum-url")
-            || section.contains("api-url");
+            || section.contains("api-url")
+            || section.contains("versions");
     }
 
     private @Nullable AddonDefinition toAddonDefinition(@Nonnull String key, @Nonnull ConfigurationSection section) {
@@ -342,8 +343,18 @@ public final class ConfigManager {
         String name = section.getString("name", key);
         String version = section.getString("version", "latest");
         String url = section.getString("download-url", section.getString("url", ""));
+<<<<<<< Updated upstream
 
         if (url.isBlank()) {
+=======
+        Map<String, String> versionUrls = loadVersionUrls(section);
+
+        if (versionUrls.isEmpty() && !url.isBlank()) {
+            versionUrls = AddonDefinition.legacyVersionUrl(version, url);
+        }
+
+        if (versionUrls.isEmpty()) {
+>>>>>>> Stashed changes
             plugin.getLogger().warning("Managed addon \"" + normalizedKey + "\" is missing a download url and will be skipped.");
             return null;
         }
@@ -362,6 +373,37 @@ public final class ConfigManager {
         );
     }
 
+<<<<<<< Updated upstream
+=======
+    private @Nonnull Map<String, String> loadVersionUrls(@Nonnull ConfigurationSection section) {
+        ConfigurationSection versionsSection = section.getConfigurationSection("versions");
+        Map<String, String> urls = new LinkedHashMap<>();
+
+        if (versionsSection == null) {
+            return urls;
+        }
+
+        collectVersionUrls(versionsSection, "", urls);
+        return urls;
+    }
+
+    private void collectVersionUrls(@Nonnull ConfigurationSection section, @Nonnull String prefix, @Nonnull Map<String, String> urls) {
+        for (String key : section.getKeys(false)) {
+            String version = prefix.isBlank() ? key : prefix + '.' + key;
+
+            if (section.isConfigurationSection(key)) {
+                ConfigurationSection child = section.getConfigurationSection(key);
+                if (child != null) {
+                    collectVersionUrls(child, version, urls);
+                }
+                continue;
+            }
+
+            urls.put(version, section.getString(key, ""));
+        }
+    }
+
+>>>>>>> Stashed changes
     private @Nonnull RemoteSyncSettings parseSyncSettings(@Nonnull YamlConfiguration configuration) {
         ConfigurationSection section = configuration.getConfigurationSection("cloud-sync");
 
@@ -370,6 +412,15 @@ public final class ConfigManager {
         }
 
         String configuredUrl = section.getString("url", DEFAULT_REMOTE_URL);
+
+        // Warn if old agent-generated 'version-urls' key is still present — it is not used.
+        if (section.isConfigurationSection("version-urls")) {
+            plugin.getLogger().warning(
+                "addonmanager.yml: 'cloud-sync.version-urls' is not a valid key and is ignored. " +
+                "Remove it from your addonmanager.yml."
+            );
+        }
+
         return new RemoteSyncSettings(
             section.getBoolean("enabled", true),
             normalizeRemoteUrl(configuredUrl),
@@ -430,11 +481,26 @@ public final class ConfigManager {
         section.set("enabled", definition.enabled());
         section.set("download", definition.download());
         section.set("auto-update", definition.autoUpdate());
+<<<<<<< Updated upstream
         section.set("version", definition.version());
         section.set("download-url", definition.url());
         section.set("sha256", definition.sha256());
         section.set("checksum-url", definition.checksumUrl());
         section.set("api-url", definition.apiUrl());
+=======
+        section.set("version", null);
+        section.set("download-url", null);
+        section.set("sha256", definition.sha256());
+        section.set("checksum-url", definition.checksumUrl());
+        section.set("api-url", definition.apiUrl());
+        section.set("versions", null);
+        ConfigurationSection versionsSection = section.createSection("versions");
+
+        for (Map.Entry<String, String> entry : definition.versionUrls().entrySet()) {
+            versionsSection.set(entry.getKey(), entry.getValue());
+        }
+
+>>>>>>> Stashed changes
         configuration.save(path.toFile());
     }
 
