@@ -344,12 +344,12 @@ public final class ConfigManager {
         String version = section.getString("version", "latest");
         String url = section.getString("download-url", section.getString("url", ""));
         Map<String, String> versionUrls = loadVersionUrls(section);
-
         if (versionUrls.isEmpty() && !url.isBlank()) {
             versionUrls = AddonDefinition.legacyVersionUrl(version, url);
         }
 
         if (versionUrls.isEmpty()) {
+>>>>>>> 46e1e0590de08d4fec311edc4566c6e20f426d7b
             plugin.getLogger().warning("Managed addon \"" + normalizedKey + "\" is missing a download url and will be skipped.");
             return null;
         }
@@ -395,6 +395,7 @@ public final class ConfigManager {
         }
     }
 
+>>>>>>> 46e1e0590de08d4fec311edc4566c6e20f426d7b
     private @Nonnull RemoteSyncSettings parseSyncSettings(@Nonnull YamlConfiguration configuration) {
         ConfigurationSection section = configuration.getConfigurationSection("cloud-sync");
 
@@ -484,6 +485,7 @@ public final class ConfigManager {
             versionsSection.set(entry.getKey(), entry.getValue());
         }
 
+>>>>>>> 46e1e0590de08d4fec311edc4566c6e20f426d7b
         configuration.save(path.toFile());
     }
 

@@ -197,8 +197,9 @@ public final class AddonService {
                         List<String> validTags = VersionTagResolver.resolveTags(Slimefun.getMinecraftVersion());
                         if (cachedVersion != null && !validTags.contains(cachedVersion)) {
                             plugin.getLogger().warning(
-                                "✦ Stale cache for '" + definition.key() +
-                                "' (tag '" + cachedVersion + "' not valid for this server) — will re-evaluate on next download."
+                                "AddonManager: discarding stale cache entry for '" + definition.key() +
+                                " (cached tag '" + cachedVersion + "' not valid for this server). " +
+                                "It will be re-evaluated on next download."
                             );
                             cacheOpt = Optional.empty();
                         }

@@ -44,7 +44,7 @@
              Version scheme: <year>.<drop>.build.<build>-<tier>
              Latest stable as of 2026-07-03: 26.1.2.build.72-stable
              Latest alpha  as of 2026-07-03: 26.2.build.43-alpha         -->
-        <paper.version>26.1.2</paper.version>
+        <paper.version>26.2</paper.version>
         <paper.api.version>26.1.2.build.72-stable</paper.api.version>
         <paper.javadocs>https://hub.spigotmc.org/javadocs/spigot/</paper.javadocs>
 
@@ -475,38 +475,6 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- JDBC Drivers — bundled and shaded to avoid conflicts with server-provided drivers.
-             All three are compile-scoped so they are included in the shaded jar.
-             Servers that already provide a driver via lib/ will use the shaded copy
-             (relocated package) rather than the system copy, preventing version conflicts. -->
-        <dependency>
-            <!-- MySQL Connector/J (GPL v2 with FOSS exception — redistributable) -->
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <version>9.3.0</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.protobuf</groupId>
-                    <artifactId>protobuf-java</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <!-- MariaDB Connector/J (LGPL v2.1 — permitted for bundling) -->
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
-            <version>3.5.3</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <!-- PostgreSQL JDBC Driver (BSD 2-clause — freely redistributable) -->
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.7.7</version>
-            <scope>compile</scope>
-        </dependency>
-
         <!-- Paper API — pinned to the latest *stable* build on the 26.x line.
              26.2 is still in -alpha as of 2026-07-03; 26.1.2.build.72-stable is the
              highest production-ready release. Bump paper.api.version in <properties>
@@ -515,6 +483,8 @@
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>${paper.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
             <scope>provided</scope>
         </dependency>
 

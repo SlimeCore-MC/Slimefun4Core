@@ -37,10 +37,6 @@ public final class VersionTagResolver {
         if (mc.isAtLeast(MinecraftVersion.MINECRAFT_26)) {
             return ADDON_TAGS_26;
         }
-
-        // Legacy branches below are unreachable in normal operation once
-        // getSupportedVersionTargets() returns only MINECRAFT_26, but are
-        // preserved intentionally — do not remove.
         if (mc.isAtLeast(MinecraftVersion.MINECRAFT_1_21)) {
             return ADDON_TAGS_1_21;
         }

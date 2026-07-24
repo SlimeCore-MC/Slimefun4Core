@@ -69,6 +69,7 @@ public final class DownloadService {
                 if (!isJarUrl(downloadUrl)) {
                     throw new IOException("Resolved download URL is not a jar for " + definition.name() + ": " + downloadUrl);
                 }
+>>>>>>> 46e1e0590de08d4fec311edc4566c6e20f426d7b
                 String expectedChecksum = remoteInfo != null ? remoteInfo.expectedSha256() : normalizeSha(definition.sha256());
                 Path target = configManager.resolveAddonPath(definition);
                 Path temporary = Files.createTempFile(configManager.getTempDirectory(), definition.key() + "-", ".jar");
