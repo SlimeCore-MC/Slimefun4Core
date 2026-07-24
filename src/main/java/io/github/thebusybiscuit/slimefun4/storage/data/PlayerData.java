@@ -281,7 +281,7 @@ public class PlayerData {
         researchesDirty = true;
     }
 
-    private void markBackpacksDirty() {
+    public synchronized void markBackpacksDirty() {
         dirty = true;
         backpacksDirty = true;
     }

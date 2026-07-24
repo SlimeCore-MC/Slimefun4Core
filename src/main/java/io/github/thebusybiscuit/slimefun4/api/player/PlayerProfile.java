@@ -254,6 +254,19 @@ public class PlayerProfile {
         dirty = true;
     }
 
+    /**
+     * Marks this profile and its backpack storage section as dirty.
+     * <p>
+     * Backpack contents live inside {@link PlayerData}, and the storage backends
+     * only rewrite that section when the backpack-specific dirty flag is set.
+     * Call this whenever backpack <em>contents</em> change (not just on reads).
+     */
+    public final void markBackpackDirty() {
+        Debug.log(TestCase.PLAYER_PROFILE_DATA, "Marking {} ({}) backpacks as dirty", name, ownerId);
+        this.data.markBackpacksDirty();
+        markDirty();
+    }
+
     public @Nonnull PlayerBackpack createBackpack(int size) {
         int nextId = this.data.getBackpacks().size(); // Size is not 0 indexed so next ID can just be the current size
 
@@ -265,18 +278,21 @@ public class PlayerProfile {
         return backpack;
     }
 
+    /**
+     * Returns the {@link PlayerBackpack} with the given id for this profile.
+     * This is a pure read — dirty marking only happens when inventory contents
+     * actually change (see {@link PlayerBackpack#markDirty()}).
+     *
+     * @param id
+     *            The backpack id
+     * @return An {@link Optional} wrapping the backpack, or empty if not found
+     */
     public @Nonnull Optional<PlayerBackpack> getBackpack(int id) {
         if (id < 0) {
             throw new IllegalArgumentException("Backpacks cannot have negative ids!");
         }
 
-        Optional<PlayerBackpack> backpack = data.getBackpack(id);
-
-        if (backpack.isPresent()) {
-            markDirty();
-        }
-
-        return backpack;
+        return data.getBackpack(id);
     }
 
     private int countNonEmptyResearches(@Nonnull Collection<Research> researches) {

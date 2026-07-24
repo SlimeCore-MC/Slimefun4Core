@@ -1,0 +1,104 @@
+# Slimefun4Core — Storage Engine Configuration
+# ================================================
+# Select which database provider to use.
+# Valid values: sqlite, mysql, mariadb, postgresql, legacy
+# legacy = original YAML file-based storage (backward compatible)
+provider: legacy
+
+# Automatically create tables on first startup
+auto-create-tables: true
+
+# Automatically run schema migrations when the plugin updates
+auto-migrate: true
+
+# Verify schema integrity on every startup (recommended: true)
+verify-schema: true
+
+# ---------------------------------------------------------------------------
+# SQLite settings (used when provider: sqlite)
+# ---------------------------------------------------------------------------
+sqlite:
+  # Path to the SQLite database file (relative to server root)
+  database: data-storage/Slimefun/slimefun.db
+
+# ---------------------------------------------------------------------------
+# MySQL settings (used when provider: mysql)
+# ---------------------------------------------------------------------------
+mysql:
+  host: localhost
+  port: 3306
+  database: slimefuncore
+  username: root
+  password: ""
+  ssl: false
+
+# ---------------------------------------------------------------------------
+# MariaDB settings (used when provider: mariadb)
+# ---------------------------------------------------------------------------
+mariadb:
+  host: localhost
+  port: 3306
+  database: slimefuncore
+  username: root
+  password: ""
+  ssl: false
+
+# ---------------------------------------------------------------------------
+# PostgreSQL settings (used when provider: postgresql)
+# ---------------------------------------------------------------------------
+postgresql:
+  host: localhost
+  port: 5432
+  database: slimefuncore
+  username: postgres
+  password: ""
+  ssl: false
+
+# ---------------------------------------------------------------------------
+# HikariCP Connection Pool settings
+# (SQLite always uses pool size 1; these apply to MySQL/MariaDB/PostgreSQL)
+# ---------------------------------------------------------------------------
+pool:
+  maximum-pool-size: 10
+  minimum-idle: 2
+  connection-timeout: 30000
+  idle-timeout: 600000
+  max-lifetime: 1800000
+  # Warn if a connection is held for longer than this many ms (0 = disabled)
+  leak-detection-threshold: 60000
+
+# ---------------------------------------------------------------------------
+# In-memory cache settings
+# ---------------------------------------------------------------------------
+cache:
+  enabled: true
+  # Maximum number of player profiles to keep in memory
+  max-size: 5000
+  # Evict entries not accessed within this many minutes
+  expire-after-minutes: 30
+
+# ---------------------------------------------------------------------------
+# Async save settings
+# ---------------------------------------------------------------------------
+save:
+  async: true
+  # How often the auto-save service flushes dirty profiles (seconds)
+  interval-seconds: 60
+  # Maximum writes per batch flush
+  batch-size: 500
+
+# ---------------------------------------------------------------------------
+# Backup settings
+# ---------------------------------------------------------------------------
+backup:
+  enabled: true
+  # Run automatic backups on a schedule
+  automatic: true
+  # How many hours between automatic backups
+  interval-hours: 6
+  # How many backups to keep before purging the oldest
+  keep-last: 20
+  # Compress backup files with ZIP
+  compress: true
+  # Directory to store backups (relative to server root)
+  directory: data-storage/Slimefun/db-backups

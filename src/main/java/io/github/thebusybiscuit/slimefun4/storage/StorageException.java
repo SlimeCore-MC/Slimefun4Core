@@ -14,7 +14,7 @@ public class StorageException extends Exception {
      * Creates a new {@link StorageException}.
      *
      * @param message
-     *            A human-readable description of the failure
+     *            
      */
     public StorageException(String message) {
         super(message);
@@ -24,7 +24,7 @@ public class StorageException extends Exception {
      * Creates a new {@link StorageException}.
      *
      * @param message
-     *            A human-readable description of the failure
+     *            
      * @param cause
      *            The original cause of this failure
      */

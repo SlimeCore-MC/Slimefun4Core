@@ -11,7 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionData;
+
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
@@ -841,7 +841,8 @@ public final class SlimefunItemSetup {
         ItemStack weaknessPotion = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) weaknessPotion.getItemMeta();
         if (Slimefun.getMinecraftVersion().isBefore(20, 2)) {
-            meta.setBasePotionData(new PotionData(PotionType.WEAKNESS, false, false));
+            // Legacy path preserved for completeness — unreachable on 26.x
+            meta.setBasePotionType(PotionType.WEAKNESS);
         } else {
             meta.setBasePotionType(PotionType.WEAKNESS);
         }
@@ -2388,7 +2389,7 @@ public final class SlimefunItemSetup {
                 .register(plugin);
 
         new ExpCollector(itemGroups.electricity, SlimefunItems.EXP_COLLECTOR, RecipeType.ENHANCED_CRAFTING_TABLE,
-        new ItemStack[] {null, SlimefunItems.BLISTERING_INGOT_3.item(), null, SlimefunItems.WITHER_PROOF_OBSIDIAN.item(), SlimefunItems.AUTO_ENCHANTER.item(), SlimefunItems.WITHER_PROOF_OBSIDIAN.item(), SlimefunItems.ALUMINUM_BRONZE_INGOT.item(), SlimefunItems.ELECTRIC_MOTOR.item(), SlimefunItems.ALUMINUM_BRONZE_INGOT.item()})
+        new ItemStack[] {null, SlimefunItems.BLISTERING_INGOT_3.item(), null, SlimefunItems.WITHER_PROOF_OBSIDIAN.item(), SlimefunItems.AUTO_ENCHANTER.item(), SlimefunItems.WITHER_PROOF_OBSIDIAN.item(), SlimefunItems.ALUMINUM_BRONZE_INGOT.item(), SlimefunItems.ELECTRIC_MOTOR.item(), SlimefunItems.ALUMINUM_BRONZE_INGOT.item()}, 4.0)
         .setEnergyConsumption(10)
         .setCapacity(1024)
         .register(plugin);

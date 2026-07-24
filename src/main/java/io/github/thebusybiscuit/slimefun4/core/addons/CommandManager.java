@@ -165,7 +165,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 2 && ACTIONS_WITH_ADDON_ARGUMENTS.contains(args[0].toLowerCase(Locale.ROOT))) {
-            return addonService.listAddons().stream()
+            return addonService.listCompatibleAddons().stream()
                 .map(status -> status.definition().key())
                 .filter(key -> key.startsWith(args[1].toLowerCase(Locale.ROOT)))
                 .sorted()
@@ -176,13 +176,14 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
     }
 
     private void sendList(@Nonnull CommandSender sender) {
-        List<ManagedAddonStatus> statuses = addonService.listAddons();
-        List<Plugin> unmanagedLoadedAddons = getUnmanagedLoadedAddons(statuses);
+        List<ManagedAddonStatus> statuses = addonService.listCompatibleAddons();
+        List<Plugin> unmanagedLoadedAddons = getUnmanagedLoadedAddons(addonService.listAddons());
+        String versionTag = VersionTagResolver.resolveTag(Slimefun.getMinecraftVersion());
         sender.sendMessage("");
-        sender.sendMessage(ChatColors.color("&bManaged Slimefun Addons"));
+        sender.sendMessage(ChatColors.color("&bManaged Slimefun Addons &8(&7server: &f" + versionTag + "&8)"));
 
         if (statuses.isEmpty()) {
-            sender.sendMessage(ChatColors.color("&7No addons are configured in addonmanager.yml"));
+            sender.sendMessage(ChatColors.color("&7No compatible addons found for this server version."));
         } else {
             for (ManagedAddonStatus status : statuses) {
                 AddonDefinition definition = status.definition();
@@ -214,17 +215,20 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
     private void sendStatus(@Nonnull CommandSender sender) {
         RemoteSyncSettings settings = gitHubSyncService.getSettings();
         RemoteSyncState state = gitHubSyncService.getState();
-        List<ManagedAddonStatus> statuses = addonService.listAddons();
-        List<Plugin> unmanagedLoadedAddons = getUnmanagedLoadedAddons(statuses);
+        List<ManagedAddonStatus> allStatuses = addonService.listAddons();
+        List<ManagedAddonStatus> compatibleStatuses = addonService.listCompatibleAddons();
+        List<Plugin> unmanagedLoadedAddons = getUnmanagedLoadedAddons(allStatuses);
+        String versionTag = VersionTagResolver.resolveTag(Slimefun.getMinecraftVersion());
 
         sender.sendMessage("");
         sender.sendMessage(ChatColors.color("&bAddonManager Cloud Sync Status"));
+        sender.sendMessage(ChatColors.color("&7Server version: &f" + versionTag));
         sender.sendMessage(ChatColors.color("&7Enabled: &f" + settings.enabled()));
         sender.sendMessage(ChatColors.color("&7Interval: &f" + settings.intervalMinutes() + " minute(s)"));
         sender.sendMessage(ChatColors.color("&7Last Status: &f" + (state.lastStatus() != null ? state.lastStatus() : "never synced")));
         sender.sendMessage(ChatColors.color("&7Last Sync: &f" + (state.lastSyncedAt() != null ? state.lastSyncedAt() : "never")));
         sender.sendMessage(ChatColors.color("&7ETag: &f" + (state.etag() != null ? state.etag() : "none")));
-        sender.sendMessage(ChatColors.color("&7Managed entries: &f" + statuses.size()));
+        sender.sendMessage(ChatColors.color("&7Managed entries: &f" + allStatuses.size() + " &7(&acompatible: &f" + compatibleStatuses.size() + "&7)"));
         sender.sendMessage(ChatColors.color("&7Loaded Slimefun addons: &f" + Slimefun.getInstalledAddons().size()));
         sender.sendMessage(ChatColors.color("&7Loaded unmanaged addons: &f" + unmanagedLoadedAddons.size()));
 

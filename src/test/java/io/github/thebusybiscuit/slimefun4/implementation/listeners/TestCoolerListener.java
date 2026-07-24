@@ -25,9 +25,10 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.items.backpacks.Cooler;
 import io.github.thebusybiscuit.slimefun4.implementation.items.food.Juice;
 import io.github.thebusybiscuit.slimefun4.test.TestUtilities;
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
+import org.mockbukkit.mockbukkit.MockBukkit;
+import org.mockbukkit.mockbukkit.ServerMock;
 
+@SuppressWarnings({"deprecation", "removal"})
 class TestCoolerListener {
 
     private static ServerMock server;
@@ -78,7 +79,7 @@ class TestCoolerListener {
         new BackpackListener().setBackpackId(player, personalCooler, 1, backpack.getId());
         player.getInventory().setItem(7, personalCooler);
 
-        FoodLevelChangeEvent event = new FoodLevelChangeEvent(player, 16);
+        FoodLevelChangeEvent event = new FoodLevelChangeEvent(player, 16, null);
         listener.onHungerLoss(event);
 
         Assertions.assertTrue(player.hasPotionEffect(PotionEffectType.HEALTH_BOOST));

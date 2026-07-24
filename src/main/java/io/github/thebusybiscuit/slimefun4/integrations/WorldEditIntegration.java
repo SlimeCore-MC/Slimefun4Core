@@ -47,7 +47,7 @@ class WorldEditIntegration {
                     World world = Bukkit.getWorld(event.getWorld().getName());
 
                     if (world != null) {
-                        Location l = new Location(world, pos.getBlockX(), pos.getBlockY(), pos.getBlockZ());
+                        Location l = new Location(world, pos.x(), pos.y(), pos.z());
 
                         if (BlockStorage.hasBlockInfo(l)) {
                             BlockStorage.clearBlockInfo(l);

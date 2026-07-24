@@ -89,25 +89,23 @@ public final class PostSetup {
         int slimefunOnly = countNonAddonItems();
 
         sender.sendMessage("");
-        sender.sendMessage(ChatColor.GREEN + "######################### - Slimefun v" + Slimefun.getVersion() + " - #########################");
-        sender.sendMessage("");
-        sender.sendMessage(ChatColor.GREEN + "Successfully loaded " + total + " Items and " + Slimefun.getRegistry().getResearches().size() + " Researches");
-        sender.sendMessage(ChatColor.GREEN + "( " + slimefunOnly + " Items from Slimefun, " + (total - slimefunOnly) + " Items from " + Slimefun.getInstalledAddons().size() + " Addons )");
-        sender.sendMessage("");
-        sender.sendMessage(ChatColor.GREEN + "Slimefun is an Open-Source project that is kept alive by a large community.");
-        sender.sendMessage(ChatColor.GREEN + "Consider helping us maintain this project by contributing on GitHub!");
+        sender.sendMessage(ChatColor.DARK_GRAY + "  \u2554" + "\u2550".repeat(58) + "\u2557");
+        sender.sendMessage(ChatColor.DARK_GRAY + "  \u2551" + ChatColor.AQUA + "  \u2726 Slimefun4Core" + ChatColor.GRAY + " v" + ChatColor.WHITE + Slimefun.getVersion() + ChatColor.GRAY + " \u2014 " + ChatColor.GREEN + "Loaded Successfully" + ChatColor.DARK_GRAY + "       \u2551");
+        sender.sendMessage(ChatColor.DARK_GRAY + "  \u2560" + "\u2550".repeat(58) + "\u2563");
+        sender.sendMessage(ChatColor.DARK_GRAY + "  \u2551" + ChatColor.GREEN + "  \u2714 Items:       " + ChatColor.WHITE + total + ChatColor.GRAY + " (" + slimefunOnly + " core + " + (total - slimefunOnly) + " from " + Slimefun.getInstalledAddons().size() + " addons)" + ChatColor.DARK_GRAY + "  \u2551");
+        sender.sendMessage(ChatColor.DARK_GRAY + "  \u2551" + ChatColor.GREEN + "  \u2714 Researches:  " + ChatColor.WHITE + Slimefun.getRegistry().getResearches().size() + ChatColor.DARK_GRAY + "                                      \u2551");
+        sender.sendMessage(ChatColor.DARK_GRAY + "  \u2560" + "\u2550".repeat(58) + "\u2563");
 
         if (Slimefun.getUpdater().getBranch().isOfficial()) {
-            sender.sendMessage("");
-            sender.sendMessage(ChatColor.GREEN + " - Source Code:  https://github.com/Slimefun/Slimefun4");
-            sender.sendMessage(ChatColor.GREEN + " - Wiki:         https://github.com/Slimefun/Slimefun4/wiki");
-            sender.sendMessage(ChatColor.GREEN + " - Addons:       https://github.com/Slimefun/Slimefun4/wiki/Addons");
-            sender.sendMessage(ChatColor.GREEN + " - Bug Reports:  https://github.com/Slimefun/Slimefun4/issues");
-            sender.sendMessage(ChatColor.GREEN + " - Discord:      https://discord.gg/slimefun");
+            sender.sendMessage(ChatColor.DARK_GRAY + "  \u2551" + ChatColor.GREEN + "   Source:  " + ChatColor.GRAY + "github.com/Slimefun/Slimefun4" + ChatColor.DARK_GRAY + "              \u2551");
+            sender.sendMessage(ChatColor.DARK_GRAY + "  \u2551" + ChatColor.GREEN + "   Wiki:    " + ChatColor.GRAY + "github.com/Slimefun/Slimefun4/wiki" + ChatColor.DARK_GRAY + "         \u2551");
+            sender.sendMessage(ChatColor.DARK_GRAY + "  \u2551" + ChatColor.GREEN + "   Discord: " + ChatColor.GRAY + "discord.gg/slimefun" + ChatColor.DARK_GRAY + "                        \u2551");
         } else {
-            sender.sendMessage(ChatColor.GREEN + " - UNOFFICIALLY MODIFIED BUILD - NO OFFICIAL SUPPORT GIVEN");
+            sender.sendMessage(ChatColor.DARK_GRAY + "  \u2551" + ChatColor.YELLOW + "  \u26a0 UNOFFICIAL MODIFIED BUILD" + ChatColor.GRAY + " \u2014 No official support" + ChatColor.DARK_GRAY + "   \u2551");
+            sender.sendMessage(ChatColor.DARK_GRAY + "  \u2551" + ChatColor.GREEN + "   Maintained by " + ChatColor.AQUA + "R2Ksanu" + ChatColor.GRAY + " for Paper/Purpur 26.x" + ChatColor.DARK_GRAY + "       \u2551");
         }
 
+        sender.sendMessage(ChatColor.DARK_GRAY + "  \u255a" + "\u2550".repeat(58) + "\u255d");
         sender.sendMessage("");
 
         Slimefun.getItemCfg().save();

@@ -20,10 +20,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
-import be.seeseemelk.mockbukkit.WorldMock;
+import org.mockbukkit.mockbukkit.MockBukkit;
+import org.mockbukkit.mockbukkit.ServerMock;
+import org.mockbukkit.mockbukkit.world.WorldMock;
 
+@SuppressWarnings({"deprecation", "removal"}) // MockBukkit 4.110.0 deprecated all assertEventFired overloads — no replacement yet
 class TestInfiniteBlockGenerators {
 
     private static ServerMock server;

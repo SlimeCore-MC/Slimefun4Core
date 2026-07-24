@@ -26,8 +26,8 @@ import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
 
-import be.seeseemelk.mockbukkit.ServerMock;
-import be.seeseemelk.mockbukkit.block.BlockMock;
+import org.mockbukkit.mockbukkit.ServerMock;
+import org.mockbukkit.mockbukkit.block.BlockMock;
 import io.github.bakedlibs.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.api.events.SlimefunBlockPlaceEvent;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
@@ -39,6 +39,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.items.VanillaItem;
 import io.github.thebusybiscuit.slimefun4.test.mocks.MockSlimefunItem;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 
+@SuppressWarnings({"deprecation", "removal"}) // MockBukkit 4.110.0 deprecated all assertEventFired overloads — no replacement yet
 public final class TestUtilities {
 
     private static final Random random = new Random();

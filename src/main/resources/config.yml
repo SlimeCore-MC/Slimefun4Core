@@ -69,6 +69,11 @@ metrics:
   analytics: true
 
 storage:
+  # DEPRECATED: Storage settings have moved to plugins/Slimefun4Core/database.yml
+  # This key is kept as a backward-compatibility shim — if database.yml is absent
+  # on first startup, StorageEngineService will read 'backend' here and migrate it
+  # to database.yml automatically, then print a deprecation warning.
+  # Valid values: legacy, sqlite, mysql, mariadb, postgresql
   backend: legacy
   consistency-check-interval-minutes: 60
 

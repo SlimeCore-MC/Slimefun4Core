@@ -54,7 +54,7 @@ public final class ChatUtils {
     }
 
     /**
-     * This converts a given {@link String} to a human-friendly version.
+     * 
      * This can be used to convert enum constants to easier to read words with
      * spaces and upper case word starts.
      * 
@@ -64,7 +64,7 @@ public final class ChatUtils {
      * @param string
      *            The {@link String} to convert
      * 
-     * @return A human-friendly version of the given {@link String}
+     * @return  {@link String}
      */
     public static @Nonnull String humanize(@Nonnull String string) {
         StringBuilder builder = new StringBuilder();

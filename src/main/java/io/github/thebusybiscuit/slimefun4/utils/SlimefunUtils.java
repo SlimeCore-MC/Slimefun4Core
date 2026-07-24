@@ -567,15 +567,7 @@ public final class SlimefunUtils {
         }
         MinecraftVersion current = Slimefun.getMinecraftVersion();
 
-        if (current.isBefore(20, 2)) {
-            // getBasePotionData pre 1.20.2
-            return potionMeta.getBasePotionData().equals(sfPotionMeta.getBasePotionData());
-        } else if (current.isBefore(20, 5)) {
-            //  getBasePotionType without null check for 1.20.3 and 1.20.4
-            return potionMeta.getBasePotionType() == sfPotionMeta.getBasePotionType();
-        }
-        // check if potionMetha has a basePotionType (acting a null check for getBasePotionType
-        // on 1.20.5+
+        // On 26.x, use hasBasePotionType + getBasePotionType (non-deprecated path)
         if (potionMeta.hasBasePotionType() != sfPotionMeta.hasBasePotionType()) {
             return false;
         }

@@ -85,7 +85,7 @@ public class StormStaff extends LimitedUseItem {
         }
 
         if (p.getGameMode() != GameMode.CREATIVE) {
-            FoodLevelChangeEvent event = new FoodLevelChangeEvent(p, p.getFoodLevel() - 4);
+            FoodLevelChangeEvent event = new FoodLevelChangeEvent(p, p.getFoodLevel() - 4, null);
             Bukkit.getPluginManager().callEvent(event);
 
             if (!event.isCancelled()) {

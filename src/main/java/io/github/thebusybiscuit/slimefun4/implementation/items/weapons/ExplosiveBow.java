@@ -10,6 +10,8 @@ import org.bukkit.SoundCategory;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
@@ -63,7 +65,8 @@ public class ExplosiveBow extends SlimefunBow {
                 double damage = e.getDamage() * (1 - (distanceSquared / (2 * range.getValue() * range.getValue())));
 
                 if (!entity.getUniqueId().equals(target.getUniqueId())) {
-                    EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(e.getDamager(), entity, EntityDamageEvent.DamageCause.ENTITY_EXPLOSION, damage);
+                    DamageSource damageSource = DamageSource.builder(DamageType.EXPLOSION).withCausingEntity(e.getDamager()).build();
+                    EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(e.getDamager(), entity, EntityDamageEvent.DamageCause.ENTITY_EXPLOSION, damageSource, damage);
                     Bukkit.getPluginManager().callEvent(event);
 
                     if (!event.isCancelled()) {

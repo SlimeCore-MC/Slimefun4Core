@@ -3,14 +3,20 @@ package io.github.thebusybiscuit.slimefun4.storage.backend.sqlite;
 import com.google.common.annotations.Beta;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.HikariPoolMXBean;
 
+import io.github.bakedlibs.dough.config.Config;
 import io.github.thebusybiscuit.slimefun4.api.gps.Waypoint;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerBackpack;
 import io.github.thebusybiscuit.slimefun4.api.researches.Research;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-import io.github.thebusybiscuit.slimefun4.storage.Storage;
 import io.github.thebusybiscuit.slimefun4.storage.StorageException;
+import io.github.thebusybiscuit.slimefun4.storage.StorageProvider;
 import io.github.thebusybiscuit.slimefun4.storage.data.PlayerData;
+import io.github.thebusybiscuit.slimefun4.storage.provider.SchemaVersion;
+import io.github.thebusybiscuit.slimefun4.storage.provider.StoragePoolStats;
+import io.github.thebusybiscuit.slimefun4.storage.provider.StorageProviderType;
+import io.github.thebusybiscuit.slimefun4.storage.schema.SchemaManager;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -40,24 +46,39 @@ import java.util.logging.Level;
  * SQLite-backed player storage for Slimefun.
  */
 @Beta
-public class SQLiteStorage implements Storage {
+public class SQLiteStorage implements StorageProvider {
 
     private static final Set<Integer> VALID_BACKPACK_SIZES = Set.of(9, 18, 27, 36, 45, 54);
+    private static final String DEFAULT_DB_PATH = "data-storage/Slimefun/slimefun.db";
 
     private final Slimefun plugin;
-    private final File databaseFile = new File("data-storage/Slimefun/slimefun.db");
+    private final File databaseFile;
     private volatile @Nullable HikariDataSource dataSource;
     private volatile boolean available = false;
 
     /**
-     * Creates a new {@link SQLiteStorage}.
+     * Creates a new {@link SQLiteStorage} using the default database path.
+     * Preserved for backward compatibility.
      *
-     * @param plugin
-     *            The current {@link Slimefun} instance
+     * @param plugin The current {@link Slimefun} instance
      */
     public SQLiteStorage(@Nonnull Slimefun plugin) {
+        this(plugin, null);
+    }
+
+    /**
+     * Creates a new {@link SQLiteStorage}, reading the database file path from
+     * {@code database.yml} when {@code dbConfig} is non-null.
+     *
+     * @param plugin   The current {@link Slimefun} instance
+     * @param dbConfig The parsed {@code database.yml} config, or {@code null} to
+     *                 use the default path ({@value DEFAULT_DB_PATH})
+     */
+    public SQLiteStorage(@Nonnull Slimefun plugin, @Nullable Config dbConfig) {
         Validate.notNull(plugin, "Plugin must not be null");
         this.plugin = plugin;
+        String path = (dbConfig != null) ? dbConfig.getString("sqlite.database") : null;
+        this.databaseFile = new File(path != null ? path : DEFAULT_DB_PATH);
     }
 
     @Override
@@ -77,44 +98,20 @@ public class SQLiteStorage implements Storage {
 
             try (Connection connection = dataSource.getConnection(); Statement statement = connection.createStatement()) {
                 statement.execute("PRAGMA journal_mode=WAL");
-                statement.execute("""
-                    CREATE TABLE IF NOT EXISTS player_researches (
-                        uuid TEXT NOT NULL,
-                        research_id INTEGER NOT NULL,
-                        PRIMARY KEY (uuid, research_id)
-                    )
-                    """);
-                statement.execute("""
-                    CREATE TABLE IF NOT EXISTS player_backpacks (
-                        uuid TEXT NOT NULL,
-                        backpack_id INTEGER NOT NULL,
-                        size INTEGER NOT NULL,
-                        PRIMARY KEY (uuid, backpack_id)
-                    )
-                    """);
-                statement.execute("""
-                    CREATE TABLE IF NOT EXISTS player_backpack_items (
-                        uuid TEXT NOT NULL,
-                        backpack_id INTEGER NOT NULL,
-                        slot INTEGER NOT NULL,
-                        item_data BLOB,
-                        PRIMARY KEY (uuid, backpack_id, slot)
-                    )
-                    """);
-                statement.execute("""
-                    CREATE TABLE IF NOT EXISTS player_waypoints (
-                        uuid TEXT NOT NULL,
-                        waypoint_id TEXT NOT NULL,
-                        name TEXT NOT NULL,
-                        world TEXT NOT NULL,
-                        x DOUBLE NOT NULL,
-                        y DOUBLE NOT NULL,
-                        z DOUBLE NOT NULL,
-                        yaw FLOAT NOT NULL,
-                        pitch FLOAT NOT NULL,
-                        PRIMARY KEY (uuid, waypoint_id)
-                    )
-                    """);
+            }
+
+            // Initialize and verify schema via SchemaManager
+            try (Connection connection = dataSource.getConnection()) {
+                connection.setAutoCommit(false);
+                try {
+                    SchemaManager.initialize(connection, StorageProviderType.SQLITE);
+                    connection.commit();
+                } catch (Exception x) {
+                    connection.rollback();
+                    throw x;
+                } finally {
+                    connection.setAutoCommit(true);
+                }
             }
 
             available = true;
@@ -134,6 +131,70 @@ public class SQLiteStorage implements Storage {
 
         if (source != null) {
             source.close();
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // StorageProvider — metadata
+    // -------------------------------------------------------------------------
+
+    @Override
+    public @Nonnull String getProviderName() {
+        return "SQLite";
+    }
+
+    @Override
+    public @Nonnull StorageProviderType getProviderType() {
+        return StorageProviderType.SQLITE;
+    }
+
+    // -------------------------------------------------------------------------
+    // StorageProvider — health checks
+    // -------------------------------------------------------------------------
+
+    @Override
+    public long pingMillis() {
+        if (!isAvailable()) {
+            return -1L;
+        }
+        long start = System.currentTimeMillis();
+        try (Connection conn = getConnection();
+             var stmt = conn.createStatement();
+             var rs   = stmt.executeQuery("SELECT 1")) {
+            rs.next();
+            return System.currentTimeMillis() - start;
+        } catch (SQLException x) {
+            return -1L;
+        }
+    }
+
+    @Override
+    public @Nonnull StoragePoolStats getPoolStats() {
+        HikariDataSource source = dataSource;
+        if (source == null) {
+            return new StoragePoolStats(0, 0, 0, 1);
+        }
+        HikariPoolMXBean bean = source.getHikariPoolMXBean();
+        if (bean == null) {
+            return new StoragePoolStats(0, 0, 0, 1);
+        }
+        return new StoragePoolStats(
+            bean.getActiveConnections(),
+            bean.getIdleConnections(),
+            bean.getThreadsAwaitingConnection(),
+            bean.getTotalConnections()
+        );
+    }
+
+    @Override
+    public @Nonnull SchemaVersion getSchemaVersion() {
+        if (!isAvailable()) {
+            return SchemaVersion.NONE;
+        }
+        try (Connection conn = getConnection()) {
+            return SchemaManager.getCurrentVersion(conn);
+        } catch (SQLException x) {
+            return SchemaVersion.NONE;
         }
     }
 

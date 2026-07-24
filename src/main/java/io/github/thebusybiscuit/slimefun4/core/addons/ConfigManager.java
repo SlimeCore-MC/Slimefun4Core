@@ -323,7 +323,7 @@ public final class ConfigManager {
     private boolean isAddonSection(@Nonnull ConfigurationSection section) {
         String directUrl = section.getString("download-url");
         String legacyUrl = section.getString("url");
-        return (directUrl != null && !directUrl.isBlank()) || (legacyUrl != null && !legacyUrl.isBlank());
+        return section.isConfigurationSection("versions") || (directUrl != null && !directUrl.isBlank()) || (legacyUrl != null && !legacyUrl.isBlank());
     }
 
     private boolean hasAddonMetadata(@Nonnull ConfigurationSection section) {
@@ -334,7 +334,8 @@ public final class ConfigManager {
             || section.contains("auto-update")
             || section.contains("sha256")
             || section.contains("checksum-url")
-            || section.contains("api-url");
+            || section.contains("api-url")
+            || section.contains("versions");
     }
 
     private @Nullable AddonDefinition toAddonDefinition(@Nonnull String key, @Nonnull ConfigurationSection section) {
@@ -342,8 +343,13 @@ public final class ConfigManager {
         String name = section.getString("name", key);
         String version = section.getString("version", "latest");
         String url = section.getString("download-url", section.getString("url", ""));
+        Map<String, String> versionUrls = loadVersionUrls(section);
 
-        if (url.isBlank()) {
+        if (versionUrls.isEmpty() && !url.isBlank()) {
+            versionUrls = AddonDefinition.legacyVersionUrl(version, url);
+        }
+
+        if (versionUrls.isEmpty()) {
             plugin.getLogger().warning("Managed addon \"" + normalizedKey + "\" is missing a download url and will be skipped.");
             return null;
         }
@@ -354,12 +360,39 @@ public final class ConfigManager {
             section.getBoolean("enabled", true),
             section.getBoolean("download", true),
             section.getBoolean("auto-update", false),
-            version,
-            url,
+            versionUrls,
             emptyToNull(section.getString("sha256")),
             emptyToNull(section.getString("checksum-url")),
             emptyToNull(section.getString("api-url"))
         );
+    }
+
+    private @Nonnull Map<String, String> loadVersionUrls(@Nonnull ConfigurationSection section) {
+        ConfigurationSection versionsSection = section.getConfigurationSection("versions");
+        Map<String, String> urls = new LinkedHashMap<>();
+
+        if (versionsSection == null) {
+            return urls;
+        }
+
+        collectVersionUrls(versionsSection, "", urls);
+        return urls;
+    }
+
+    private void collectVersionUrls(@Nonnull ConfigurationSection section, @Nonnull String prefix, @Nonnull Map<String, String> urls) {
+        for (String key : section.getKeys(false)) {
+            String version = prefix.isBlank() ? key : prefix + '.' + key;
+
+            if (section.isConfigurationSection(key)) {
+                ConfigurationSection child = section.getConfigurationSection(key);
+                if (child != null) {
+                    collectVersionUrls(child, version, urls);
+                }
+                continue;
+            }
+
+            urls.put(version, section.getString(key, ""));
+        }
     }
 
     private @Nonnull RemoteSyncSettings parseSyncSettings(@Nonnull YamlConfiguration configuration) {
@@ -370,6 +403,15 @@ public final class ConfigManager {
         }
 
         String configuredUrl = section.getString("url", DEFAULT_REMOTE_URL);
+
+        // Warn if old agent-generated 'version-urls' key is still present — it is not used.
+        if (section.isConfigurationSection("version-urls")) {
+            plugin.getLogger().warning(
+                "addonmanager.yml: 'cloud-sync.version-urls' is not a valid key and is ignored. " +
+                "Remove it from your addonmanager.yml."
+            );
+        }
+
         return new RemoteSyncSettings(
             section.getBoolean("enabled", true),
             normalizeRemoteUrl(configuredUrl),
@@ -430,11 +472,18 @@ public final class ConfigManager {
         section.set("enabled", definition.enabled());
         section.set("download", definition.download());
         section.set("auto-update", definition.autoUpdate());
-        section.set("version", definition.version());
-        section.set("download-url", definition.url());
+        section.set("version", null);
+        section.set("download-url", null);
         section.set("sha256", definition.sha256());
         section.set("checksum-url", definition.checksumUrl());
         section.set("api-url", definition.apiUrl());
+        section.set("versions", null);
+        ConfigurationSection versionsSection = section.createSection("versions");
+
+        for (Map.Entry<String, String> entry : definition.versionUrls().entrySet()) {
+            versionsSection.set(entry.getKey(), entry.getValue());
+        }
+
         configuration.save(path.toFile());
     }
 

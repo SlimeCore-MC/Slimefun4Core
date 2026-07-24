@@ -48,7 +48,7 @@ public final class AddonService {
     }
 
     public void shutdown() {
-        plugin.getLogger().info("AddonService shutting down.");
+        plugin.getLogger().info("✦ AddonService shutting down.");
     }
 
     public void refreshDefinitions() {
@@ -71,6 +71,19 @@ public final class AddonService {
         }
 
         return statuses;
+    }
+
+    /**
+     * Returns only the managed addons that are compatible with the
+     * currently running Minecraft version (i.e. have at least one
+     * non-empty URL for a matching version tag).
+     *
+     * @return Filtered list of compatible addon statuses
+     */
+    public @Nonnull List<ManagedAddonStatus> listCompatibleAddons() {
+        return listAddons().stream()
+            .filter(status -> status.definition().isCompatibleWith(Slimefun.getMinecraftVersion()))
+            .toList();
     }
 
     public @Nonnull CompletableFuture<AddonOperationResult> download(@Nonnull String key) {
@@ -165,13 +178,33 @@ public final class AddonService {
                         if (configManager.addonJarExists(definition)) {
                             configManager.deleteAddonJar(definition);
                             configManager.removeCacheEntry(definition.key());
-                            plugin.getLogger().info("Deleted managed addon jar because download=false: " + definition.name());
+                            plugin.getLogger().info("✦ Removed addon jar (download=false): " + definition.name());
                         }
                         continue;
                     }
 
+                    // Skip addons that have no compatible URL for this server version.
+                    if (!definition.isCompatibleWith(Slimefun.getMinecraftVersion())) {
+                        continue;
+                    }
+
                     boolean present = configManager.addonJarExists(definition);
-                    AddonCacheEntry cache = configManager.getCacheEntry(definition.key()).orElse(null);
+                    Optional<AddonCacheEntry> cacheOpt = configManager.getCacheEntry(definition.key());
+
+                    // Discard stale cache entries whose version tag no longer matches the current server's tags.
+                    if (cacheOpt.isPresent()) {
+                        String cachedVersion = cacheOpt.get().version();
+                        List<String> validTags = VersionTagResolver.resolveTags(Slimefun.getMinecraftVersion());
+                        if (cachedVersion != null && !validTags.contains(cachedVersion)) {
+                            plugin.getLogger().warning(
+                                "✦ Stale cache for '" + definition.key() +
+                                "' (tag '" + cachedVersion + "' not valid for this server) — will re-evaluate on next download."
+                            );
+                            cacheOpt = Optional.empty();
+                        }
+                    }
+
+                    AddonCacheEntry cache = cacheOpt.orElse(null);
 
                     if (!present) {
                         AddonOperationResult result = downloadService.download(definition, updateChecker.inspect(definition, cache));
@@ -193,7 +226,7 @@ public final class AddonService {
                         toLoad.add(definition);
                     }
                 } catch (Exception x) {
-                    plugin.getLogger().log(Level.WARNING, "Failed to reconcile managed addon \"" + definition.name() + "\"", x);
+                    plugin.getLogger().log(Level.WARNING, "✦ Failed to reconcile addon '" + definition.name() + "'", x);
                 }
             }
 

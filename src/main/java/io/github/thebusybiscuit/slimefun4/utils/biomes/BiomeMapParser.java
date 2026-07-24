@@ -12,6 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.block.Biome;
 
 import com.google.gson.JsonArray;
@@ -167,12 +168,22 @@ public class BiomeMapParser<T> {
                 String value = element.getAsString();
 
                 if (PatternUtils.MINECRAFT_NAMESPACEDKEY.matcher(value).matches()) {
-                    String formattedValue = CommonPatterns.COLON.split(value)[1].toUpperCase(Locale.ROOT);
+
 
                     try {
-                        Biome biome = Biome.valueOf(formattedValue);
-                        biomes.add(biome);
-                    } catch (IllegalArgumentException x) {
+                        String lowerValue = CommonPatterns.COLON.split(value)[1].toLowerCase(Locale.ROOT);
+                        Biome biome = Registry.BIOME.get(NamespacedKey.minecraft(lowerValue));
+                        if (biome != null) {
+                            biomes.add(biome);
+                        } else {
+                            if (isLenient) {
+                                continue;
+                            }
+                            throw new BiomeMapException(key, "The Biome '" + value + "' does not exist!");
+                        }
+                    } catch (BiomeMapException bme) {
+                        throw bme;
+                    } catch (Exception x) {
                         // Lenient Parsers will ignore unknown biomes
                         if (isLenient) {
                             continue;

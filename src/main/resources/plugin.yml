@@ -9,7 +9,7 @@ description: Slimefun basically turns your entire Server into a FTB modpack with
 
 # Technical settings
 main: io.github.thebusybiscuit.slimefun4.implementation.Slimefun
-api-version: '1.21'
+api-version: '26.1'
 
 # (Soft) dependencies of Slimefun, we hook into these plugins.
 softdepend:
@@ -97,4 +97,10 @@ permissions:
     default: op
   addon.manage:
     description: Allows managed addon enable, disable and remove actions
+    default: op
+  slimefun.command.storage:
+    description: Allows viewing storage engine status, info, stats, and backup list
+    default: op
+  slimefun.admin.storage:
+    description: Allows full storage engine management (backup, restore, repair, migrate, reload)
     default: op

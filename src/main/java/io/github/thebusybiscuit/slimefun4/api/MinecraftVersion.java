@@ -62,6 +62,17 @@ public enum MinecraftVersion {
     MINECRAFT_1_21(21, 1, 11, "1.21.1-1.21.11"),
 
     /**
+     * This constant represents Minecraft (Java Edition) 26.x
+     * (the "year.drop" versioning era — 26.1, 26.1.1, 26.1.2, 26.2, 26.3 …).
+     *
+     * <p>The unbounded two-arg constructor is used intentionally: minorVersion and
+     * maxMinorVersion are both left at -1, so {@link #isMinecraftVersion(int, int)}
+     * matches any drop number under year 26 without needing a separate constant
+     * per point release.  When year 27 arrives, add MINECRAFT_27 after this entry.
+     */
+    MINECRAFT_26(26, "26.x"),
+
+    /**
      * This constant represents an exceptional state in which we were unable
      * to identify the Minecraft Version we are using
      */

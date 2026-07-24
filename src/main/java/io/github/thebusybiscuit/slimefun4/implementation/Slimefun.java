@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import io.github.thebusybiscuit.slimefun4.core.services.StorageEngineService;
 import io.github.thebusybiscuit.slimefun4.storage.Storage;
 import io.github.thebusybiscuit.slimefun4.storage.backend.legacy.LegacyStorage;
 
@@ -145,14 +146,29 @@ import me.mrCookieSlime.Slimefun.api.inventory.UniversalBlockMenu;
  */
 public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
-    private static final Pattern MINECRAFT_VERSION_PATTERN = Pattern.compile("1\\.(\\d+)(?:\\.(\\d+))?");
+    /**
+     * Matches Minecraft version strings in both the old "1.x.y" format and the
+     * new year-based "YY.D[.H]" format (e.g. "26.1", "26.1.2", "27.3").
+     *
+     * <p>Groups:
+     * <ol>
+     *   <li>Major/year number (e.g. {@literal 21} or {@literal 26})</li>
+     *   <li>Drop/minor number (e.g. {@literal 1} or {@literal 2})</li>
+     *   <li>Optional hotfix/patch number (e.g. {@literal 2} in {@literal 26.1.2})</li>
+     * </ol>
+     *
+     * <p>Note: the old "1." prefix is retained as an alternative branch so that
+     * any legacy version string in fallback sources still parses correctly.
+     */
+    private static final Pattern MINECRAFT_VERSION_PATTERN = Pattern.compile(
+        "(?:1\\.(\\d+)(?:\\.(\\d+))?|(\\d{2,})\\.(\\d+)(?:\\.(\\d+))?)");
 
     /**
      * This is the Java version we recommend server owners to use.
      * This does not necessarily mean that it's the minimum version
      * required to run Slimefun.
      */
-    private static final int RECOMMENDED_JAVA_VERSION = 21;
+    private static final int RECOMMENDED_JAVA_VERSION = 25;
 
     /**
      * Our static instance of {@link Slimefun}.
@@ -209,6 +225,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
     // Data storage
     private Storage playerStorage;
+    private StorageEngineService storageEngineService;
 
     // Listeners that need to be accessed elsewhere
     private final GrapplingHookListener grapplingHookListener = new GrapplingHookListener();
@@ -272,7 +289,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
         // Check if Paper (<3) is installed
         if (PaperLib.isPaper()) {
-            logger.log(Level.INFO, "Paper was detected! Performance optimizations have been applied.");
+            logger.log(Level.INFO, "✦ Paper detected! Performance optimizations applied.");
         } else {
             PaperLib.suggestPaper(this);
         }
@@ -293,14 +310,14 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         isNewlyInstalled = !new File("data-storage/Slimefun").exists();
 
         // Creating all necessary Folders
-        logger.log(Level.INFO, "Creating directories...");
+        logger.log(Level.INFO, "✦ Creating directories...");
         createDirectories();
 
         // Load various config settings into our cache
         registry.load(this, config);
 
         // Set up localization
-        logger.log(Level.INFO, "Loading language files...");
+        logger.log(Level.INFO, "✦ Loading language files...");
         String chatPrefix = config.getString("options.chat-prefix");
         String serverDefaultLanguage = config.getString("options.language");
         local = new LocalizationService(this, chatPrefix, serverDefaultLanguage);
@@ -315,9 +332,12 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
         networkManager = new NetworkManager(networkSize, config.getBoolean("networks.enable-visualizer"), config.getBoolean("networks.delete-excess-items"));
 
-        // Data storage
-        playerStorage = new LegacyStorage();
-        logger.log(Level.INFO, "Using legacy storage for player data");
+        // Data storage — the StorageEngineService reads database.yml, builds the
+        // configured provider, wraps it in a cache, verifies the schema, and
+        // schedules automatic backups. Falls back to LegacyStorage automatically
+        // if the configured SQL provider fails to initialize.
+        storageEngineService = new StorageEngineService(this);
+        playerStorage = storageEngineService.getStorage();
 
         // Compatibility note: embedded bStats now starts directly from the plugin jar instead of downloading an external module.
         metricsService.start();
@@ -325,29 +345,29 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
         // Starting the Auto-Updater
         if (config.getBoolean("options.auto-update")) {
-            logger.log(Level.INFO, "Starting Auto-Updater...");
+            logger.log(Level.INFO, "✦ Starting Auto-Updater...");
             updaterService.start();
         } else {
             updaterService.disable();
         }
 
         // Registering all GEO Resources
-        logger.log(Level.INFO, "Loading GEO-Resources...");
+        logger.log(Level.INFO, "✦ Loading GEO-Resources...");
         GEOResourcesSetup.setup();
 
-        logger.log(Level.INFO, "Loading Tags...");
+        logger.log(Level.INFO, "✦ Loading Tags...");
         loadTags();
 
-        logger.log(Level.INFO, "Loading items...");
+        logger.log(Level.INFO, "✦ Loading items...");
         loadItems();
 
-        logger.log(Level.INFO, "Loading researches...");
+        logger.log(Level.INFO, "✦ Loading researches...");
         loadResearches();
 
         registry.setResearchingEnabled(getResearchCfg().getBoolean("enable-researching"));
         PostSetup.setupWiki();
 
-        logger.log(Level.INFO, "Registering listeners...");
+        logger.log(Level.INFO, "✦ Registering listeners...");
         registerListeners();
 
         // Initiating various Stuff and all items with a slight delay (0ms after the Server finished loading)
@@ -392,12 +412,12 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         ticker.start(this);
 
         // Loading integrations
-        logger.log(Level.INFO, "Loading Third-Party plugin integrations...");
+        logger.log(Level.INFO, "✦ Loading third-party plugin integrations...");
         integrations.start();
         gitHubService.start(this);
 
         // Hooray!
-        logger.log(Level.INFO, "Slimefun has finished loading in {0}", getStartupTime(timestamp));
+        logger.log(Level.INFO, "✦ Slimefun4Core loaded successfully in {0}", getStartupTime(timestamp));
     }
 
     @Override
@@ -464,6 +484,11 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         // Close and unload any resources from our Metrics Service
         metricsService.cleanUp();
         addonManager.shutdown();
+
+        // Shutdown the storage engine (flushes save queue, closes pool)
+        if (storageEngineService != null) {
+            storageEngineService.shutdown();
+        }
 
         // Terminate our Plugin instance
         setInstance(null);
@@ -532,12 +557,36 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
                 return true;
             }
 
-            // Now check the actual Version of Minecraft
-            int version = PaperLib.getMinecraftVersion();
-            int patchVersion = normalizeMinecraftPatchVersion(version, PaperLib.getMinecraftPatchVersion());
+            // Now check the actual Version of Minecraft.
+            // Try Bukkit.getMinecraftVersion() first — it works reliably on Paper 26.x
+            // even when PaperLib's shaded internals throw a LinkageError.
+            int version = -1;
+            int patchVersion = -1;
+
+            try {
+                String directVersion = Bukkit.getMinecraftVersion(); // e.g. "26.2" or "26.1.2"
+                if (directVersion != null && !directVersion.isBlank()) {
+                    Matcher directMatcher = MINECRAFT_VERSION_PATTERN.matcher(directVersion);
+                    if (directMatcher.find()) {
+                        int[] parts = extractVersionParts(directMatcher);
+                        version = parts[0];
+                        patchVersion = parts[1];
+                    }
+                }
+            } catch (NoSuchMethodError | Exception ignored) {
+                // Bukkit.getMinecraftVersion() not available on this server build — fall through.
+            }
+
+            // Fall back to PaperLib if Bukkit direct parse did not give us a version.
+            if (version < 0) {
+                version = PaperLib.getMinecraftVersion();
+                patchVersion = normalizeMinecraftPatchVersion(version, PaperLib.getMinecraftPatchVersion());
+            } else {
+                // We got version from Bukkit directly; still normalize patch against all reported strings.
+                patchVersion = normalizeMinecraftPatchVersion(version, patchVersion);
+            }
 
             if (version > 0) {
-                // Check the explicitly supported server versions for this build.
                 for (MinecraftVersion supportedVersion : getSupportedVersionTargets()) {
                     if (supportedVersion.isMinecraftVersion(version, patchVersion)) {
                         minecraftVersion = supportedVersion;
@@ -545,7 +594,6 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
                     }
                 }
 
-                // Looks like you are using an unsupported Minecraft Version
                 StartupWarnings.invalidMinecraftVersion(getLogger(), version, getDescription().getVersion());
                 return true;
             } else {
@@ -593,6 +641,34 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         return versions;
     }
 
+    /**
+     * Extracts the [majorVersion, patchVersion] pair from a regex {@link Matcher}
+     * that has already found a match against {@link #MINECRAFT_VERSION_PATTERN}.
+     *
+     * <p>The pattern has two branches:
+     * <ul>
+     *   <li>Old "1.x[.y]" — groups 1 (minor) and 2 (patch, nullable)</li>
+     *   <li>New "YY.D[.H]" — groups 3 (year), 4 (drop), 5 (hotfix, nullable)</li>
+     * </ul>
+     *
+     * @return int[]{majorVersion, patchVersion} where patchVersion is 0 when absent
+     */
+    private static int[] extractVersionParts(@Nonnull Matcher matcher) {
+        if (matcher.group(1) != null) {
+            // Old "1.x[.y]" branch — group(1) is the minor (treated as "major" by our enum)
+            int major = Integer.parseInt(matcher.group(1));
+            String patch = matcher.group(2);
+            return new int[] { major, patch == null ? 0 : Integer.parseInt(patch) };
+        } else {
+            // New "YY.D[.H]" branch — group(3) is the year, group(4) is the drop
+            int major = Integer.parseInt(matcher.group(3));
+            int drop  = Integer.parseInt(matcher.group(4));
+            String hotfix = matcher.group(5);
+            // patchVersion here is the drop number; hotfix is available if needed in future
+            return new int[] { major, drop };
+        }
+    }
+
     private int parseMinecraftPatchVersion(@Nullable String versionString, int expectedMajorVersion) {
         if (versionString == null) {
             return -1;
@@ -601,14 +677,14 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         Matcher matcher = MINECRAFT_VERSION_PATTERN.matcher(versionString);
 
         while (matcher.find()) {
-            int majorVersion = Integer.parseInt(matcher.group(1));
+            int[] parts = extractVersionParts(matcher);
+            int majorVersion = parts[0];
 
             if (majorVersion != expectedMajorVersion) {
                 continue;
             }
 
-            String patchVersion = matcher.group(2);
-            return patchVersion == null ? 0 : Integer.parseInt(patchVersion);
+            return parts[1];
         }
 
         return -1;
@@ -639,7 +715,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
     }
 
     private static @Nonnull Collection<MinecraftVersion> getSupportedVersionTargets() {
-        return List.of(MinecraftVersion.MINECRAFT_1_21);
+        return List.of(MinecraftVersion.MINECRAFT_26);
     }
 
     /**
@@ -1140,6 +1216,16 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         }
 
         return instance.getServer().getScheduler().runTask(instance, runnable);
+    }
+
+    /**
+     * Returns the {@link StorageEngineService} that manages the active storage backend.
+     *
+     * @return The storage engine service, or {@code null} if Slimefun has not finished
+     *         initializing yet (e.g. during unit tests)
+     */
+    public @Nullable StorageEngineService getStorageEngineService() {
+        return storageEngineService;
     }
 
     public static @Nonnull Storage getPlayerStorage() {

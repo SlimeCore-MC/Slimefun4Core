@@ -16,7 +16,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
  */
 public final class AddonManager {
 
-    private static final String PREFIX = "&8[&bAddonManager&8] ";
+    private static final String PREFIX = "&8[&b✦ AddonManager&8] ";
 
     private final Slimefun plugin;
     private final ConfigManager configManager;
@@ -49,8 +49,13 @@ public final class AddonManager {
                 gitHubSyncService.start();
             }
 
-            info("Managed addon system is ready. Repository: " + configManager.getRepositoryDirectory());
-            info("Cloud sync source: " + configManager.getSyncSettings().url());
+            String versionTag = VersionTagResolver.resolveTag(Slimefun.getMinecraftVersion());
+            int total = addonService.listAddons().size();
+            int compatible = addonService.listCompatibleAddons().size();
+            info("Addon system ready — detected server: &f" + versionTag);
+            info("Managed addons: &f" + total + " &7| &aCompatible: &f" + compatible);
+            info("Repository: &f" + configManager.getRepositoryDirectory());
+            info("Cloud sync: &f" + configManager.getSyncSettings().url());
         } catch (IOException x) {
             error("Failed to initialize the managed addon system", x);
         }
@@ -59,6 +64,7 @@ public final class AddonManager {
     public void shutdown() {
         gitHubSyncService.shutdown();
         addonService.shutdown();
+        info("Addon system shut down gracefully.");
     }
 
     public @Nonnull AddonService getAddonService() {
