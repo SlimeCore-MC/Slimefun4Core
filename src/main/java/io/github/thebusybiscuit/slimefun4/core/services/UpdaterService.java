@@ -46,6 +46,7 @@ public class UpdaterService {
     private static final String DEFAULT_MODRINTH_PROJECT = "slimefuncore";
     private static final String USER_AGENT = "SlimefunCoreV4.0-Updater";
     private static final String MODRINTH_VERSION_ENDPOINT = "https://api.modrinth.com/v2/project/%s/version?game_versions=%s&loaders=%s";
+    private static final String MODRINTH_VERSION_ENDPOINT_NO_GAME_FILTER = "https://api.modrinth.com/v2/project/%s/version?loaders=%s";
     private static final Pattern BUILD_NUMBER_PATTERN = Pattern.compile("(\\d{4})(?=\\.jar$)");
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build();
 
@@ -143,6 +144,7 @@ public class UpdaterService {
         plugin.getLogger().log(Level.WARNING, "It looks like you are using an unofficially modified build of Slimefun!");
         plugin.getLogger().log(Level.WARNING, "Modrinth release checks are enabled for this unofficial build.");
         plugin.getLogger().log(Level.WARNING, "Project: {0}", getModrinthProject());
+        plugin.getLogger().log(Level.WARNING, "Detected game version: {0}", getCurrentGameVersion());
         plugin.getLogger().log(Level.WARNING, "Auto-download updates: {0}", isAutoDownloadEnabled() ? "enabled" : "disabled");
         plugin.getLogger().log(Level.WARNING, "Do not report bugs encountered in this Version of Slimefun to any official sources.");
         printBorder();
@@ -294,7 +296,21 @@ public class UpdaterService {
     }
 
     private @Nullable ReleaseInfo fetchLatestModrinthRelease() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder(createModrinthVersionUri())
+        // First try with game_versions filter
+        ReleaseInfo result = fetchFromModrinth(createModrinthVersionUri());
+
+        if (result == null) {
+            // Fallback: retry without game_versions filter in case the version string
+            // from Bukkit.getBukkitVersion() doesn't exactly match what's on Modrinth.
+            plugin.getLogger().log(Level.INFO, "\u2726 No Modrinth releases matched game version \"{0}\", retrying without version filter...", getCurrentGameVersion());
+            result = fetchFromModrinth(createModrinthVersionUriNoGameFilter());
+        }
+
+        return result;
+    }
+
+    private @Nullable ReleaseInfo fetchFromModrinth(@Nonnull URI uri) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder(uri)
             .header("User-Agent", USER_AGENT)
             .header("Accept", "application/json")
             .GET()
@@ -309,6 +325,9 @@ public class UpdaterService {
         if (versions.isEmpty()) {
             return null;
         }
+
+        // Scan ALL versions and pick the one with the highest build number.
+        ReleaseInfo best = null;
 
         for (JsonElement element : versions) {
             if (!element.isJsonObject()) {
@@ -338,11 +357,18 @@ public class UpdaterService {
             }
 
             Integer buildNumber = parseBuildNumber(assetName);
-            String projectUrl = "https://modrinth.com/plugin/" + getModrinthProject() + "/version/" + versionId;
-            return new ReleaseInfo(versionNumber, projectUrl, Instant.parse(publishedAtRaw), assetName, downloadUrl, buildNumber);
+            if (buildNumber == null) {
+                continue;
+            }
+
+            // Keep only the release with the highest build number.
+            if (best == null || best.buildNumber() == null || buildNumber > best.buildNumber()) {
+                String projectUrl = "https://modrinth.com/plugin/" + getModrinthProject() + "/version/" + versionId;
+                best = new ReleaseInfo(versionNumber, projectUrl, Instant.parse(publishedAtRaw), assetName, downloadUrl, buildNumber);
+            }
         }
 
-        return null;
+        return best;
     }
 
     private @Nullable JsonObject selectModrinthJar(@Nonnull JsonArray files) {
@@ -399,6 +425,12 @@ public class UpdaterService {
         String gameVersions = encodeJsonArray(getCurrentGameVersion());
         String loaders = encodeJsonArray("paper", "purpur", "spigot", "bukkit");
         return URI.create(String.format(MODRINTH_VERSION_ENDPOINT, project, gameVersions, loaders));
+    }
+
+    private @Nonnull URI createModrinthVersionUriNoGameFilter() {
+        String project = getModrinthProject();
+        String loaders = encodeJsonArray("paper", "purpur", "spigot", "bukkit");
+        return URI.create(String.format(MODRINTH_VERSION_ENDPOINT_NO_GAME_FILTER, project, loaders));
     }
 
     private @Nonnull String encodeJsonArray(@Nonnull String... values) {

@@ -69,8 +69,7 @@ public class EnhancedFurnace extends SimpleSlimefunItem<BlockTicker> {
     }
 
     public int getRandomOutputAmount() {
-        int bonus = ThreadLocalRandom.current().nextInt(fortuneLevel + 2);
-        return 1 + bonus;
+        return 1 + fortuneLevel;
     }
 
     @Override
@@ -89,11 +88,7 @@ public class EnhancedFurnace extends SimpleSlimefunItem<BlockTicker> {
                     // Check if the BlockState is a Furnace and cooking something
                     if (state instanceof Furnace furnace && furnace.getCookTime() > 0) {
                         setProgress(furnace);
-
-                        // Only update if necessary
-                        if (result.isSnapshot()) {
-                            state.update(true, false);
-                        }
+                        state.update(true, false);
                     }
                 }
             }
@@ -108,7 +103,75 @@ public class EnhancedFurnace extends SimpleSlimefunItem<BlockTicker> {
 
     private void setProgress(@Nonnull Furnace furnace) {
         // Update the cooktime
-        int cookTime = furnace.getCookTime() + getProcessingSpeed() * 10;
-        furnace.setCookTime((short) Math.min(cookTime, furnace.getCookTimeTotal() - 1));
+        int tickRate = Math.max(1, io.github.thebusybiscuit.slimefun4.implementation.Slimefun.getTickerTask().getTickRate());
+        
+        int totalCookTime = furnace.getCookTimeTotal();
+        if (totalCookTime <= 0) {
+            totalCookTime = 200;
+        }
+
+        int cookTime = furnace.getCookTime() + getProcessingSpeed() * tickRate;
+
+        if (cookTime >= totalCookTime) {
+            int extraItems = (cookTime / totalCookTime) - 1;
+            cookTime = cookTime % totalCookTime;
+
+            if (extraItems > 0) {
+                smeltExtraItems(furnace, extraItems);
+            }
+            
+            // To ensure vanilla smelts exactly 1 item on the next tick, we set it to total - 1.
+            // If we actually smelted all input items, we just set it to whatever modulo is left.
+            if (furnace.getInventory().getSmelting() != null && furnace.getInventory().getSmelting().getAmount() > 0) {
+                cookTime = totalCookTime - 1;
+            }
+        }
+        
+        furnace.setCookTime((short) Math.min(cookTime, totalCookTime - 1));
+    }
+
+    private void smeltExtraItems(@Nonnull Furnace furnace, int amountToSmelt) {
+        org.bukkit.inventory.FurnaceInventory inv = furnace.getInventory();
+        ItemStack input = inv.getSmelting();
+        if (input == null || input.getAmount() == 0) return;
+
+        java.util.Optional<ItemStack> recipeResult = io.github.thebusybiscuit.slimefun4.implementation.Slimefun.getMinecraftRecipeService().getFurnaceOutput(input);
+        if (recipeResult.isEmpty()) return;
+
+        for (int i = 0; i < amountToSmelt; i++) {
+            if (input.getAmount() <= 0) {
+                inv.setSmelting(null);
+                break;
+            }
+
+            ItemStack outputBase = recipeResult.get().clone();
+            org.bukkit.event.inventory.FurnaceSmeltEvent event = new org.bukkit.event.inventory.FurnaceSmeltEvent(furnace.getBlock(), input, outputBase);
+            org.bukkit.Bukkit.getPluginManager().callEvent(event);
+            
+            if (event.isCancelled()) break;
+
+            ItemStack result = event.getResult();
+            ItemStack currentOutput = inv.getResult();
+
+            if (currentOutput == null || currentOutput.getType() == Material.AIR) {
+                inv.setResult(result);
+                input.setAmount(input.getAmount() - 1);
+            } else if (currentOutput.isSimilar(result)) {
+                int newAmount = currentOutput.getAmount() + result.getAmount();
+                if (newAmount <= currentOutput.getMaxStackSize()) {
+                    currentOutput.setAmount(newAmount);
+                    input.setAmount(input.getAmount() - 1);
+                } else {
+                    break; // Output slot is full
+                }
+            } else {
+                break; // Output slot has a different item
+            }
+            
+            if (input.getAmount() <= 0) {
+                inv.setSmelting(null);
+                break;
+            }
+        }
     }
 }

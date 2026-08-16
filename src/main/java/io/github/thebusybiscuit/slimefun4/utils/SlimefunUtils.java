@@ -494,7 +494,13 @@ public final class SlimefunUtils {
                 Debug.log(TestCase.CARGO_INPUT_TESTING, "  Comparing meta (vanilla items?) - {} == {} (lore: {})", itemMeta, sfItemMeta, checkLore);
                 return equalsItemMeta(itemMeta, sfItemMeta, checkLore);
             } else {
-                return false;
+                // sfitem is a plain vanilla ingredient with no meta at all.
+                // If `item` is actually a registered SlimefunItem (sf_item != null),
+                // it must not be treated as equal to a generic vanilla item of the
+                // same Material — otherwise reskinned items (e.g. dusts built on
+                // Material.SUGAR) will incorrectly match unrelated vanilla-only
+                // recipes (e.g. the Christmas Caramel recipe, 2x plain Sugar).
+                return sf_item == null;
             }
         } else {
             return !sfitem.hasItemMeta();

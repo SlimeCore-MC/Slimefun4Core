@@ -14,7 +14,7 @@ if (-not [string]::IsNullOrWhiteSpace($propertiesDirectory)) {
 }
 
 $currentYear = (Get-Date).ToString('yy')
-$currentCount = 0
+$currentBuildNumber = 0
 
 if (Test-Path -LiteralPath $PropertiesPath) {
     $existing = @{}
@@ -28,32 +28,26 @@ if (Test-Path -LiteralPath $PropertiesPath) {
         $existing[$key.Trim()] = $value.Trim()
     }
 
-    if ($existing['build.year'] -eq $currentYear -and $existing['build.session'] -eq $BuildSession) {
+    # Skip if this exact build session was already processed.
+    if ($existing['build.session'] -eq $BuildSession) {
         return
     }
 
-    if ($existing['build.year'] -eq $currentYear) {
-        $parsedCount = 0
-        if ([int]::TryParse($existing['build.count'], [ref]$parsedCount)) {
-            $currentCount = $parsedCount
-        }
+    # Read the current build number and increment it.
+    $parsedNumber = 0
+    if ([int]::TryParse($existing['short.build.number'], [ref]$parsedNumber)) {
+        $currentBuildNumber = $parsedNumber
     }
 }
 
-$nextCount = $currentCount + 1
-
-if ($nextCount -gt 99) {
-    throw "The 4-digit YYNN build number format only supports up to 99 builds per year. Reset or expand the format before building again."
-}
-
-$buildCount = '{0:D2}' -f $nextCount
-$shortBuildNumber = "$currentYear$buildCount"
+$nextBuildNumber = $currentBuildNumber + 1
 
 @(
     "# Auto-generated build number for SlimefunCore."
     "build.year=$currentYear"
-    "build.count=$buildCount"
-    "short.build.number=$shortBuildNumber"
-    "generated.short.build.number=$shortBuildNumber"
+    "build.count=$nextBuildNumber"
+    "short.build.number=$nextBuildNumber"
+    "generated.short.build.number=$nextBuildNumber"
     "build.session=$BuildSession"
 ) | Set-Content -LiteralPath $PropertiesPath -Encoding ASCII
+

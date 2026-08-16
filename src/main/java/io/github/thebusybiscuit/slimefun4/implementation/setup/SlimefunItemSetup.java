@@ -1104,8 +1104,7 @@ public final class SlimefunItemSetup {
                 .register(plugin);
 
         new Composter(itemGroups.basicMachines, SlimefunItems.COMPOSTER, RecipeType.ENHANCED_CRAFTING_TABLE,
-                // Recipe display fix: show the fence on the top row and the dispenser as facing up in the guide.
-                new ItemStack[] {new ItemStack(Material.OAK_SLAB), new ItemStack(Material.OAK_FENCE), new ItemStack(Material.OAK_SLAB), new ItemStack(Material.OAK_SLAB), CustomItemStack.create(Material.DISPENSER, "Dispenser (Facing up)"), new ItemStack(Material.OAK_SLAB), new ItemStack(Material.OAK_SLAB), new ItemStack(Material.CAULDRON), new ItemStack(Material.OAK_SLAB)})
+                new ItemStack[] {new ItemStack(Material.OAK_SLAB), new ItemStack(Material.OAK_FENCE), new ItemStack(Material.OAK_SLAB), new ItemStack(Material.OAK_SLAB), new ItemStack(Material.DISPENSER), new ItemStack(Material.OAK_SLAB), new ItemStack(Material.OAK_SLAB), new ItemStack(Material.CAULDRON), new ItemStack(Material.OAK_SLAB)})
                 .register(plugin);
 
         new FarmerShoes(itemGroups.magicalArmor, SlimefunItems.FARMER_SHOES, RecipeType.ARMOR_FORGE,
@@ -1150,8 +1149,7 @@ public final class SlimefunItemSetup {
                 .register(plugin);
 
         new Crucible(itemGroups.basicMachines, SlimefunItems.CRUCIBLE, RecipeType.ENHANCED_CRAFTING_TABLE,
-                // Recipe display fix: show the fence on the top row and the dispenser as facing up in the guide.
-                new ItemStack[] {new ItemStack(Material.TERRACOTTA), new ItemStack(Material.OAK_FENCE), new ItemStack(Material.TERRACOTTA), new ItemStack(Material.TERRACOTTA), CustomItemStack.create(Material.DISPENSER, "Dispenser (Facing up)"), new ItemStack(Material.TERRACOTTA), new ItemStack(Material.TERRACOTTA), new ItemStack(Material.FLINT_AND_STEEL), new ItemStack(Material.TERRACOTTA)})
+                new ItemStack[] {new ItemStack(Material.TERRACOTTA), null, new ItemStack(Material.TERRACOTTA), new ItemStack(Material.TERRACOTTA), null, new ItemStack(Material.TERRACOTTA), new ItemStack(Material.TERRACOTTA), new ItemStack(Material.FLINT_AND_STEEL), new ItemStack(Material.TERRACOTTA)})
                 .register(plugin);
 
         new SlimefunBackpack(45, itemGroups.usefulItems, SlimefunItems.GILDED_BACKPACK, RecipeType.ENHANCED_CRAFTING_TABLE,
@@ -1331,51 +1329,51 @@ public final class SlimefunItemSetup {
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), new ItemStack(Material.FURNACE), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 2, 1, 1, SlimefunItems.ENHANCED_FURNACE_2,
+        new EnhancedFurnace(itemGroups.basicMachines, 2, 2, 2, SlimefunItems.ENHANCED_FURNACE_2,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 2, 2, 1, SlimefunItems.ENHANCED_FURNACE_3,
+        new EnhancedFurnace(itemGroups.basicMachines, 3, 3, 3, SlimefunItems.ENHANCED_FURNACE_3,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_2.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 3, 2, 1, SlimefunItems.ENHANCED_FURNACE_4,
+        new EnhancedFurnace(itemGroups.basicMachines, 4, 4, 4, SlimefunItems.ENHANCED_FURNACE_4,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_3.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 3, 2, 2, SlimefunItems.ENHANCED_FURNACE_5,
+        new EnhancedFurnace(itemGroups.basicMachines, 5, 5, 5, SlimefunItems.ENHANCED_FURNACE_5,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_4.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 3, 3, 2, SlimefunItems.ENHANCED_FURNACE_6,
+        new EnhancedFurnace(itemGroups.basicMachines, 5, 6, 6, SlimefunItems.ENHANCED_FURNACE_6,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_5.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 4, 3, 2, SlimefunItems.ENHANCED_FURNACE_7,
+        new EnhancedFurnace(itemGroups.basicMachines, 5, 7, 7, SlimefunItems.ENHANCED_FURNACE_7,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_6.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 4, 4, 2, SlimefunItems.ENHANCED_FURNACE_8,
+        new EnhancedFurnace(itemGroups.basicMachines, 5, 8, 8, SlimefunItems.ENHANCED_FURNACE_8,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_7.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 5, 4, 2, SlimefunItems.ENHANCED_FURNACE_9,
+        new EnhancedFurnace(itemGroups.basicMachines, 5, 9, 9, SlimefunItems.ENHANCED_FURNACE_9,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_8.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 5, 5, 2, SlimefunItems.ENHANCED_FURNACE_10,
+        new EnhancedFurnace(itemGroups.basicMachines, 5, 10, 10, SlimefunItems.ENHANCED_FURNACE_10,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_9.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 5, 5, 3, SlimefunItems.ENHANCED_FURNACE_11,
+        new EnhancedFurnace(itemGroups.basicMachines, 5, 11, 11, SlimefunItems.ENHANCED_FURNACE_11,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_10.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 10, 10, 3, SlimefunItems.REINFORCED_FURNACE,
+        new EnhancedFurnace(itemGroups.basicMachines, 40, 20, 15, SlimefunItems.REINFORCED_FURNACE,
                 new ItemStack[] {SlimefunItems.REINFORCED_ALLOY_INGOT.item(), SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.REINFORCED_ALLOY_INGOT.item(), SlimefunItems.HEATING_COIL.item(), SlimefunItems.ENHANCED_FURNACE_11.item(), SlimefunItems.HEATING_COIL.item(), SlimefunItems.REINFORCED_ALLOY_INGOT.item(), SlimefunItems.ELECTRIC_MOTOR.item(), SlimefunItems.REINFORCED_ALLOY_INGOT.item()})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 20, 10, 3, SlimefunItems.CARBONADO_EDGED_FURNACE,
+        new EnhancedFurnace(itemGroups.basicMachines, 60, 30, 20, SlimefunItems.CARBONADO_EDGED_FURNACE,
                 new ItemStack[] {SlimefunItems.CARBONADO.item(), SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.CARBONADO.item(), SlimefunItems.HEATING_COIL.item(), SlimefunItems.REINFORCED_FURNACE.item(), SlimefunItems.HEATING_COIL.item(), SlimefunItems.CARBONADO.item(), SlimefunItems.ELECTRIC_MOTOR.item(), SlimefunItems.CARBONADO.item()})
                 .register(plugin);
 

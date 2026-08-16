@@ -10,11 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Map;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
->>>>>>> 46e1e0590de08d4fec311edc4566c6e20f426d7b
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -89,6 +84,27 @@ public record AddonDefinition(
 
         return Optional.empty();
     }
+
+    /**
+     * Returns whether this addon has at least one non-empty URL for a version
+     * tag that is compatible with the given Minecraft version.
+     *
+     * @param mcVersion
+     *            The Minecraft version to check against
+     *
+     * @return {@code true} if the addon is compatible, {@code false} otherwise
+     */
+    public boolean isCompatibleWith(@Nonnull MinecraftVersion mcVersion) {
+        Validate.notNull(mcVersion, "Minecraft version must not be null");
+
+        for (String tag : candidateTags(mcVersion)) {
+            String url = versionUrls.get(tag);
+            if (url != null && !url.isBlank()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public @Nonnull String version() {
@@ -105,7 +121,6 @@ public record AddonDefinition(
     public @Nonnull String url() {
         return resolveUrlForMinecraftVersion(Slimefun.getMinecraftVersion())
             .orElse("");
->>>>>>> 46e1e0590de08d4fec311edc4566c6e20f426d7b
     }
 
     public @Nonnull String repositoryFileName() {
@@ -132,76 +147,6 @@ public record AddonDefinition(
         Map<String, String> map = new LinkedHashMap<>();
         map.put(version, url);
         return map;
-    }
-
-    private @Nonnull Optional<String> closestVersionUrl(@Nonnull String targetVersion) {
-        return closestVersionKey(targetVersion).map(versionUrls::get);
-    }
-
-    private @Nonnull List<String> candidateTags(@Nonnull MinecraftVersion mcVersion) {
-        List<String> tags = new ArrayList<>();
-        addCandidateTag(tags, Slimefun.getVersion());
-        addCandidateTag(tags, VersionTagResolver.normalizeSlimefunVersion(Slimefun.getVersion()));
-        VersionTagResolver.resolveTags(mcVersion).forEach(tag -> addCandidateTag(tags, tag));
-        return tags;
-    }
-
-    private void addCandidateTag(@Nonnull List<String> tags, @Nonnull String tag) {
-        if (!tag.isBlank() && !tags.contains(tag)) {
-            tags.add(tag);
-        }
-    }
-
-    private @Nonnull Optional<String> closestVersionKey(@Nonnull String targetVersion) {
-        int[] target = parseVersionNumbers(targetVersion);
-        if (target.length == 0) {
-            return Optional.empty();
-        }
-
-        return versionUrls.entrySet().stream()
-            .filter(entry -> entry.getValue() != null && !entry.getValue().isBlank())
-            .filter(entry -> hasSameMajorVersion(target, parseVersionNumbers(entry.getKey())))
-            .max(Comparator.comparing(entry -> compareVersionDistance(target, parseVersionNumbers(entry.getKey()))))
-            .map(Map.Entry::getKey);
-    }
-
-    private boolean hasSameMajorVersion(@Nonnull int[] target, @Nonnull int[] candidate) {
-        return candidate.length > 0 && candidate[0] == target[0];
-    }
-
-    private int compareVersionDistance(@Nonnull int[] target, @Nonnull int[] candidate) {
-        int score = 0;
-        int max = Math.max(target.length, candidate.length);
-
-        for (int i = 0; i < max; i++) {
-            int targetPart = i < target.length ? target[i] : 0;
-            int candidatePart = i < candidate.length ? candidate[i] : 0;
-            if (candidatePart > targetPart) {
-                return Integer.MIN_VALUE + candidatePart;
-            }
-
-            score = (score * 1000) + candidatePart;
-        }
-
-        return score;
-    }
-
-    private @Nonnull int[] parseVersionNumbers(@Nonnull String value) {
-        Matcher matcher = VERSION_NUMBER_PATTERN.matcher(value);
-        int[] numbers = new int[4];
-        int count = 0;
-
-        while (matcher.find() && count < numbers.length) {
-            try {
-                numbers[count++] = Integer.parseInt(matcher.group());
-            } catch (NumberFormatException ignored) {
-                // Ignore oversized version parts.
-            }
-        }
-
-        int[] parsed = new int[count];
-        System.arraycopy(numbers, 0, parsed, 0, count);
-        return parsed;
     }
 
     private @Nonnull Optional<String> closestVersionUrl(@Nonnull String targetVersion) {
