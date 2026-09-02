@@ -1,163 +1,269 @@
-# Slimefun 4.0-UNOFFICIAL
-**Modified Version**  
-<hr />
+<div align="center">
 
-<p align="center">
-    <a href="https://github.com/rutwok-labs/Slimefun4Core/actions">
-        <img alt="Build Status" src="https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge" />
-    </a>
-    <a href="https://modrinth.com/plugin/slimefuncore">
-        <img alt="Downloads" src="https://img.shields.io/modrinth/dt/slimefuncore?style=for-the-badge&logo=modrinth" />
-    </a>
-    <a href="https://modrinth.com/plugin/slimefuncore">
-        <img alt="Latest Version" src="https://img.shields.io/modrinth/v/slimefuncore?style=for-the-badge&logo=modrinth" />
-    </a>
-   <a href="https://discord.gg/5FWW7hbFd">
-        <img alt="Discord" src="https://img.shields.io/badge/Discord-Join%20Community-5865F2?style=for-the-badge&logo=discord&logoColor=white" />
- </a>
-</p>
+# ⛏️ SlimeFunCore 4.0v ⛏️
+### <sub>✨ UNOFFICIAL MODIFIED VERSION ✨</sub>
+### <sub>Maintained by **R2Ksanu**</sub>
 
-<p align="center">
-    <img alt="Minecraft" src="https://img.shields.io/badge/Minecraft-1.21.11-62B47A?style=for-the-badge&logo=minecraft" />
-    <img alt="Java" src="https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk" />
-    <img alt="License" src="https://img.shields.io/badge/License-GPLv3-green?style=for-the-badge" />
-</p>
+<br>
 
-<hr />
+![Minecraft Version](https://img.shields.io/badge/MINECRAFT-1.21.x-62b47a?style=for-the-badge&logo=minecraft&logoColor=white)
+![Java Version](https://img.shields.io/badge/JAVA-21%2B-007396?style=for-the-badge&logo=openjdk&logoColor=white)
+![License](https://img.shields.io/badge/LICENSE-GPLv3-orange?style=for-the-badge&logo=gnu&logoColor=white)
+![Status](https://img.shields.io/badge/STATUS-ACTIVE-brightgreen?style=for-the-badge&logo=statuspage&logoColor=white)
 
----
+<br>
 
-## 📊 Live Statistics
+<img src="https://raw.githubusercontent.com/Slimefun/Slimefun-Wiki/master/images/showcase1.png" width="600" style="border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,0.35)">
 
-<p align="center">
-    <a href="https://bstats.org/plugin/bukkit/SlimefunCore-V4/30622">
-        <img alt="Servers" src="https://img.shields.io/bstats/servers/30622?style=for-the-badge&label=Servers" />
-    </a>
-    <a href="https://bstats.org/plugin/bukkit/SlimefunCore-V4/30622">
-        <img alt="Players" src="https://img.shields.io/bstats/players/30622?style=for-the-badge&label=Players" />
-    </a>
-</p>
+<br><br>
 
-<p align="center">
-    <a href="https://bstats.org/plugin/bukkit/SlimefunCore-V4/30622">
-        <img src="https://bstats.org/signatures/bukkit/SlimefunCore-V4.svg" alt="bStats Statistics">
-    </a>
-</p>
+**[💬 DISCORD](https://discord.gg/hJwXe3tw4)** &nbsp;•&nbsp;
+**[🐞 REPORT A BUG](https://github.com/rutwok-labs/SlimefunCore-V.4.0/issues)** &nbsp;•&nbsp;
+**[📖 ORIGINAL WIKI](https://github.com/Slimefun/Slimefun4/wiki)** &nbsp;•&nbsp;
+**[❤️ ORIGINAL PROJECT](https://github.com/Slimefun/Slimefun4)**
 
-<p align="center">
-    <sub>Statistics powered by bStats</sub>
-</p>
+</div>
+
+<br>
+
+> **Slimefun** turns your Minecraft server into a full-blown modpack — **without installing a single mod.** Advanced tech, powerful magic, automated factories, and hundreds of custom items, all running on vanilla clients.
+>
+> ⚠️ **This is an unofficial fork** of the original project, updated and maintained by **R2Ksanu** to bring full support for the latest Minecraft & Java releases.
+
+<br>
 
 ---
 
-Slimefun is a plugin which turns your Minecraft server into a **modpack without installing mods**. It adds a huge amount of content including advanced technology, powerful magic, machines, and full automation systems.
+<div align="center">
 
-_**This is an unofficial modified version** of the original project, maintained and updated by **R2Ksanu**._
+## 📦 SUPPORTED VERSIONS
 
->** **Original Repository**: [https://github.com/Slimefun/Slimefun4](https://github.com/Slimefun/Slimefun4)**
+</div>
+
+<table align="center">
+<tr>
+  <th align="center">🏷️ Build</th>
+  <th align="center">📌 Minecraft Version</th>
+  <th align="center">🚀 Loader</th>
+</tr>
+<tr>
+  <td align="center"><code> 2710 </code></td>
+  <td align="center"><code>1.21.x → 1.21.11</code></td>
+  <td align="center">⚡ Paper / Purpur</td>
+</tr>
+<tr>
+  <td align="center"><code> 2800 </code></td>
+  <td align="center"><code>26.1 → Up</code></td>
+  <td align="center">⚡ Paper / Purpur</td>
+</tr>
+</table>
+
+<br>
 
 ---
 
-## Status Update
-- **Original version**: 1.19.4
-- **Updated to**: **1.21.11**
-- **Compatibility**: :white_check_mark: **Working**
-- **Status**: :test_tube: **Online**
-- **Tested on**: Purpur 1.21.11 (Java 21)
+<div align="center">
 
-**This build is still under testing and may contain bugs.** Feedback and bug reports are highly appreciated!
+## 📊 STATUS UPDATE
+
+</div>
+
+<table align="center">
+<tr><td>⏪ <b>Original Base Version</b></td><td><code>1.19.4</code></td></tr>
+<tr><td>⏩ <b>Updated To</b></td><td><code>1.21.x → 1.21.11</code> &nbsp;&amp;&nbsp; <code>26.1+</code></td></tr>
+<tr><td>🧩 <b>Compatibility</b></td><td>✅ <b>100% Working</b></td></tr>
+<tr><td>🟢 <b>Overall Status</b></td><td>🧪 <b>Success</b> ✅</td></tr>
+<tr><td>🖥️ <b>Tested On</b></td><td><code>Paper / Purpur</code> — Java 21 / Java 25</td></tr>
+</table>
+
+<div align="center">
+
+> ⚠️ **This build is still under testing** and may contain bugs.
+> Feedback & bug reports are **highly appreciated** — always test on a backup server before deploying to production!
+
+</div>
+
+<br>
 
 ---
 
-## Future Update
-Upcoming **Slimefun community addons** will also be updated for **Minecraft 1.21.11** to work together with this main core build.
+<div align="center">
 
-The goal is to keep the wider Slimefun addon ecosystem usable on modern **Purpur/Paper 1.21.11** servers.
+## 🌟 WHAT IS SLIMEFUN?
 
-## Updated Addons
-**Addon Repo**:
+*Legendary in the Minecraft community since **2013**.*
+
+</div>
+
+<table align="center">
+<tr>
+<td align="center" width="25%">
+
+### ⚙️
+**Advanced Tech**
+<br><sub>Reactors, generators & electricity grids</sub>
+
+</td>
+<td align="center" width="25%">
+
+### 🔮
+**Magic & Altars**
+<br><sub>Runes, rituals & mystical crafting</sub>
+
+</td>
+<td align="center" width="25%">
+
+### 🏭
+**Full Automation**
+<br><sub>Auto-crafters & production lines</sub>
+
+</td>
+<td align="center" width="25%">
+
+### 🎒
+**500+ Items**
+<br><sub>Tools, armor, machines & more</sub>
+
+</td>
+</tr>
+</table>
+
+<div align="center">
+
+This unofficial build **keeps the spirit of the original alive**, while bringing full support for the absolute latest Minecraft versions.
+
+</div>
+
+<br>
+
+---
+
+<div align="center">
+
+## 🚀 ADDONS & FUTURE UPDATES
+
+Community addons are being updated for **Minecraft 1.21.x+**, keeping the whole Slimefun ecosystem alive on modern **Purpur/Paper** servers.
+
+</div>
+
+### ✨ What's New in Addon Management
+
+| | |
+|:---|:---|
+| 🔄 | **Dynamic addon list** — shows cloud-managed & manually installed addons |
+| 📊 | **Status overview** — managed, loaded, and unmanaged addon counts |
+| 🧠 | **Smarter GitHub jar selection** — matches by addon name first |
+| 📖 | **Managed addon detection** — reads directly from the jar's `plugin.yml` |
+| 🛡️ | **Fallback flags** for remote sync — now fully respected |
+
+<br>
+
+### ⌨️ Addon Commands
+
+```bash
+/sf addon list                 # List all addons (managed + installed)
+/sf addon status                # Show addon counts and sync state
+/sf addon sync                  # Manually trigger a cloud config sync
+/sf addon enable <name>         # Enable a managed addon
+/sf addon disable <name>        # Disable a managed addon
+/sf addon update <name>         # Update a specific addon
+/sf addon download <name>       # Download a managed addon
+/sf addon remove <name>         # Remove a managed addon
 ```
-https://github.com/rutwok-labs/SF4-Addons
-```
 
-| Addon | Status | Notes |
-|-------|--------|-------|
-| Community Addons | ⏳__ Upcoming | Planned compatibility updates for `1.21.11` |
-| Main Slimefun Core | ✅ Updated | Working on `Purpur/Paper 1.21.11` |
+<br>
 
----
+<div align="center">
 
-## Download
-🔗 **Link** : [SlimefunCore4](https://modrinth.com/plugin/slimefuncore)
+| 🧩 Addon Type | 📈 Progress | 📝 Notes |
+|:---|:---:|:---|
+| 🌍 **Community Addons** | `██████░░░░░░░░░░░░░░` 30% | Updates in progress for `1.21.x+` |
+| ⚙️ **Main Slimefun Core** | `████████████████████` 100% | ✅ Fully working on `Purpur/Paper 1.21.x+` |
 
-> **Note**: This is an **unofficial fork**. Always test on a backup server before using on production.
+</div>
 
----
-
-## Screenshots
-*(Reused from the original project – showcasing the power of Slimefun)*
-
-| Reactors & Electricity | Awesome Factories | Magic & Altars |
-|------------------------|-------------------|----------------|
-| ![Reactors and electricity showcase](https://raw.githubusercontent.com/Slimefun/Slimefun-Wiki/master/images/showcase1.png) | ![Factory automation showcase](https://raw.githubusercontent.com/Slimefun/Slimefun-Wiki/master/images/showcase6.png) | ![Magic and altar showcase](https://raw.githubusercontent.com/Slimefun/Slimefun-Wiki/master/images/showcase5.png) |
+<br>
 
 ---
 
-## ✨ What is Slimefun?
-Slimefun adds:
+<div align="center">
 
-- **Advanced technology systems**
-- **Magical items and crafting**
-- **Machines and automation**
-- **Over 500 custom items**
+## 📸 SCREENSHOTS
 
-The original project started in **2013** and has grown into a large community project with hundreds of contributors.
+<sub><i>Reused from the original project — showcasing the absolute power of Slimefun</i></sub>
 
-**This unofficial version keeps the spirit alive** while bringing full support for the latest Minecraft 1.21.11!
+<br><br>
+
+<img src="https://raw.githubusercontent.com/Slimefun/Slimefun-Wiki/master/images/showcase1.png" width="270" style="border-radius:12px;margin:6px;box-shadow:0 6px 18px rgba(0,0,0,0.3)">
+<img src="https://raw.githubusercontent.com/Slimefun/Slimefun-Wiki/master/images/showcase6.png" width="270" style="border-radius:12px;margin:6px;box-shadow:0 6px 18px rgba(0,0,0,0.3)">
+<img src="https://raw.githubusercontent.com/Slimefun/Slimefun-Wiki/master/images/showcase5.png" width="270" style="border-radius:12px;margin:6px;box-shadow:0 6px 18px rgba(0,0,0,0.3)">
+
+<br>
+
+⚡ **Reactors & Electricity** &nbsp;&nbsp;|&nbsp;&nbsp; 🏭 **Awesome Factories** &nbsp;&nbsp;|&nbsp;&nbsp; 🔮 **Magic & Altars**
+
+</div>
+
+<br>
 
 ---
 
-##  🧭 Quick Navigation
-- **[🖼️ Screenshots](#framed_picture-screenshots)**
-- **[🐞 Bug Reports & Feedback](https://github.com/rutwok-labs/SlimefunCore-V.4.0/issues)**
-- **[📖 Original Wiki](https://github.com/Slimefun/Slimefun4/wiki)**
-- **[❤️ Original Project](https://github.com/Slimefun/Slimefun4)**
+<div align="center">
+
+## 🌐 COMMUNITY & SUPPORT
+
+Join the community to get support, report bugs, follow updates, and test upcoming builds!
+
+<br>
+
+[![Discord](https://img.shields.io/badge/Join_our-Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/hJwXe3tw4)
+[![Issues](https://img.shields.io/badge/Report_a-Bug-red?style=for-the-badge&logo=github&logoColor=white)](https://github.com/rutwok-labs/SlimefunCore-V.4.0/issues)
+[![Wiki](https://img.shields.io/badge/Read_the-Wiki-blue?style=for-the-badge&logo=bookstack&logoColor=white)](https://github.com/Slimefun/Slimefun4/wiki)
+[![Original](https://img.shields.io/badge/Original-Slimefun4-black?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Slimefun/Slimefun4)
+
+</div>
+
+<br>
 
 ---
 
-## ⚠️ Important Disclaimer
+<div align="center">
+
+## 🤝🏻 CREDITS & DISCLAIMER
+
 **This is an unofficial fork and is not affiliated with the original Slimefun developers or team.**
+All credit goes to the original **Slimefun Team**.
 
-- All credits go to the original **Slimefun Team**.
-- This project follows the **GNU GPLv3 License**.
-- You are allowed to modify and share it, **but you must give proper credit** and keep the same license.
+<br>
 
-**Original Project**  
-Creator & Builder: **[TheBusyBiscuit](https://github.com/TheBusyBiscuit)**  
+| Role | Credit |
+|:---|:---|
+| 👑 **Original Project Creator** | [**TheBusyBiscuit**](https://github.com/TheBusyBiscuit) |
+| 👥 **Original Project Team** | Slimefun Team |
+| 🛠️ **Modified & Updated By** | **R2Ksanu** |
+| 📸 **Screenshots** | Courtesy of the original Slimefun community |
 
-![TheBusyBiscuit avatar](https://avatars.githubusercontent.com/u/3967898?v=4)
+<br>
 
-**TheBusyBiscuit** · he/him  
-Original Project Team: **Slimefun Team**  
-Repository: [https://github.com/Slimefun/Slimefun4](https://github.com/Slimefun/Slimefun4)
+This project follows the **GNU GPLv3 License**.
+You are free to modify and share it — **but you must give proper credit** and keep the same license.
+See the [LICENSE](https://github.com/Slimefun/Slimefun4/blob/master/LICENSE) for full details.
 
----
+</div>
 
-## 🤝🏻 Credits
-- **Original Project Creator**: **[TheBusyBiscuit](https://github.com/TheBusyBiscuit)**
-- **Original Project Team**: Slimefun Team
-- **Modified & Updated by**: **R2Ksanu**
-- **Screenshots**: Courtesy of the original Slimefun community
-
----
-
-## 📄 License
-This project follows the **GNU GPLv3 License**.  
-See [LICENSE](LICENSE) for details.
+<br>
 
 ---
 
-**Thank you for using Slimefun 4.0-UNOFFICIAL!**  
-Enjoy your modpack-like experience on the latest Minecraft version! :tada:
+<div align="center">
 
-*Made with ❤️ for the Minecraft community*
+### 💚 Thank you for using Slimefun 4.0v-UNOFFICIAL! 💚
+
+*Enjoy your modpack-like experience on the latest Minecraft version.*
+**Made with ❤️ for the Minecraft community.**
+
+<br>
+
+![Visitors](https://img.shields.io/badge/Powered_by-Slimefun_Community-62b47a?style=for-the-badge&logo=minecraft&logoColor=white)
+
+</div>
