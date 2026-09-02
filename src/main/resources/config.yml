@@ -116,3 +116,34 @@ research-ranks:
 - Great Master
 - Proficient Master
 - The Chosen One
+
+
+furnaces:
+  speeds:
+    enhanced-furnace-1: 1
+    enhanced-furnace-2: 2
+    enhanced-furnace-3: 3
+    enhanced-furnace-4: 4
+    enhanced-furnace-5: 5
+    enhanced-furnace-6: 7
+    enhanced-furnace-7: 8
+    enhanced-furnace-8: 9
+    enhanced-furnace-9: 10
+    enhanced-furnace-10: 10
+    enhanced-furnace-11: 10
+    reinforced-furnace: 14
+    carbonado-edged-furnace: 18
+  multipliers:
+    enhanced-furnace-1: 1
+    enhanced-furnace-2: 2
+    enhanced-furnace-3: 3
+    enhanced-furnace-4: 4
+    enhanced-furnace-5: 5
+    enhanced-furnace-6: 7
+    enhanced-furnace-7: 7
+    enhanced-furnace-8: 8
+    enhanced-furnace-9: 8
+    enhanced-furnace-10: 9
+    enhanced-furnace-11: 9
+    reinforced-furnace: 10
+    carbonado-edged-furnace: 11

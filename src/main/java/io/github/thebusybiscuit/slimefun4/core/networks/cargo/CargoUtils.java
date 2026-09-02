@@ -40,7 +40,7 @@ import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
  * @author DNx5
  *
  */
-final class CargoUtils {
+public final class CargoUtils {
 
     /**
      * These are the slots where our filter items sit.
@@ -62,7 +62,7 @@ final class CargoUtils {
      * 
      * @return Whether this {@link Block} represents a {@link BlockState} that is an {@link InventoryHolder}
      */
-    static boolean hasInventory(@Nullable Block block) {
+    public static boolean hasInventory(@Nullable Block block) {
         if (block == null) {
             // No block, no inventory
             return false;
@@ -73,7 +73,7 @@ final class CargoUtils {
     }
 
     @Nonnull
-    static int[] getInputSlotRange(@Nonnull Inventory inv, @Nullable ItemStack item) {
+    public static int[] getInputSlotRange(@Nonnull Inventory inv, @Nullable ItemStack item) {
         if (inv instanceof FurnaceInventory) {
             if (item != null && item.getType().isFuel()) {
                 if (isSmeltable(item, true)) {
@@ -245,7 +245,7 @@ final class CargoUtils {
     }
 
     @Nullable
-    static ItemStack insert(AbstractItemNetwork network, Map<Location, Inventory> inventories, Block node, Block target, boolean smartFill, ItemStack stack, ItemStackWrapper wrapper) {
+    public static ItemStack insert(AbstractItemNetwork network, Map<Location, Inventory> inventories, Block node, Block target, boolean smartFill, ItemStack stack, ItemStackWrapper wrapper) {
         Debug.log(TestCase.CARGO_INPUT_TESTING, "CargoUtils#insert");
         if (!matchesFilter(network, node, stack)) {
             return stack;
@@ -365,7 +365,7 @@ final class CargoUtils {
     }
 
     @Nullable
-    static DirtyChestMenu getChestMenu(@Nonnull Block block) {
+    public static DirtyChestMenu getChestMenu(@Nonnull Block block) {
         if (BlockStorage.hasInventory(block)) {
             return BlockStorage.getInventory(block);
         } else {

@@ -1325,55 +1325,55 @@ public final class SlimefunItemSetup {
                 new ItemStack[] {SlimefunItems.ENDER_RUNE.item(), SlimefunItems.FILLED_FLASK_OF_KNOWLEDGE.item(), SlimefunItems.ESSENCE_OF_AFTERLIFE.item(), SlimefunItems.FILLED_FLASK_OF_KNOWLEDGE.item(), SlimefunItems.BROKEN_SPAWNER.item(), SlimefunItems.FILLED_FLASK_OF_KNOWLEDGE.item(), SlimefunItems.ESSENCE_OF_AFTERLIFE.item(), SlimefunItems.FILLED_FLASK_OF_KNOWLEDGE.item(), SlimefunItems.ENDER_RUNE.item()})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 1, 1, 1, SlimefunItems.ENHANCED_FURNACE,
+        new EnhancedFurnace(itemGroups.basicMachines, plugin.getConfig().getInt("furnaces.speeds.enhanced-furnace-1", 1), 1, plugin.getConfig().getInt("furnaces.multipliers.enhanced-furnace-1", 1), SlimefunItems.ENHANCED_FURNACE,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), new ItemStack(Material.FURNACE), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 2, 2, 2, SlimefunItems.ENHANCED_FURNACE_2,
+        new EnhancedFurnace(itemGroups.basicMachines, plugin.getConfig().getInt("furnaces.speeds.enhanced-furnace-2", 2), 2, plugin.getConfig().getInt("furnaces.multipliers.enhanced-furnace-2", 2), SlimefunItems.ENHANCED_FURNACE_2,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 3, 3, 3, SlimefunItems.ENHANCED_FURNACE_3,
+        new EnhancedFurnace(itemGroups.basicMachines, plugin.getConfig().getInt("furnaces.speeds.enhanced-furnace-3", 3), 3, plugin.getConfig().getInt("furnaces.multipliers.enhanced-furnace-3", 3), SlimefunItems.ENHANCED_FURNACE_3,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_2.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 4, 4, 4, SlimefunItems.ENHANCED_FURNACE_4,
+        new EnhancedFurnace(itemGroups.basicMachines, plugin.getConfig().getInt("furnaces.speeds.enhanced-furnace-4", 4), 4, plugin.getConfig().getInt("furnaces.multipliers.enhanced-furnace-4", 4), SlimefunItems.ENHANCED_FURNACE_4,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_3.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 5, 5, 5, SlimefunItems.ENHANCED_FURNACE_5,
+        new EnhancedFurnace(itemGroups.basicMachines, plugin.getConfig().getInt("furnaces.speeds.enhanced-furnace-5", 5), 5, plugin.getConfig().getInt("furnaces.multipliers.enhanced-furnace-5", 5), SlimefunItems.ENHANCED_FURNACE_5,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_4.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 5, 6, 6, SlimefunItems.ENHANCED_FURNACE_6,
+        new EnhancedFurnace(itemGroups.basicMachines, plugin.getConfig().getInt("furnaces.speeds.enhanced-furnace-6", 5), 6, plugin.getConfig().getInt("furnaces.multipliers.enhanced-furnace-6", 6), SlimefunItems.ENHANCED_FURNACE_6,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_5.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 5, 7, 7, SlimefunItems.ENHANCED_FURNACE_7,
+        new EnhancedFurnace(itemGroups.basicMachines, plugin.getConfig().getInt("furnaces.speeds.enhanced-furnace-7", 5), 7, plugin.getConfig().getInt("furnaces.multipliers.enhanced-furnace-7", 7), SlimefunItems.ENHANCED_FURNACE_7,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_6.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 5, 8, 8, SlimefunItems.ENHANCED_FURNACE_8,
+        new EnhancedFurnace(itemGroups.basicMachines, plugin.getConfig().getInt("furnaces.speeds.enhanced-furnace-8", 5), 8, plugin.getConfig().getInt("furnaces.multipliers.enhanced-furnace-8", 8), SlimefunItems.ENHANCED_FURNACE_8,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_7.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 5, 9, 9, SlimefunItems.ENHANCED_FURNACE_9,
+        new EnhancedFurnace(itemGroups.basicMachines, plugin.getConfig().getInt("furnaces.speeds.enhanced-furnace-9", 5), 9, plugin.getConfig().getInt("furnaces.multipliers.enhanced-furnace-9", 9), SlimefunItems.ENHANCED_FURNACE_9,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_8.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 5, 10, 10, SlimefunItems.ENHANCED_FURNACE_10,
+        new EnhancedFurnace(itemGroups.basicMachines, plugin.getConfig().getInt("furnaces.speeds.enhanced-furnace-10", 5), 10, plugin.getConfig().getInt("furnaces.multipliers.enhanced-furnace-10", 10), SlimefunItems.ENHANCED_FURNACE_10,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_9.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 5, 11, 11, SlimefunItems.ENHANCED_FURNACE_11,
+        new EnhancedFurnace(itemGroups.basicMachines, plugin.getConfig().getInt("furnaces.speeds.enhanced-furnace-11", 5), 11, plugin.getConfig().getInt("furnaces.multipliers.enhanced-furnace-11", 11), SlimefunItems.ENHANCED_FURNACE_11,
                 new ItemStack[] {null, SlimefunItems.STEEL_INGOT.item(), null, SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.ENHANCED_FURNACE_10.item(), SlimefunItems.HEATING_COIL.item(), null, SlimefunItems.ELECTRIC_MOTOR.item(), null})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 40, 20, 15, SlimefunItems.REINFORCED_FURNACE,
+        new EnhancedFurnace(itemGroups.basicMachines, plugin.getConfig().getInt("furnaces.speeds.reinforced-furnace", 3), 20, plugin.getConfig().getInt("furnaces.multipliers.reinforced-furnace", 15), SlimefunItems.REINFORCED_FURNACE,
                 new ItemStack[] {SlimefunItems.REINFORCED_ALLOY_INGOT.item(), SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.REINFORCED_ALLOY_INGOT.item(), SlimefunItems.HEATING_COIL.item(), SlimefunItems.ENHANCED_FURNACE_11.item(), SlimefunItems.HEATING_COIL.item(), SlimefunItems.REINFORCED_ALLOY_INGOT.item(), SlimefunItems.ELECTRIC_MOTOR.item(), SlimefunItems.REINFORCED_ALLOY_INGOT.item()})
                 .register(plugin);
 
-        new EnhancedFurnace(itemGroups.basicMachines, 60, 30, 20, SlimefunItems.CARBONADO_EDGED_FURNACE,
+        new EnhancedFurnace(itemGroups.basicMachines, plugin.getConfig().getInt("furnaces.speeds.carbonado-edged-furnace", 4), 30, plugin.getConfig().getInt("furnaces.multipliers.carbonado-edged-furnace", 20), SlimefunItems.CARBONADO_EDGED_FURNACE,
                 new ItemStack[] {SlimefunItems.CARBONADO.item(), SlimefunItems.BASIC_CIRCUIT_BOARD.item(), SlimefunItems.CARBONADO.item(), SlimefunItems.HEATING_COIL.item(), SlimefunItems.REINFORCED_FURNACE.item(), SlimefunItems.HEATING_COIL.item(), SlimefunItems.CARBONADO.item(), SlimefunItems.ELECTRIC_MOTOR.item(), SlimefunItems.CARBONADO.item()})
                 .register(plugin);
 

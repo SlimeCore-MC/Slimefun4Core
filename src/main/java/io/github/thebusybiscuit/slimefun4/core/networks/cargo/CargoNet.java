@@ -50,6 +50,18 @@ public class CargoNet extends AbstractItemNetwork implements HologramOwner {
     protected final Map<Location, Integer> roundRobin = new HashMap<>();
     private int tickDelayThreshold = 0;
 
+    public @Nonnull Optional<Block> getAttachedBlock(@Nonnull Location l) {
+        return super.getAttachedBlock(l);
+    }
+
+    public @Nonnull Set<Location> getInputNodes() {
+        return inputNodes;
+    }
+
+    public @Nonnull Set<Location> getOutputNodes() {
+        return outputNodes;
+    }
+
     public static @Nullable CargoNet getNetworkFromLocation(@Nonnull Location l) {
         return Slimefun.getNetworkManager().getNetworkFromLocation(l, CargoNet.class).orElse(null);
     }
