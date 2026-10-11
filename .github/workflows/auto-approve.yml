@@ -16,7 +16,7 @@ jobs:
       pull-requests: write
 
     # Only run this on the main repo
-    if: github.event.pull_request.head.repo.full_name == 'Slimefun/Slimefun4'
+    if: github.event.pull_request.head.repo.full_name == 'SlimeCore-MC/Slimefun4Core'
 
     steps:
     - name: Approve via actions

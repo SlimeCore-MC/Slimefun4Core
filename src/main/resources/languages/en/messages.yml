@@ -9,6 +9,8 @@ commands:
   search: Searches your Guide for the given term
   open_guide: Opens Slimefun's guide without using the book
   stats: Shows some Stats about a Player
+  storage: Manage the Slimefun storage engine, backups and migration
+  checkpoint: Create, inspect and restore Slimefun checkpoints
 
   research:
     description: Unlock/Reset researches for a player

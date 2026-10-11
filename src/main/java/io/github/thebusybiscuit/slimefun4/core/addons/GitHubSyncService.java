@@ -166,19 +166,60 @@ public final class GitHubSyncService {
             addonService.syncConfiguredAddons();
             return new RemoteSyncResult(RemoteSyncOutcome.UPDATED, "Remote addonmanager.yml synced successfully from GitHub.", null);
         } catch (Exception x) {
+            String reason = describeFailure(x);
+
             try {
                 configManager.saveRemoteSyncState(new RemoteSyncState(
                     RemoteSyncState.EMPTY.etag(),
                     RemoteSyncState.EMPTY.lastModified(),
                     configManager.getSyncSettings().url(),
-                    "Sync failed: " + x.getMessage(),
+                    "Sync failed: " + reason,
                     Instant.now()
                 ));
             } catch (Exception ignored) {
                 // Best effort state update only.
             }
 
-            return new RemoteSyncResult(RemoteSyncOutcome.FAILED, "Remote addonmanager.yml sync failed: " + x.getMessage(), x);
+            return new RemoteSyncResult(RemoteSyncOutcome.FAILED, "Remote addonmanager.yml sync failed: " + reason, x);
         }
+    }
+
+    /**
+     * Describes a sync failure in one line.
+     *
+     * <p>Several of the exceptions thrown by {@link HttpClient} carry no message at all, so the
+     * exception type and the root cause are named as well. An HTTP status, when the server
+     * returned one, is already part of the message this service throws.
+     *
+     * @param throwable The failure to describe
+     * @return A non-empty description, even when every message is {@code null}
+     */
+    @Nonnull
+    private static String describeFailure(@Nonnull Throwable throwable) {
+        StringBuilder builder = new StringBuilder(throwable.getClass().getSimpleName());
+        String message = throwable.getMessage();
+
+        if (message != null && !message.isBlank()) {
+            builder.append(": ").append(message);
+        }
+
+        Throwable root = throwable;
+
+        while (root.getCause() != null && root.getCause() != root) {
+            root = root.getCause();
+        }
+
+        if (root != throwable) {
+            builder.append(" (caused by ").append(root.getClass().getSimpleName());
+            String rootMessage = root.getMessage();
+
+            if (rootMessage != null && !rootMessage.isBlank()) {
+                builder.append(": ").append(rootMessage);
+            }
+
+            builder.append(')');
+        }
+
+        return builder.toString();
     }
 }

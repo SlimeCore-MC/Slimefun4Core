@@ -171,11 +171,25 @@ class CargoNetworkTask implements Runnable {
             destinations = new ArrayList<>(outputNodes);
         }
 
+        // The wrapper snapshots the item's amount at construction, and some machine presets (e.g.
+        // HeatedPressureChamber) read wrapper.getAmount() during slot selection — so the wrapper must
+        // always reflect the item's CURRENT amount when passed to insert. But building it clones the
+        // ItemMeta (the expensive CraftItemStack#getItemMeta), and the item only changes when an insert
+        // actually consumes some of it. So we cache the wrapper and rebuild it only when the amount has
+        // changed since it was last built. Outputs that reject the item (filter) or are full leave the
+        // item untouched and reuse the same wrapper — identical behaviour, far fewer meta clones.
+        ItemStackWrapper wrapper = ItemStackWrapper.wrap(item);
+        int wrappedAmount = item.getAmount();
+
         for (Location output : destinations) {
             Optional<Block> target = network.getAttachedBlock(output);
 
             if (target.isPresent()) {
-                ItemStackWrapper wrapper = ItemStackWrapper.wrap(item);
+                if (item.getAmount() != wrappedAmount) {
+                    wrapper = ItemStackWrapper.wrap(item);
+                    wrappedAmount = item.getAmount();
+                }
+
                 item = CargoUtils.insert(network, inventories, output.getBlock(), target.get(), smartFill, item, wrapper);
 
                 if (item == null) {

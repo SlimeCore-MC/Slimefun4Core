@@ -102,3 +102,72 @@ backup:
   compress: true
   # Directory to store backups (relative to server root)
   directory: data-storage/Slimefun/db-backups
+
+# ---------------------------------------------------------------------------
+# Checkpoint settings
+#
+# A checkpoint is one complete Slimefun backup state holding two independent
+# halves under a single checkpoint-NNN directory:
+#
+#   storage/storage.zip       the file-based Slimefun data tree
+#   database/database-backup.*  the database-owned player data
+#   metadata.json             checksums, counts and status of both halves
+#
+# Neither half ever contains Minecraft world data. Block machines always live
+# in the storage half, on every provider, because block data was never moved
+# to the database. Manage checkpoints with /sf checkpoint.
+# ---------------------------------------------------------------------------
+checkpoint:
+  enabled: true
+  # How many valid checkpoints to keep. The oldest is only ever deleted after
+  # a new checkpoint has been written, checksummed and re-parsed.
+  max-checkpoints: 10
+  # Where checkpoints are stored. Relative paths resolve inside plugins/Slimefun.
+  directory: slimefun-checkpoints
+  # Create checkpoints on a schedule
+  automatic: false
+  # How many hours between automatic checkpoints
+  interval-hours: 12
+  # Fixed UTC times to run automatic checkpoints, as "HH:mm" (24h, UTC). When this list is
+  # non-empty it REPLACES interval-hours: a checkpoint fires as each listed time comes round.
+  # Example for 4 times per day:  ["00:00", "06:00", "12:00", "18:00"]. Leave empty to use
+  # interval-hours instead.
+  times: []
+  # Skip an automatic checkpoint when nothing changed since the newest one
+  only-when-changed: true
+  # Compress the database half of a checkpoint
+  compress: true
+  # How many pre-restore safety copies to keep (0 = keep every one)
+  keep-safety-backups: 3
+
+# ---------------------------------------------------------------------------
+# World backup settings
+#
+# World backups are a SEPARATE pool from checkpoints. They archive the actual
+# Minecraft world folders (overworld, nether, end) into one worlds.zip, stored
+# under <checkpoint directory>/worlds/world-NNN/. They have their own retention
+# and their own opt-in toggle so a multi-gigabyte world archive never bloats a
+# checkpoint or its verify.
+#
+# Capture saves each target world on the main thread, then zips the region
+# files off-thread. Restore never touches a loaded world: it stages the files
+# and applies them on the next server startup, before the worlds load. Manage
+# world backups with /sf checkpoint worlds.
+# ---------------------------------------------------------------------------
+world-backup:
+  # Off by default. Worlds can be many gigabytes, so this is opt-in.
+  enabled: false
+  # Create world backups on a schedule
+  automatic: false
+  # How many hours between automatic world backups (6 = four times per day)
+  interval-hours: 6
+  # Fixed UTC times to run automatic world backups, as "HH:mm" (24h, UTC). When this list is
+  # non-empty it REPLACES interval-hours. Example for 4 times per day:
+  # ["00:00", "06:00", "12:00", "18:00"]. Leave empty to use interval-hours instead.
+  times: []
+  # How many world backups to keep. Retention only ever deletes after a new
+  # backup has been written, checksummed and re-parsed.
+  keep: 3
+  # World folders to capture. Leave empty to auto-detect the primary world and
+  # its _nether / _the_end companions.
+  worlds: []

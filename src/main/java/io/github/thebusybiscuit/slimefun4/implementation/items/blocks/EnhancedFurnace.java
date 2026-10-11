@@ -130,6 +130,7 @@ public class EnhancedFurnace extends SimpleSlimefunItem<BlockTicker> {
         furnace.setCookTime((short) Math.min(cookTime, totalCookTime - 1));
     }
 
+    @SuppressWarnings("removal")
     private void smeltExtraItems(@Nonnull Furnace furnace, int amountToSmelt) {
         org.bukkit.inventory.FurnaceInventory inv = furnace.getInventory();
         ItemStack input = inv.getSmelting();

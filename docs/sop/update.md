@@ -1,71 +1,83 @@
-# Update Procedure
+# Updating the Fork to a New Minecraft Version
 
-Date: 2024-01-15
-Last updated: 2024-01-15
+**Date:** 2024-01-15 (upstream)
+**Last updated:** 2026-09-04 (SlimefunCore4)
 
-## Goal
+This guide explains how to update this Slimefun fork to a new Minecraft version. Even minor releases can break the API, so read this carefully.
 
-This SOP will go over updating Slimefun to the newest Minecraft version, most of this will only apply to major versions, but we have also seen minor versions break things. So please read through the whole SOP and make sure you do everything applicable.
+## Before You Start
 
-## Updating
+- **Cross-platform build:** Maven uses the Java build-number helper on Windows, Linux, and macOS.
+- **Build numbers commit on success:** `package` prepares the next artifact number, while `verify` atomically persists it only after all earlier phases succeed.
+- **MockBukkit limitation:** The available MockBukkit release targets Minecraft 1.21 and cannot initialize against Paper 26.x. Use `-DskipTests` for the full Paper 26 build and run Bukkit-facing behavior on a Paper 26 test server.
 
-### Updating Bukkit/Spigot
+## The Update Process
 
-The first step is just updating Spigot in the pom.xml. This should only be done in 2 cases:
-* There's a new major version (well, MC major - 1.19 -> 1.20 is a major)
-* There was a change within MC or Bukkit/Spigot that broke the API
+### 1. Update the API Version
+Update these two files to match your target version (e.g., `26.1.2` for Paper, `26.1` for Bukkit API):
+- `pom.xml`: Change the `paper.version` property.
+- `src/main/resources/plugin.yml`: Change the `api-version`.
 
-To update the Spigot version, you will need to go to the `pom.xml` and find the `spigot.version` property, this will be within the `properties` property. Simply make this the MC version (e.g. `1.20` or in the case of minor `1.20.4`).
+If the required Java version changed, update `maven.compiler.release` in the `pom.xml` too.
 
-Once updated, **make sure to run a build** to check for compilation failures with `mvn clean package -DskipTests=true`. We will go over the tests next.
+Test it:
+```shell
+mvn -B clean verify -DskipTests
+```
 
-### Updating tests
+### 2. Add the Version Constant
+Slimefun uses its own `MinecraftVersion` enum. It uses a year-based system (e.g., `MINECRAFT_26`). 
 
-The next step is making sure our tests are still working correctly as is. This can be done by running `mvn test` and verifying that all tests pass correctly without any failures or errors.
+If we've hit a new year (like 27), add `MINECRAFT_27` to `MinecraftVersion.java`. 
+**Crucial:** You must add it *before* `UNKNOWN` and `UNIT_TEST`. The order matters! If you put it at the very end, tests will silently fail to run version-gated code.
 
-If there are any failures you will need to investigate these, it's best to run them one at a time, so you don't have the potential for cross-test contamination. If you find any issues with the tests, please fix them and make sure to add a comment to the PR explaining why the test was changed.
+### 3. Check for Breaking Changes
+Read the Paper/Purpur changelogs. Pay special attention to:
+- **Damage sources:** Bukkit frequently changes how damage sources are built. 
+- **Reflection:** Methods like `getDeclaredMethod` don't see inherited methods. Watch out for database provider inheritance.
+- **Registries:** Material and EntityType renames or removals.
+- **NMS:** Anything touching `net.minecraft` or `org.bukkit.craftbukkit`.
 
-If you need any help fixing tests feel free to join the [Discord](https://discord.gg/slimefun).
+### 4. Build and Test
+Build the Paper 26 artifact:
+```shell
+mvn -B clean verify -DskipTests
+```
+JaCoCo 0.8.14 supports Java 25. MockBukkit remains limited to 1.21, so verify Bukkit-facing behavior on a Paper 26 test server.
 
-Once all the tests are passed, check to see if there's a new version of [MockBukkit](https://github.com/MockBukkit/MockBukkit), this is the framework handling the Bukkit side of our tests. There very well may not be a new version, they usually lag updates a bit. If not, that's perfectly ok, just make sure to note it on the PR.
+### 5. In-Game Testing Checklist
+Start a local server on the target version and test everything manually:
 
-### Testing in game
+**The Basics:**
+- Server boots without errors.
+- `/sf guide` opens and items render properly.
+- Machines work (try an Electric Furnace and Coal Generator).
+- Multiblocks work (Enhanced Crafting Table, Magic Workbench).
+- Cargo networks work (place an input, output, and Cargo Manager).
+- Weapons deal damage correctly (especially `Explosive Bow` and `Seismic Axe`).
+- Researches save across rejoins.
+- Backpacks keep their items across restarts.
 
-The final and most important step is testing this in game. While I'd love for our tests to be perfect, they are not (especially if MockBukkit hasn't had an update yet). We need to ensure that everything is working in-game before we can ship a new version release.
+**Storage & Checkpoints:**
+- `/sf storage gui` opens and shows health stats.
+- Create a backup from the GUI, then restore it.
+- Take a block backup (`/sf storage backup blocks`) and restore it.
+- Try a dry-run migration (`/sf storage migrate check sqlite`).
+- Create a checkpoint (`/sf checkpoint create`) and verify both halves saved.
+- Restore a checkpoint from the console and confirm nothing broke.
 
-To do this, you will need to build the plugin with `mvn clean package` and then copy the jar from `target/` to your server's `plugins/` folder. Once you've done this, start the server. You will want to test various things but the things we always want covered are:
-* Commands, verify running a few commands work
-  * `/sf versions`
-  * `/sf cheat`
-  * `/sf search`
-* Items, verify you can use a few items (you can grab these from `/sf cheat`)
-  * Wind staff
-  * One of the talismans
-  * One of the backpacks
-* Blocks, verify you can place, break and ensure they all work
-  * Ancient altar
-  * Ore washer
-  * Coal generator
+### 6. Update Documentation
+Don't forget to update:
+- `README.md` (Version badges).
+- `CHANGELOG.md` (Add a new entry for the build).
+- This very file, if the update process changed.
 
-It is important to verify heads are still working (part of the energy network and the coal generator). If head skins are not loading, consider it as a bug: try figuring out what the issue is, and ask in the [Discord](https://discord.gg/slimefun) if you are not sure what the cause may be.
+### 7. Release It
+Run `mvn clean package` one last time. This bumps the build number and produces `target/SlimefunCore4-<build>.jar`.
+Upload it to Modrinth under the `slimefuncore` project. 
 
-Also make sure to verify that there are no errors in the console, any errors here should be investigated and fixed.
+*Note: The `UNOFFICIAL` tag in the pom version tells the plugin to check Modrinth for updates. Do not remove it!*
 
-If you find any issues, please fix them and make sure to add a comment to the PR explaining why the fix was needed.
-
-> **Note**
-> An issue here usually means that we need to update Dough. If this is the case, please open a PR to Dough and then update the Dough version in the `pom.xml` to the new version. Once you've done this, make sure to run a build to verify everything is working correctly.
-
-### Final steps
-
-Once you've verified everything is working, you can go ahead and open the PR. We will get to this as soon as we can :)
-
-While the PR is open, make sure to verify the E2E tests are passing, and you should also verify the output of these. If the E2E tests look good then finally we will update these.
-
-#### Updating E2E tests
-
-**This is only needed in a major version**
-
-In the `e2e-testing.yml` file you will need to update the matrix strategy, please add the latest version of the old major (e.g. if 1.21 came out, add 1.20.x where x is the latest released version). If MC is requiring a new Java version make sure that is updated too in the `latest` version.
-
-Once updated, push and re-verify that the E2E tests are still passing.
+## Troubleshooting
+If something breaks on this fork, report it to our tracker, not the official Slimefun tracker:
+https://github.com/rutwok-labs/Slimefun4Core/issues

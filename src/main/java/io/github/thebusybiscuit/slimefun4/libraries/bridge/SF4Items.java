@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.bakedlibs.dough.items.CustomItemStack;
+import io.github.bakedlibs.dough.items.ItemStackEditor;
 
 /**
  * Bridge for {@link CustomItemStack}.
@@ -59,8 +60,8 @@ public final class SF4Items {
         return CustomItemStack.create(item, amount);
     }
 
-    /** Delegates to {@link CustomItemStack#create(ItemStack, Material)}. */
+    /** Creates a clone with the given material while retaining all other stack data. */
     public static @Nonnull ItemStack create(@Nonnull ItemStack item, @Nonnull Material material) {
-        return CustomItemStack.create(item, material);
+        return new ItemStackEditor(item).andStackConsumer(stack -> stack.setType(material)).create();
     }
 }

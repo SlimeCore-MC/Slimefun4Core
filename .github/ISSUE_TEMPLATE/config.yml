@@ -1,10 +1,10 @@
 blank_issues_enabled: false
 contact_links:
   - name: Code of Conduct
-    url: https://github.com/Slimefun/Slimefun4/blob/master/.github/CODE_OF_CONDUCT.md
+    url: https://github.com/SlimeCore-MC/Slimefun4Core/blob/master/.github/CODE_OF_CONDUCT.md
     about: Please read this before posting
   - name: Bug Report Guidelines
-    url: https://github.com/Slimefun/Slimefun4/wiki/How-to-report-bugs
+    url: https://github.com/SlimeCore-MC/Slimefun4Core/wiki/How-to-report-bugs
     about: Guidelines on how to make good Bug reports
   - name: Discord Server (for Questions and Suggestions)
     url: https://discord.gg/slimefun

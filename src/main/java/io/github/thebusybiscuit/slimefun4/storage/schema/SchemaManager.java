@@ -44,11 +44,7 @@ public final class SchemaManager {
 
     /** The schema version written during initial database creation. */
     public static final int CURRENT_SCHEMA_VERSION = 1;
-
-    // -------------------------------------------------------------------------
     // Canonical table definitions
-    // -------------------------------------------------------------------------
-
     private static final TableDefinition TABLE_SCHEMA_VERSION = new TableDefinition(
         "sf_schema_version",
         List.of(
@@ -258,19 +254,11 @@ public final class SchemaManager {
         TABLE_PLAYER_BACKPACK_ITEMS,
         TABLE_PLAYER_WAYPOINTS
     );
-
-    // -------------------------------------------------------------------------
     // Constructor (utility class)
-    // -------------------------------------------------------------------------
-
     private SchemaManager() {
         throw new UnsupportedOperationException("SchemaManager is a utility class");
     }
-
-    // -------------------------------------------------------------------------
     // Public API
-    // -------------------------------------------------------------------------
-
     /**
      * Returns the canonical list of all managed {@link TableDefinition} instances.
      *
@@ -373,11 +361,7 @@ public final class SchemaManager {
             return SchemaVersion.NONE;
         }
     }
-
-    // -------------------------------------------------------------------------
     // Private helpers
-    // -------------------------------------------------------------------------
-
     /**
      * Fetches the set of column names (lower-case) that exist in the given table.
      *

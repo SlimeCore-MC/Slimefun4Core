@@ -43,19 +43,11 @@ public final class SchemaRepair {
      */
     private static final Pattern MISSING_COLUMN_PATTERN =
         Pattern.compile("^Table '([^']+)' missing column '([^']+)'$");
-
-    // -------------------------------------------------------------------------
     // Constructor (utility class)
-    // -------------------------------------------------------------------------
-
     private SchemaRepair() {
         throw new UnsupportedOperationException("SchemaRepair is a utility class");
     }
-
-    // -------------------------------------------------------------------------
     // Public API
-    // -------------------------------------------------------------------------
-
     /**
      * Attempts to repair each issue in the supplied list by executing an
      * {@code ALTER TABLE … ADD COLUMN} statement for every missing column.
@@ -112,11 +104,7 @@ public final class SchemaRepair {
 
         return repaired;
     }
-
-    // -------------------------------------------------------------------------
     // Private helpers
-    // -------------------------------------------------------------------------
-
     /**
      * Finds a {@link TableDefinition.ColumnDefinition} by table name and column name.
      *

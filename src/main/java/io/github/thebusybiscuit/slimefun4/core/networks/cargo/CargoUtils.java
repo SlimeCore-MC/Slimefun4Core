@@ -23,7 +23,6 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
 import io.github.thebusybiscuit.slimefun4.utils.tags.SlimefunTag;
-import io.papermc.lib.PaperLib;
 
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -116,6 +115,26 @@ public final class CargoUtils {
         }
     }
 
+    /**
+     * Resolves the {@link BlockState} of a cargo target using the cheap, non-snapshot variant.
+     *
+     * <p>The shaded PaperLib on this server resolves to a "before snapshots" environment whose
+     * {@code getBlockState(block, false)} ignores the flag and always builds a full tile-entity
+     * snapshot — the dominant cost in the cargo tick profile ({@code CraftBlock.getState()}). Calling
+     * {@link Block#getState(boolean)} with {@code useSnapshot = false} returns a live-backed state and
+     * skips that copy. Cargo only reads the {@link InventoryHolder} inventory from it, which the
+     * non-snapshot state exposes correctly, so behaviour is unchanged.
+     *
+     * @param target
+     *            The container {@link Block}
+     *
+     * @return The non-snapshot {@link BlockState} of the block
+     */
+    @Nonnull
+    private static BlockState getInventoryState(@Nonnull Block target) {
+        return target.getState(false);
+    }
+
     @Nullable
     static ItemStack withdraw(AbstractItemNetwork network, Map<Location, Inventory> inventories, Block node, Block target, ItemStack template) {
         DirtyChestMenu menu = getChestMenu(target);
@@ -128,7 +147,7 @@ public final class CargoUtils {
                     return withdrawFromVanillaInventory(network, node, template, inventory);
                 }
 
-                BlockState state = PaperLib.getBlockState(target, false).getState();
+                BlockState state = getInventoryState(target);
 
                 if (state instanceof InventoryHolder inventoryHolder) {
                     inventory = inventoryHolder.getInventory();
@@ -213,7 +232,7 @@ public final class CargoUtils {
                 return withdrawFromVanillaInventory(network, node, inventory);
             }
 
-            BlockState state = PaperLib.getBlockState(target, false).getState();
+            BlockState state = getInventoryState(target);
 
             if (state instanceof InventoryHolder inventoryHolder) {
                 inventory = inventoryHolder.getInventory();
@@ -246,7 +265,9 @@ public final class CargoUtils {
 
     @Nullable
     public static ItemStack insert(AbstractItemNetwork network, Map<Location, Inventory> inventories, Block node, Block target, boolean smartFill, ItemStack stack, ItemStackWrapper wrapper) {
-        Debug.log(TestCase.CARGO_INPUT_TESTING, "CargoUtils#insert");
+        if (Debug.isEnabled()) {
+            Debug.log(TestCase.CARGO_INPUT_TESTING, "CargoUtils#insert");
+        }
         if (!matchesFilter(network, node, stack)) {
             return stack;
         }
@@ -261,7 +282,7 @@ public final class CargoUtils {
                     return insertIntoVanillaInventory(stack, wrapper, smartFill, inventory);
                 }
 
-                BlockState state = PaperLib.getBlockState(target, false).getState();
+                BlockState state = getInventoryState(target);
 
                 if (state instanceof InventoryHolder inventoryHolder) {
                     inventory = inventoryHolder.getInventory();

@@ -123,10 +123,14 @@ public class SeismicAxe extends SimpleSlimefunItem<ItemUseHandler> implements No
     }
 
     @ParametersAreNonnullByDefault
+    @SuppressWarnings("removal")
     private void pushEntity(Player p, Entity entity) {
         // Only damage players when PVP is enabled, other entities are fine.
         if (entity.getType() != EntityType.PLAYER || p.getWorld().getPVP()) {
-            DamageSource damageSource = DamageSource.builder(DamageType.MOB_ATTACK).withCausingEntity(p).build();
+            DamageSource damageSource = DamageSource.builder(DamageType.MOB_ATTACK)
+                .withDirectEntity(p)
+                .withCausingEntity(p)
+                .build();
             EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(p, entity, DamageCause.ENTITY_ATTACK, damageSource, DAMAGE);
             Bukkit.getPluginManager().callEvent(event);
 

@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -133,11 +134,7 @@ public class SQLiteStorage implements StorageProvider {
             source.close();
         }
     }
-
-    // -------------------------------------------------------------------------
     // StorageProvider — metadata
-    // -------------------------------------------------------------------------
-
     @Override
     public @Nonnull String getProviderName() {
         return "SQLite";
@@ -148,10 +145,16 @@ public class SQLiteStorage implements StorageProvider {
         return StorageProviderType.SQLITE;
     }
 
-    // -------------------------------------------------------------------------
-    // StorageProvider — health checks
-    // -------------------------------------------------------------------------
+    @Override
+    public boolean supportsSql() {
+        return true;
+    }
 
+    @Override
+    public @Nonnull Optional<Connection> borrowConnection() throws SQLException {
+        return Optional.of(getConnection());
+    }
+    // StorageProvider — health checks
     @Override
     public long pingMillis() {
         if (!isAvailable()) {

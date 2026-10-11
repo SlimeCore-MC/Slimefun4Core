@@ -61,11 +61,30 @@ public class BlockStorage {
     private final Map<Location, BlockMenu> inventories = new ConcurrentHashMap<>();
     private final Map<String, Config> blocksCache = new ConcurrentHashMap<>();
 
+    /**
+     * Stored inventory files ({@code .sfi}) whose {@link BlockMenuPreset} was not yet registered when
+     * the world loaded (typically because the owning addon registers later). The persisted data is
+     * kept here verbatim so a later reconciliation pass can bind the correct preset. The file is
+     * never deleted and the inventory is never replaced with an empty one while it waits here.
+     */
+    private final Map<Location, File> deferredInventories = new ConcurrentHashMap<>();
+
     private static int chunkChanges = 0;
     private static boolean universalInventoriesLoaded = false;
 
     private int changes = 0;
     private AtomicBoolean isMarkedForRemoval = new AtomicBoolean(false);
+
+    /**
+     * Cached {@link ImmutableMap} snapshot returned by {@link #getRawStorage()}. Rebuilding it walks
+     * every block in the world and allocates a fresh {@link Location} per entry, so a per-tick caller
+     * used to trash the young generation. The snapshot is rebuilt lazily only after the block set
+     * changes (a block was added or removed); in-place edits to an existing block's {@link Config}
+     * mutate the same value reference and need no rebuild. {@code volatile} + the {@code synchronized}
+     * rebuild keeps it safe for the occasional off-main-thread reader.
+     */
+    private volatile Map<Location, Config> rawStorageCache;
+    private volatile boolean rawStorageDirty = true;
 
     @Nullable
     public static BlockStorage getStorage(@Nonnull World world) {
@@ -215,6 +234,9 @@ public class BlockStorage {
                     return;
                 }
 
+                // A new block key was inserted; the raw-storage snapshot is now stale.
+                markRawStorageDirty();
+
                 String fileName = file.getName().replace(".sfb", "");
 
                 if (Slimefun.getRegistry().getTickerBlocks().contains(fileName)) {
@@ -265,6 +287,13 @@ public class BlockStorage {
 
                     if (preset != null) {
                         inventories.put(l, new BlockMenu(preset, l, cfg));
+                    } else {
+                        /*
+                         * The preset is not registered yet (late/async addon load). Keep the file
+                         * reference so reconcileAfterAddons() can bind it once the addon registers.
+                         * Do NOT drop the record or replace it with an empty inventory.
+                         */
+                        deferredInventories.put(l, file);
                     }
                 } catch (Exception x) {
                     Slimefun.logger().log(Level.SEVERE, x, () -> "An Error occurred while loading this Block Inventory: " + file.getName());
@@ -292,6 +321,88 @@ public class BlockStorage {
                 }
             }
         }
+    }
+
+    /**
+     * Runs a deterministic reconciliation pass over every registered {@link BlockStorage} world.
+     * This is intended to be called after all core items and managed/late addons have registered,
+     * so that stored blocks whose owning addon was not present during the initial raw load are
+     * re-bound to their {@link SlimefunItem}, {@link BlockMenuPreset}, {@link BlockTicker} and any
+     * previously-deferred stored inventory.
+     *
+     * <p>This pass never rewrites or deletes persistent data; it only reconnects runtime references.
+     *
+     * @return The number of blocks that were newly reconciled across all worlds
+     */
+    public static int reconcileAllWorlds() {
+        int reconciled = 0;
+
+        for (BlockStorage storage : Slimefun.getRegistry().getWorlds().values()) {
+            reconciled += storage.reconcile();
+        }
+
+        if (reconciled > 0) {
+            Slimefun.logger().log(Level.INFO, "Reconciled {0} stored block(s) after addon registration.", reconciled);
+        }
+
+        return reconciled;
+    }
+
+    /**
+     * Reconciles the stored blocks of this single world against the now-registered item registry.
+     *
+     * @return The number of blocks newly reconciled in this world
+     */
+    public int reconcile() {
+        int reconciled = 0;
+
+        for (Map.Entry<BlockPosition, Config> entry : storage.entrySet()) {
+            Location l = entry.getKey().toLocation();
+            String id = entry.getValue().getString("id");
+
+            if (id == null) {
+                continue;
+            }
+
+            SlimefunItem item = SlimefunItem.getById(id);
+
+            if (item == null) {
+                // Still unresolved - keep the record intact for a future pass/restart.
+                continue;
+            }
+
+            boolean changed = false;
+
+            // Rebind ticker state if the item ticks but the ticker was not enabled at raw load time.
+            if (item.isTicking() && !item.isDisabledIn(world)) {
+                Slimefun.getTickerTask().enableTicker(l);
+                changed = true;
+            }
+
+            // Bind a previously-deferred stored inventory, or create one from the preset.
+            if (!hasInventory(l)) {
+                String presetId = BlockMenuPreset.getPreset(id) != null ? id : entry.getValue().getString("preset");
+                BlockMenuPreset preset = BlockMenuPreset.getPreset(presetId != null ? presetId : id);
+
+                if (preset != null) {
+                    File deferred = deferredInventories.remove(l);
+
+                    if (deferred != null && deferred.exists()) {
+                        inventories.put(l, new BlockMenu(preset, l, new io.github.bakedlibs.dough.config.Config(deferred)));
+                    } else if (!BlockMenuPreset.isUniversalInventory(id)) {
+                        loadInventory(l, preset);
+                    }
+
+                    changed = true;
+                }
+            }
+
+            if (changed) {
+                reconciled++;
+            }
+        }
+
+        return reconciled;
     }
 
     public void computeChanges() {
@@ -398,13 +509,37 @@ public class BlockStorage {
      */
     @Nonnull
     public Map<Location, Config> getRawStorage() {
-        Map<Location, Config> copy = new HashMap<>(this.storage.size());
+        Map<Location, Config> cached = rawStorageCache;
 
-        for (Map.Entry<BlockPosition, Config> entry : this.storage.entrySet()) {
-            copy.put(entry.getKey().toLocation(), entry.getValue());
+        if (!rawStorageDirty && cached != null) {
+            return cached;
         }
 
-        return ImmutableMap.copyOf(copy);
+        synchronized (this) {
+            if (rawStorageDirty || rawStorageCache == null) {
+                // Clear the flag before snapshotting: a mutation racing this rebuild re-sets it, so the
+                // next call rebuilds rather than serving a permanently stale snapshot.
+                rawStorageDirty = false;
+
+                Map<Location, Config> copy = new HashMap<>(this.storage.size());
+
+                for (Map.Entry<BlockPosition, Config> entry : this.storage.entrySet()) {
+                    copy.put(entry.getKey().toLocation(), entry.getValue());
+                }
+
+                rawStorageCache = ImmutableMap.copyOf(copy);
+            }
+
+            return rawStorageCache;
+        }
+    }
+
+    /**
+     * Marks the {@link #getRawStorage()} snapshot stale after the world's block set changed. Call this
+     * whenever a {@link BlockPosition} key is added to or removed from {@link #storage}.
+     */
+    private void markRawStorageDirty() {
+        rawStorageDirty = true;
     }
 
     /**
@@ -586,7 +721,14 @@ public class BlockStorage {
             return;
         }
 
-        storage.storage.put(new BlockPosition(l), cfg);
+        if (storage.storage.put(new BlockPosition(l), cfg) != cfg) {
+            // The snapshot only goes stale when the mapping actually changes: a brand-new key
+            // (previous == null) or a key whose value was swapped for a different Config object.
+            // The common machine path mutates the SAME Config object in place and re-puts it, which
+            // leaves the snapshot valid, so it deliberately does not invalidate here.
+            storage.markRawStorageDirty();
+        }
+
         String id = cfg.getString("id");
         BlockMenuPreset preset = BlockMenuPreset.getPreset(id);
 
@@ -677,7 +819,9 @@ public class BlockStorage {
 
         if (hasBlockInfo(l)) {
             refreshCache(storage, l, getLocationInfo(l).getString("id"), null, destroy);
-            storage.storage.remove(new BlockPosition(l));
+            if (storage.storage.remove(new BlockPosition(l)) != null) {
+                storage.markRawStorageDirty();
+            }
         }
 
         if (destroy) {
@@ -693,6 +837,10 @@ public class BlockStorage {
             }
 
             Slimefun.getTickerTask().disableTicker(l);
+
+            // Drop any pending deferred-inventory file for this block so a never-reconciled entry
+            // (its preset was never registered) does not linger after the block is destroyed.
+            storage.deferredInventories.remove(l);
         }
     }
 
@@ -728,7 +876,19 @@ public class BlockStorage {
         }
 
         refreshCache(storage, from, previousData.getString("id"), null, true);
-        storage.storage.remove(new BlockPosition(from));
+        if (storage.storage.remove(new BlockPosition(from)) != null) {
+            storage.markRawStorageDirty();
+        }
+
+        // Carry a not-yet-reconciled deferred inventory across the move so it is neither lost nor
+        // left orphaned at the old location.
+        File deferred = storage.deferredInventories.remove(from);
+        if (deferred != null) {
+            BlockStorage target = getStorage(to.getWorld());
+            if (target != null) {
+                target.deferredInventories.put(to, deferred);
+            }
+        }
 
         Slimefun.getTickerTask().disableTicker(from);
     }

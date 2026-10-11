@@ -161,7 +161,11 @@ class ItemFilter implements Predicate<ItemStack> {
 
     @Override
     public boolean test(@Nonnull ItemStack item) {
-        Debug.log(TestCase.CARGO_INPUT_TESTING, "ItemFilter#test({})", item);
+        // Guard the varargs allocation: this method runs once per item per node per tick, so building
+        // the Object[] for the debug message on every call was pure waste while debug is off.
+        if (Debug.isEnabled()) {
+            Debug.log(TestCase.CARGO_INPUT_TESTING, "ItemFilter#test({})", item);
+        }
         /*
          * An empty Filter does not need to be iterated over.
          * We can just return our default value in this scenario.

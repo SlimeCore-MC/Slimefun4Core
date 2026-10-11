@@ -84,11 +84,7 @@ public class StorageCache implements Storage {
             }
         });
     }
-
-    // -------------------------------------------------------------------------
     // Storage — data operations
-    // -------------------------------------------------------------------------
-
     @Override
     public PlayerData loadPlayerData(UUID uuid) {
         synchronized (cache) {
@@ -149,11 +145,7 @@ public class StorageCache implements Storage {
     public String getBackendName() {
         return "Cache -> " + backend.getBackendName();
     }
-
-    // -------------------------------------------------------------------------
     // Cache management
-    // -------------------------------------------------------------------------
-
     /**
      * Invalidates the cached entry for a player.
      * Must be called after the final save on player quit to prevent unbounded memory growth.
@@ -166,6 +158,26 @@ public class StorageCache implements Storage {
             cache.remove(uuid);
         }
         lastAccess.remove(uuid);
+    }
+
+    /**
+     * Invalidates every cached entry.
+     *
+     * <p>Required after a restore or any other out-of-band change to the backend,
+     * where cached data no longer reflects what is stored.
+     *
+     * @return The number of entries that were dropped
+     */
+    public int invalidateAll() {
+        int dropped;
+
+        synchronized (cache) {
+            dropped = cache.size();
+            cache.clear();
+        }
+
+        lastAccess.clear();
+        return dropped;
     }
 
     /**
@@ -203,11 +215,7 @@ public class StorageCache implements Storage {
         }
         return new CacheStats(currentSize, maxSize, hits.get(), misses.get(), evictions.get());
     }
-
-    // -------------------------------------------------------------------------
     // Inner record — CacheStats
-    // -------------------------------------------------------------------------
-
     /**
      * Immutable snapshot of cache performance statistics.
      *

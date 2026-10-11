@@ -234,6 +234,40 @@ public final class AddonService {
         });
     }
 
+    /**
+     * Inspects the remote source (GitHub release API when configured, otherwise the download URL's
+     * metadata) for a single managed addon and returns what version the source advertises, the jar
+     * URL that version resolves to, and whether it differs from the cached/installed version.
+     *
+     * <p>Runs off the main thread and never throws: a network failure or an unknown key completes the
+     * future with {@code null} rather than an exception, so a caller can simply fall back to the
+     * locally-known {@link AddonDefinition} data.
+     *
+     * @param key
+     *            The addon key
+     *
+     * @return A future completed with the {@link RemoteAddonInfo}, or {@code null} if it could not be
+     *         determined
+     */
+    public @Nonnull CompletableFuture<RemoteAddonInfo> inspectRemote(@Nonnull String key) {
+        String normalizedKey = key.toLowerCase(Locale.ROOT);
+        return Slimefun.getThreadService().supplyFuture(plugin, "AddonManager#inspect-" + normalizedKey, () -> {
+            refreshDefinitions();
+            AddonDefinition definition = definitions.get().get(normalizedKey);
+
+            if (definition == null) {
+                return null;
+            }
+
+            try {
+                return updateChecker.inspect(definition, configManager.getCacheEntry(definition.key()).orElse(null));
+            } catch (Exception x) {
+                plugin.getLogger().log(Level.FINE, "Remote inspection failed for " + definition.name(), x);
+                return null;
+            }
+        });
+    }
+
     private @Nonnull CompletableFuture<AddonOperationResult> withDefinition(@Nonnull String key, @Nonnull AddonWork work) {
         String normalizedKey = key.toLowerCase(Locale.ROOT);
         return Slimefun.getThreadService().supplyFuture(plugin, "AddonManager#" + normalizedKey, () -> {

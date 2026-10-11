@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -77,11 +78,7 @@ public class PostgreSQLProvider implements StorageProvider {
         this.plugin = plugin;
         this.dbConfig = dbConfig;
     }
-
-    // -------------------------------------------------------------------------
     // StorageProvider — metadata
-    // -------------------------------------------------------------------------
-
     @Override
     public @Nonnull String getProviderName() {
         return "PostgreSQL";
@@ -92,10 +89,16 @@ public class PostgreSQLProvider implements StorageProvider {
         return StorageProviderType.POSTGRESQL;
     }
 
-    // -------------------------------------------------------------------------
-    // StorageProvider — health checks
-    // -------------------------------------------------------------------------
+    @Override
+    public boolean supportsSql() {
+        return true;
+    }
 
+    @Override
+    public @Nonnull Optional<Connection> borrowConnection() throws SQLException {
+        return Optional.of(getConnection());
+    }
+    // StorageProvider — health checks
     @Override
     public long pingMillis() {
         if (!isAvailable()) {
@@ -141,11 +144,7 @@ public class PostgreSQLProvider implements StorageProvider {
             return SchemaVersion.NONE;
         }
     }
-
-    // -------------------------------------------------------------------------
     // Storage — lifecycle
-    // -------------------------------------------------------------------------
-
     @Override
     public void initialize() throws StorageException {
         String host     = dbConfig.getString("postgresql.host");
@@ -214,11 +213,7 @@ public class PostgreSQLProvider implements StorageProvider {
     public boolean isAvailable() {
         return available && dataSource != null && !dataSource.isClosed();
     }
-
-    // -------------------------------------------------------------------------
     // Storage — data operations
-    // -------------------------------------------------------------------------
-
     @Override
     public PlayerData loadPlayerData(@Nonnull UUID uuid) {
         ensureAvailable();
@@ -279,11 +274,7 @@ public class PostgreSQLProvider implements StorageProvider {
         Slimefun.getAnalyticsService().recordPlayerProfileDataTime(
             "postgresql", false, System.nanoTime() - start);
     }
-
-    // -------------------------------------------------------------------------
     // Private — load helpers
-    // -------------------------------------------------------------------------
-
     private @Nonnull Set<Research> loadResearches(
             @Nonnull Connection conn, @Nonnull UUID uuid) throws SQLException {
 
@@ -396,11 +387,7 @@ public class PostgreSQLProvider implements StorageProvider {
         }
         return result;
     }
-
-    // -------------------------------------------------------------------------
     // Private — save helpers
-    // -------------------------------------------------------------------------
-
     private void saveResearches(@Nonnull Connection conn, @Nonnull UUID uuid,
                                 @Nonnull Set<Research> researches) throws SQLException {
         try (PreparedStatement del = conn.prepareStatement(
@@ -497,11 +484,7 @@ public class PostgreSQLProvider implements StorageProvider {
             ins.executeBatch();
         }
     }
-
-    // -------------------------------------------------------------------------
     // Private — utilities
-    // -------------------------------------------------------------------------
-
     @Nonnull
     private Connection getConnection() throws SQLException {
         HikariDataSource source = dataSource;

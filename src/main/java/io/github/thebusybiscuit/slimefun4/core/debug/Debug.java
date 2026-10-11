@@ -29,6 +29,19 @@ public final class Debug {
      * @param msg
      *            The message to log
      */
+    /**
+     * Returns whether any {@link TestCase} debug logging is currently enabled. This is a cheap check
+     * intended to be called <em>before</em> a {@code Debug.log(...)} in a hot path, so the caller can
+     * skip building the varargs array / formatting arguments when debug logging is off (the normal
+     * production state). When this returns {@code false}, a following {@code log(...)} would no-op
+     * anyway — this just avoids the argument allocation at the call site.
+     *
+     * @return {@code true} if a test case is active
+     */
+    public static boolean isEnabled() {
+        return testCase != null;
+    }
+
     public static void log(@Nonnull TestCase testCase, @Nonnull String msg) {
         log(testCase.toString(), msg, new Object[0]);
     }

@@ -14,6 +14,7 @@ import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.debug.Debug;
 import io.github.thebusybiscuit.slimefun4.core.debug.TestCase;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.storage.checkpoint.CheckpointService;
 
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 
@@ -79,6 +80,7 @@ public class AutoSavingService {
 
         if (players > 0) {
             Slimefun.logger().log(Level.INFO, "Auto-saved all player data for {0} player(s)!", players);
+            markCheckpointDirty(false);
         }
     }
 
@@ -102,9 +104,41 @@ public class AutoSavingService {
             for (BlockStorage storage : worlds) {
                 storage.save();
             }
+
+            markCheckpointDirty(true);
         }
 
         BlockStorage.saveChunks();
+    }
+
+    /**
+     * Records that data changed since the newest checkpoint.
+     *
+     * <p>This never creates a checkpoint. It only sets the marker that
+     * {@code /sf checkpoint status} and the checkpoint scheduler read.
+     *
+     * @param storage
+     *            {@code true} for file-based storage data, {@code false} for player data
+     */
+    private void markCheckpointDirty(boolean storage) {
+        Slimefun instance = Slimefun.instance();
+
+        if (instance == null) {
+            return;
+        }
+
+        StorageEngineService engine = instance.getStorageEngineService();
+        CheckpointService service = engine == null ? null : engine.getCheckpointService();
+
+        if (service == null) {
+            return;
+        }
+
+        if (storage) {
+            service.markStorageDirty();
+        } else {
+            service.markDatabaseDirty();
+        }
     }
 
 }

@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -74,11 +75,7 @@ public class MySQLProvider implements StorageProvider {
         this.plugin = plugin;
         this.dbConfig = dbConfig;
     }
-
-    // -------------------------------------------------------------------------
     // StorageProvider — metadata
-    // -------------------------------------------------------------------------
-
     @Override
     public @Nonnull String getProviderName() {
         return "MySQL";
@@ -89,10 +86,16 @@ public class MySQLProvider implements StorageProvider {
         return StorageProviderType.MYSQL;
     }
 
-    // -------------------------------------------------------------------------
-    // StorageProvider — health checks
-    // -------------------------------------------------------------------------
+    @Override
+    public boolean supportsSql() {
+        return true;
+    }
 
+    @Override
+    public @Nonnull Optional<Connection> borrowConnection() throws SQLException {
+        return Optional.of(getConnection());
+    }
+    // StorageProvider — health checks
     @Override
     public long pingMillis() {
         if (!isAvailable()) {
@@ -138,11 +141,7 @@ public class MySQLProvider implements StorageProvider {
             return SchemaVersion.NONE;
         }
     }
-
-    // -------------------------------------------------------------------------
     // Storage — lifecycle
-    // -------------------------------------------------------------------------
-
     @Override
     public void initialize() throws StorageException {
         String section = getConfigSection();
@@ -215,11 +214,7 @@ public class MySQLProvider implements StorageProvider {
     public boolean isAvailable() {
         return available && dataSource != null && !dataSource.isClosed();
     }
-
-    // -------------------------------------------------------------------------
     // Storage — data operations
-    // -------------------------------------------------------------------------
-
     @Override
     public PlayerData loadPlayerData(@Nonnull UUID uuid) {
         ensureAvailable();
@@ -282,11 +277,7 @@ public class MySQLProvider implements StorageProvider {
         Slimefun.getAnalyticsService().recordPlayerProfileDataTime(
             getProviderName().toLowerCase(), false, end - start);
     }
-
-    // -------------------------------------------------------------------------
     // Protected extension points (overridden by MariaDBProvider)
-    // -------------------------------------------------------------------------
-
     /**
      * Returns the YAML config section key used to read connection parameters.
      * Override in subclasses (e.g. {@code "mariadb"}).
@@ -326,11 +317,7 @@ public class MySQLProvider implements StorageProvider {
     protected String getDriverClassName() {
         return "com.mysql.cj.jdbc.Driver";
     }
-
-    // -------------------------------------------------------------------------
     // Private — load helpers
-    // -------------------------------------------------------------------------
-
     private @Nonnull Set<Research> loadResearches(
             @Nonnull Connection conn, @Nonnull UUID uuid) throws SQLException {
 
@@ -443,11 +430,7 @@ public class MySQLProvider implements StorageProvider {
         }
         return result;
     }
-
-    // -------------------------------------------------------------------------
     // Private — save helpers
-    // -------------------------------------------------------------------------
-
     private void saveResearches(@Nonnull Connection conn, @Nonnull UUID uuid,
                                 @Nonnull Set<Research> researches) throws SQLException {
         try (PreparedStatement del = conn.prepareStatement(
@@ -544,11 +527,7 @@ public class MySQLProvider implements StorageProvider {
             ins.executeBatch();
         }
     }
-
-    // -------------------------------------------------------------------------
     // Private — utilities
-    // -------------------------------------------------------------------------
-
     @Nonnull
     private Connection getConnection() throws SQLException {
         HikariDataSource source = dataSource;

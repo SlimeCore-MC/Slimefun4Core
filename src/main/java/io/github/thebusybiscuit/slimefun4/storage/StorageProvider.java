@@ -8,6 +8,10 @@ import io.github.thebusybiscuit.slimefun4.storage.provider.StorageProviderType;
 
 import javax.annotation.Nonnull;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Optional;
+
 /**
  * Extension of {@link Storage} that represents a concrete, configurable
  * database provider (SQLite, MySQL, MariaDB, PostgreSQL).
@@ -63,6 +67,31 @@ public interface StorageProvider extends Storage {
      *         if the schema version table has not been created yet
      */
     @Nonnull SchemaVersion getSchemaVersion();
+
+    /**
+     * Returns whether this provider is backed by a SQL database and can therefore
+     * serve JDBC connections through {@link #borrowConnection()}.
+     *
+     * @return {@code true} for SQL-backed providers, {@code false} for file storage
+     */
+    default boolean supportsSql() {
+        return false;
+    }
+
+    /**
+     * Borrows a pooled JDBC {@link Connection} from this provider.
+     *
+     * <p>The caller owns the returned connection and must close it. Providers that
+     * are not SQL-backed return {@link Optional#empty()} rather than throwing, so
+     * callers can branch on storage shape without reflection or instanceof chains.
+     *
+     * @return A live connection, or {@link Optional#empty()} if this provider has none
+     * @throws SQLException If the provider is SQL-backed but the pool cannot serve a connection
+     */
+    @Nonnull
+    default Optional<Connection> borrowConnection() throws SQLException {
+        return Optional.empty();
+    }
 
     /**
      * {@inheritDoc}

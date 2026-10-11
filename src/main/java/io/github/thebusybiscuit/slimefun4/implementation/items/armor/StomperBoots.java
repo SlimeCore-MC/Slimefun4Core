@@ -11,6 +11,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -45,6 +47,7 @@ public class StomperBoots extends SlimefunItem {
      * @param fallDamageEvent
      *            The {@link EntityDamageEvent} in which the {@link Player} has taken fall damage
      */
+    @SuppressWarnings("removal")
     public void stomp(@Nonnull EntityDamageEvent fallDamageEvent) {
         Player player = (Player) fallDamageEvent.getEntity();
         SoundEffect.STOMPER_BOOTS_STOMP_SOUND.playFor(player);
@@ -57,7 +60,11 @@ public class StomperBoots extends SlimefunItem {
 
                 // Check if it's not a Player or if PvP is enabled
                 if (!(entity instanceof Player) || (player.getWorld().getPVP() && Slimefun.getProtectionManager().hasPermission(player, entity.getLocation(), Interaction.ATTACK_PLAYER))) {
-                    EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, entity, DamageCause.ENTITY_ATTACK, fallDamageEvent.getDamage() / 2);
+                    DamageSource damageSource = DamageSource.builder(DamageType.PLAYER_ATTACK)
+                        .withDirectEntity(player)
+                        .withCausingEntity(player)
+                        .build();
+                    EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, entity, DamageCause.ENTITY_ATTACK, damageSource, fallDamageEvent.getDamage() / 2);
                     Bukkit.getPluginManager().callEvent(event);
 
                     if (!event.isCancelled()) {

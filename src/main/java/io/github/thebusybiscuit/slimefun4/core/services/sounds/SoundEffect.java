@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 import org.bukkit.Location;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
@@ -130,7 +131,7 @@ public enum SoundEffect {
         Preconditions.checkArgument(volume >= 0, "The volume cannot be a negative number.");
         Preconditions.checkArgument(pitch >= 0.5, "A pitch below 0.5 has no effect on the sound.");
 
-        this.defaultSound = sound.getKey().getKey();
+        this.defaultSound = Registry.SOUNDS.getKey(sound).value();
         this.defaultVolume = volume;
         this.defaultPitch = pitch;
     }

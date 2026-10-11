@@ -5,6 +5,7 @@ import com.google.common.annotations.Beta;
 import io.github.bakedlibs.dough.config.Config;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.storage.backup.BlockStorageBackup;
 import io.github.thebusybiscuit.slimefun4.storage.data.PlayerData;
 
 import org.apache.commons.lang.Validate;
@@ -15,12 +16,24 @@ import org.bukkit.scheduler.BukkitTask;
 import javax.annotation.Nonnull;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 /**
  * Performs asynchronous read-only consistency checks against player and block storage.
+ *
+ * <p>Constructing this class does nothing but wire it up. {@link #startScheduler()} has to be
+ * called for the periodic check to begin, so a caller that only wants
+ * {@link #scanBlockFiles(File)} or a single {@link #runCheck()} does not silently acquire a
+ * repeating task it then has to remember to cancel.
+ *
+ * <p>The player half compares the cache against the backend for players who are online, so it
+ * cannot say anything about a migration, which by rule runs on an empty server. The block half
+ * needs no players and is exposed as the static {@link #scanBlockFiles(File)} for exactly that
+ * reason: it is the integrity check to run after a block archive has been restored.
  */
 @Beta
 public class StorageConsistencyChecker {
@@ -31,7 +44,7 @@ public class StorageConsistencyChecker {
     private final AtomicReference<BukkitTask> scheduledTask = new AtomicReference<>();
 
     /**
-     * Creates a new {@link StorageConsistencyChecker} and schedules periodic checks.
+     * Creates a new {@link StorageConsistencyChecker} without scheduling anything.
      *
      * @param plugin
      *            The current {@link Slimefun} instance
@@ -44,7 +57,6 @@ public class StorageConsistencyChecker {
         this.plugin = plugin;
         this.storage = storage;
         this.backendForChecks = storage instanceof StorageCache cache ? cache.getBackend() : storage;
-        startScheduler();
     }
 
     /**
@@ -66,7 +78,36 @@ public class StorageConsistencyChecker {
         }
     }
 
-    private void startScheduler() {
+    /**
+     * Reads every stored block file under a data root and reports the ones that no longer parse.
+     *
+     * <p>Nothing is written and nothing is repaired. This is the check to run after a block
+     * archive has been restored, and after a migration, because a truncated or half-written
+     * YAML file is exactly what a failed copy leaves behind.
+     *
+     * @param root The data root block files live under, usually {@code data-storage/Slimefun}
+     * @return What was scanned and what could not be parsed
+     */
+    @Nonnull
+    public static BlockScanResult scanBlockFiles(@Nonnull File root) {
+        Validate.notNull(root, "Root must not be null");
+
+        BlockScanCollector collector = new BlockScanCollector();
+
+        for (String section : BlockStorageBackup.getSections()) {
+            collector.walk(new File(root, section));
+        }
+
+        return new BlockScanResult(collector.scanned, List.copyOf(collector.unreadable));
+    }
+
+    /**
+     * Starts the periodic consistency check.
+     *
+     * <p>Calling this more than once replaces nothing: the previous task keeps running, so
+     * {@link #shutdown()} is the only way to stop one. Call it once, from startup.
+     */
+    public void startScheduler() {
         long intervalMinutes = Math.max(1L, Slimefun.getCfg().getLong("storage.consistency-check-interval-minutes"));
         long periodTicks = intervalMinutes * 60L * 20L;
 
@@ -101,51 +142,15 @@ public class StorageConsistencyChecker {
 
         boolean blockScanEnabled = Slimefun.getCfg().getBoolean("storage.consistency-check-scan-blocks");
         if (blockScanEnabled) {
-            File storedBlocksDirectory = new File("data-storage/Slimefun/stored-blocks");
-            File[] files = storedBlocksDirectory.listFiles();
+            BlockScanResult result = scanBlockFiles(BlockStorageBackup.defaultRoot());
+            blockIssues = result.unreadable().size();
 
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        blockIssues += inspectStoredBlockDirectory(file);
-                    } else {
-                        blockIssues += inspectStoredBlockFile(file);
-                    }
-                }
+            for (String path : result.unreadable()) {
+                plugin.getLogger().log(Level.WARNING, "Stored block file could not be parsed: {0}", path);
             }
         }
 
         return new ConsistencyReport(playerIssues, blockIssues);
-    }
-
-    private int inspectStoredBlockDirectory(@Nonnull File directory) {
-        int issues = 0;
-        File[] files = directory.listFiles();
-
-        if (files == null) {
-            return 0;
-        }
-
-        for (File file : files) {
-            if (file.isDirectory()) {
-                issues += inspectStoredBlockDirectory(file);
-            } else {
-                issues += inspectStoredBlockFile(file);
-            }
-        }
-
-        return issues;
-    }
-
-    private int inspectStoredBlockFile(@Nonnull File file) {
-        try {
-            Config config = new Config(file);
-            config.getKeys();
-            return 0;
-        } catch (Exception x) {
-            plugin.getLogger().log(Level.WARNING, "Stored block file could not be parsed: " + file.getAbsolutePath(), x);
-            return 1;
-        }
     }
 
     private int compareSection(@Nonnull String section, @Nonnull String playerId, int cachedCount, int backendCount) {
@@ -156,6 +161,71 @@ public class StorageConsistencyChecker {
         }
 
         return 0;
+    }
+
+    private static final class BlockScanCollector {
+
+        private final List<String> unreadable = new ArrayList<>();
+        private int scanned;
+
+        private void walk(@Nonnull File file) {
+            if (file.isDirectory()) {
+                File[] children = file.listFiles();
+
+                if (children != null) {
+                    for (File child : children) {
+                        walk(child);
+                    }
+                }
+
+                return;
+            }
+
+            if (!file.isFile()) {
+                return;
+            }
+
+            scanned++;
+
+            try {
+                new Config(file).getKeys();
+            } catch (Exception x) {
+                unreadable.add(file.getPath());
+            }
+        }
+    }
+
+    /**
+     * The result of a block file scan.
+     *
+     * @param scanned
+     *            How many files were read
+     * @param unreadable
+     *            The path of every file that could not be parsed, in scan order
+     */
+    @Beta
+    public record BlockScanResult(int scanned, @Nonnull List<String> unreadable) {
+
+        /**
+         * @return {@code true} when every scanned file parsed
+         */
+        public boolean isHealthy() {
+            return unreadable.isEmpty();
+        }
+
+        /**
+         * @return A single line describing the scan
+         */
+        @Nonnull
+        public String describe() {
+            if (scanned == 0) {
+                return "No block files were found";
+            }
+
+            return unreadable.isEmpty()
+                ? scanned + " block file(s) scanned, all readable"
+                : unreadable.size() + " of " + scanned + " block file(s) could not be parsed";
+        }
     }
 
     /**

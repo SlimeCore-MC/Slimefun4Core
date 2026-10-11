@@ -3,7 +3,7 @@ name: Translation Notifier
 on:
   push:
     branches:
-    - master
+    - main
     paths:
     - 'src/main/resources/languages/en/**.yml'
 
@@ -15,7 +15,7 @@ jobs:
 
     name: Translation-Notifier
     runs-on: ubuntu-latest
-    if: github.repository == 'Slimefun/Slimefun4'
+    if: github.repository == 'SlimeCore-MC/Slimefun4Core'
 
     steps:
       - name: Discord Notification

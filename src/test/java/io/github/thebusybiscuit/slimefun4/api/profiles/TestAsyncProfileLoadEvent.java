@@ -18,6 +18,7 @@ import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
 import org.mockbukkit.mockbukkit.entity.OfflinePlayerMock;
 
+@SuppressWarnings("removal")
 class TestAsyncProfileLoadEvent {
 
     private static ServerMock server;

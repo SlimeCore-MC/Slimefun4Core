@@ -28,6 +28,7 @@ import org.bukkit.inventory.ItemStack;
 public class PlayerData {
 
     private final Set<Research> researches = new HashSet<>();
+    private final Set<Integer> unknownResearchIds = new HashSet<>();
     private final Map<Integer, PlayerBackpack> backpacks = new HashMap<>();
     private final Set<Waypoint> waypoints = new HashSet<>();
     private boolean dirty = false;
@@ -36,7 +37,12 @@ public class PlayerData {
     private boolean waypointsDirty = false;
 
     public PlayerData(Set<Research> researches, Map<Integer, PlayerBackpack> backpacks, Set<Waypoint> waypoints) {
+        this(researches, Collections.emptySet(), backpacks, waypoints);
+    }
+
+    public PlayerData(Set<Research> researches, Set<Integer> unknownResearchIds, Map<Integer, PlayerBackpack> backpacks, Set<Waypoint> waypoints) {
         this.researches.addAll(researches);
+        this.unknownResearchIds.addAll(unknownResearchIds);
         this.backpacks.putAll(backpacks);
         this.waypoints.addAll(waypoints);
     }
@@ -48,6 +54,18 @@ public class PlayerData {
      */
     public synchronized Set<Research> getResearches() {
         return Collections.unmodifiableSet(new HashSet<>(researches));
+    }
+
+    /**
+     * Returns the numeric research IDs that were present in persistent storage but could not be
+     * resolved to a registered {@link Research} at load time (for example because the owning addon
+     * had not registered yet). These are preserved verbatim and re-written on save so that a
+     * temporarily-unresolved research is never silently discarded.
+     *
+     * @return An immutable copy of the unresolved research IDs
+     */
+    public synchronized Set<Integer> getUnknownResearchIds() {
+        return Collections.unmodifiableSet(new HashSet<>(unknownResearchIds));
     }
 
     /**
@@ -245,6 +263,7 @@ public class PlayerData {
     @Nonnull
     public synchronized PlayerData snapshot(boolean preserveDirtyState) {
         Set<Research> copiedResearches = new HashSet<>(researches);
+        Set<Integer> copiedUnknownResearchIds = new HashSet<>(unknownResearchIds);
         Map<Integer, PlayerBackpack> copiedBackpacks = new HashMap<>();
         Set<Waypoint> copiedWaypoints = new HashSet<>();
 
@@ -257,7 +276,7 @@ public class PlayerData {
             copiedWaypoints.add(new Waypoint(waypoint.getOwnerId(), waypoint.getId(), location, waypoint.getName()));
         }
 
-        PlayerData copy = new PlayerData(copiedResearches, copiedBackpacks, copiedWaypoints);
+        PlayerData copy = new PlayerData(copiedResearches, copiedUnknownResearchIds, copiedBackpacks, copiedWaypoints);
         if (preserveDirtyState) {
             copy.dirty = dirty;
             copy.researchesDirty = researchesDirty;

@@ -273,6 +273,17 @@ public class UpdaterService {
                 if (announceToConsole) {
                     printBorder();
                 }
+
+                // Publish to monitor event bus so Discord/in-game sinks also fire
+                var eventBus = Slimefun.getMonitorEventBus();
+                if (eventBus != null) {
+                    eventBus.publish(new io.github.thebusybiscuit.slimefun4.core.monitor.MonitorEvent.CoreUpdateAvailable(
+                        pluginFile.getName(),
+                        latestRelease.assetName(),
+                        latestRelease.projectUrl()
+                    ));
+                }
+
                 return;
             }
 

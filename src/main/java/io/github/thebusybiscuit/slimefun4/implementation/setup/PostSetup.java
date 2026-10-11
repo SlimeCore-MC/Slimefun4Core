@@ -97,8 +97,8 @@ public final class PostSetup {
         sender.sendMessage(ChatColor.DARK_GRAY + "  \u2560" + "\u2550".repeat(58) + "\u2563");
 
         if (Slimefun.getUpdater().getBranch().isOfficial()) {
-            sender.sendMessage(ChatColor.DARK_GRAY + "  \u2551" + ChatColor.GREEN + "   Source:  " + ChatColor.GRAY + "github.com/Slimefun/Slimefun4" + ChatColor.DARK_GRAY + "              \u2551");
-            sender.sendMessage(ChatColor.DARK_GRAY + "  \u2551" + ChatColor.GREEN + "   Wiki:    " + ChatColor.GRAY + "github.com/Slimefun/Slimefun4/wiki" + ChatColor.DARK_GRAY + "         \u2551");
+            sender.sendMessage(ChatColor.DARK_GRAY + "  \u2551" + ChatColor.GREEN + "   Source:  " + ChatColor.GRAY + "github.com/SlimeCore-MC/Slimefun4Core" + ChatColor.DARK_GRAY + "              \u2551");
+            sender.sendMessage(ChatColor.DARK_GRAY + "  \u2551" + ChatColor.GREEN + "   Wiki:    " + ChatColor.GRAY + "github.com/SlimeCore-MC/Slimefun4Core/wiki" + ChatColor.DARK_GRAY + "         \u2551");
             sender.sendMessage(ChatColor.DARK_GRAY + "  \u2551" + ChatColor.GREEN + "   Discord: " + ChatColor.GRAY + "discord.gg/slimefun" + ChatColor.DARK_GRAY + "                        \u2551");
         } else {
             sender.sendMessage(ChatColor.DARK_GRAY + "  \u2551" + ChatColor.YELLOW + "  \u26a0 UNOFFICIAL MODIFIED BUILD" + ChatColor.GRAY + " \u2014 No official support" + ChatColor.DARK_GRAY + "   \u2551");

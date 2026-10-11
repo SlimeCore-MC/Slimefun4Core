@@ -19,6 +19,7 @@ import io.github.thebusybiscuit.slimefun4.utils.FileUtils;
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
 
+@SuppressWarnings("removal")
 class TestWaypoints {
 
     private static ServerMock server;

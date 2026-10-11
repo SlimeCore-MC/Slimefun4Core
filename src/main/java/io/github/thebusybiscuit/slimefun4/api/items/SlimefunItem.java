@@ -624,13 +624,13 @@ public class SlimefunItem implements Placeable {
         if (c != null) {
             // Check if this Class is deprecated
             if (c.isAnnotationPresent(Deprecated.class)) {
-                warn("The inherited Class \"" + c.getName() + "\" has been deprecated. Check the documentation for more details!");
+                logDeprecation("The inherited Class \"" + c.getName() + "\" has been deprecated. Check the documentation for more details!");
             }
 
             for (Class<?> parent : c.getInterfaces()) {
                 // Check if this Interface is deprecated
                 if (parent.isAnnotationPresent(Deprecated.class)) {
-                    warn("The implemented Interface \"" + parent.getName() + "\" has been deprecated. Check the documentation for more details!");
+                    logDeprecation("The implemented Interface \"" + parent.getName() + "\" has been deprecated. Check the documentation for more details!");
                 }
             }
 
@@ -865,7 +865,7 @@ public class SlimefunItem implements Placeable {
      */
     public final void addOfficialWikipage(@Nonnull String page) {
         Validate.notNull(page, "Wiki page cannot be null.");
-        wikiURL = Optional.of("https://github.com/Slimefun/Slimefun4/wiki/" + page);
+        wikiURL = Optional.of("https://github.com/SlimeCore-MC/Slimefun4Core/wiki/" + page);
     }
 
     /**
@@ -992,6 +992,23 @@ public class SlimefunItem implements Placeable {
             // We can prompt the server operator to report it to the addon's bug tracker
             addon.getLogger().log(Level.WARNING, "You can report this warning here: {0}", addon.getBugTrackerURL());
         }
+    }
+
+    /**
+     * Records a deprecation warning for this {@link SlimefunItem} to the {@code warning.log} file
+     * instead of the server console. Deprecation notices are informational for developers but create
+     * excessive console noise (one or more lines per registered item), so they are written to a file
+     * where they remain available without cluttering the console.
+     *
+     * @param message
+     *            The deprecation warning to record
+     */
+    @ParametersAreNonnullByDefault
+    private void logDeprecation(String message) {
+        Validate.notNull(addon, "Cannot log a deprecation for an unregistered item!");
+
+        String bugTracker = addon.getBugTrackerURL() != null ? " (report: " + addon.getBugTrackerURL() + ")" : "";
+        io.github.thebusybiscuit.slimefun4.utils.DeprecationLog.record(toString() + " [" + addon.getName() + "]: " + message + bugTracker);
     }
 
     /**

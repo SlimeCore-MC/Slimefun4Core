@@ -1,129 +1,115 @@
-# 1. Storage layer
+# 1. The Storage Layer
 
-Date: 2023-11-15
-Last update: 2023-12-27
-
-**DO NOT rely on any APIs introduced until we finish the work completely!**
+**Date:** 2023-11-15 (upstream)
+**Last Update:** 2026-09-06 (SlimefunCore4)
 
 ## Status
 
-Work in progress
+**Implemented for player data. Marked `@Beta`.** 
+Block data was never moved to the new system and we don't plan to move it here. 
+
+Note: `@Beta` means the API might change between builds, not that the code is unstable. Addon authors shouldn't depend on these classes just yet.
 
 ## Context
 
-Slimefun has been around for a very long time and due to that, the way we
-wrote persistence of data has also been around for a very long time.
-While Slimefun has grown, the storage layer has never been adapted.
-This means that even all these years later, it's using the same old saving/loading.
-This isn't necessarily always bad, however, as Slimefun has grown both in terms of content
-and the servers using it - we've seen some issues.
+Slimefun historically saved everything in massive YAML files (often with a JSON object per line). While easy to read, it's terrible for performance: files get huge, data corrupts, and everything is loaded into memory at once.
 
-Today, files are saved as YAML files (sometimes with just a JSON object per line),
-which is good for a config format but not good for a data store. It can create very large files
-that can get corrupted, the way we've been saving data often means loading it all at once as well
-rather than lazy-loading and generally isn't very performant.
+Upstream Slimefun planned to fix this in phases. Meanwhile, servers running large worlds on this fork needed a real database for player data *now*, plus a way to back it up without shutting down the server.
 
-For a long time we've been talking about rewriting our data storage in multiple forms
-(you may have seen this referenced for "BlockStorage rewrite" or "SQL for PlayerProfiles", etc.).
-Now is the time we start to do this, this will be a very large change and will not be done quickly or rushed.
+## The Decision
 
-This ADR talks about the future of our data persistence. 
+We built a new storage system with interchangeable backends, but **only for player data**. We also built backup, restore, migration, and checkpoint systems on top of it.
 
-## Decision
+Block data stays in YAML. Moving `BlockStorage` is risky and massive, so we aren't touching it. However, the new backup system still captures it by copying the legacy files exactly.
 
-We want to create a new storage layer abstraction and implementations
-which will be backwards-compatible but open up new ways of storing data
-within Slimefun. The end end goal is we can quickly and easily support
-new storage backends (such as binary storage, SQL, etc.) for things like
-[PlayerProfile](https://github.com/Slimefun/Slimefun4/blob/bbfb9734b9f549d7e82291eff041f9b666a61b63/src/main/java/io/github/thebusybiscuit/slimefun4/api/player/PlayerProfile.java), [BlockStorage](https://github.com/Slimefun/Slimefun4/blob/bbfb9734b9f549d7e82291eff041f9b666a61b63/src/main/java/me/mrCookieSlime/Slimefun/api/BlockStorage.java), etc.
+### Quick Overview
+- **Interchangeable Backends:** Legacy YAML, SQLite, MySQL, MariaDB, and PostgreSQL.
+- **Schema Management:** Auto-generates and verifies tables based on the database dialect.
+- **Async I/O:** Caching and an async save queue so the server doesn't lag when saving.
+- **Backups & Restores:** Checksummed archives that match the active backend.
+- **Migration:** Move player data between any two backends on the fly.
+- **Checkpoints:** Captures the whole Slimefun state (database + files) as a single restorable unit.
+- **Commands:** `/sf storage` and `/sf checkpoint`, plus an in-game GUI panel.
 
-We also want to be generally more efficient in the way we save and load data.
-Today, we load way more than is required.
-We can improve memory usage by only loading what we need, when we need it.
+## How It Works Under the Hood
 
-We will do this incrementally and at first, in an experimental context.
-In that regard, we should aim to minimise the blast radius and lift as much
-as possible.
+The main interface is `Storage`. It's deliberately kept simple: `loadPlayerData(UUID)` and `savePlayerData(UUID, PlayerData)`, along with async versions and lifecycle hooks.
 
-### Quick changes overview
+Under that is `StorageProvider`, which represents the actual backend. It provides methods like `supportsSql()` and `borrowConnection()` so we don't have to write messy special cases for non-SQL backends.
 
-* New abstraction over storage to easily support multiple backends.
-* Work towards moving away from the legacy YAML based storage.
-* Lazy load and save data to more efficiently handle the data life cycle.
+Key classes to know:
+- **Core Abstractions:** `Storage`, `StorageProvider`
+- **Backends:** `LegacyStorage` (YAML), `SQLiteStorage`, `MySQLProvider`, `MariaDBProvider`, `PostgreSQLProvider`
+- **Schema & DDL:** `SchemaManager`, `SchemaRepair`
+- **I/O & Performance:** `StorageCache`, `StorageSaveQueue`
+- **Backups:** `DatabaseBackupService`, `LegacyFileBackup`, `ZipTreeWriter`
+- **Migrations:** `StorageMigrator`, `SqlTableCopier`
+- **Checkpoints:** `CheckpointService`
 
-### Implementation details
+### The Tables
+For SQL backends, we use five tables:
+- `sf_schema_version`: Tracks the current database schema.
+- `player_researches`: Unlocked researches.
+- `player_backpacks`: Backpack IDs and their sizes.
+- `player_backpack_items`: Serialized item data (`BLOB` / `BYTEA`).
+- `player_waypoints`: Waypoint names and coordinates.
 
-There is a new interface called [`Storage`](TBD) which is what all storage
-backends will implement.
-This will have methods for loading and saving things like
-[`PlayerProfile`](https://github.com/Slimefun/Slimefun4/blob/bbfb9734b9f549d7e82291eff041f9b666a61b63/src/main/java/io/github/thebusybiscuit/slimefun4/api/player/PlayerProfile.java) and [`BlockStorage`](https://github.com/Slimefun/Slimefun4/blob/bbfb9734b9f549d7e82291eff041f9b666a61b63/src/main/java/me/mrCookieSlime/Slimefun/api/BlockStorage.java).
+*Note: `player_backpack_items.item_data` is the only nullable binary column. Because of this, restores bind parameters strictly by type, not as strings.*
 
-Then, backends will implement these
-(e.g. [`LegacyStorageBackend`](TBD) (today's YAML situation))
-in order to support these functions.
-Not all storage backends are required support each data type.
-e.g. SQL may not support [`BlockStorage`](https://github.com/Slimefun/Slimefun4/blob/bbfb9734b9f549d7e82291eff041f9b666a61b63/src/main/java/me/mrCookieSlime/Slimefun/api/BlockStorage.java).
+### Backups and Restores
 
+The backup format is written into the backup file itself, making it impossible to accidentally restore a file dump into a SQL database. 
+
+We support four backup formats:
+1. `SQL_JSON`: Every row of the five SQL tables exported as JSON.
+2. `LEGACY_FILES`: A byte-for-byte ZIP of the YAML data tree (player data + block data).
+3. `BLOCK_FILES`: A ZIP of just the block sections. Used automatically before migrations or via `/sf storage backup blocks`.
+4. `PLAYER_FILES`: A ZIP of just player data and waypoints. Acts as the database half of a checkpoint when running on Legacy YAML.
+
+**Safety First:**
+- All backups include a SHA-256 checksum.
+- SQL restores run in a single transaction. If it fails, nothing changes.
+- File/block restores take a snapshot *before* extracting, stage the files safely, and abort if any file path tries to escape the target directory. 
+- Block restores actually dry-run parsing every extracted file and fail if anything is broken.
+
+### Migrating Between Backends
+
+Driven by `/sf storage migrate`. See [docs/storage/migration-guide.md](../storage/migration-guide.md) for the runbook.
+
+Important design decisions:
+- **We skip `Storage.loadPlayerData` during migration.** If we used the standard loader, it would silently drop invalid items, missing worlds, or bad backpack sizes. Instead, the migration reads and writes the raw database records directly. If it hits something it can't convert, it aborts.
+- **SQL-to-SQL is a direct table copy.** It streams `ResultSet` straight to a `PreparedStatement`. No JSON strings or hex conversions in the middle.
+
+*Reminder: Block data is not migrated. It always lives in YAML.*
+
+### Checkpoints
+
+Driven by `/sf checkpoint`. See [docs/storage/checkpoints.md](../storage/checkpoints.md) for the runbook.
+
+A backup only covers one type of data. A checkpoint is a full snapshot of the entire plugin state: a "database half" and a "storage half", bundled together in a `checkpoint-NNN` folder.
+
+Important design decisions:
+- **Two halves, not one archive.** If you use MySQL, your player data is in SQL and your block data is in files. We have to snapshot both separately.
+- **Creation is all-or-nothing.** If either half fails to save or fails its checksum verification, the whole checkpoint is deleted.
+- **Retention keeps the newest.** We always write and verify the new checkpoint *before* deleting old ones to enforce the retention limit. Restores don't overwrite history, they just roll back the active data.
+- **Restores are highly restricted.** You can only run them from the console, and only when no players are online. It takes a safety snapshot before doing anything, allowing a full rollback if the restore crashes halfway through.
 
 ## Addons
 
-The goal is that Addons will be able to use and implement new storage backends
-if they wish and also be extended so they can load/save things as they wish.
+Addons still can't implement their own backends or use this system to save their own custom data. We prioritized getting the core server admin tools stable first.
 
-The first few iterations will not focus on Addon support. We want to ensure
-this new storage layer will work and supports what we need it to today.
+## Upstream's Old Plan (For History)
 
-This ADR will be updated when we get to supporting Addons properly.
+Upstream originally planned to move to a custom binary format for everything, including blocks. This fork abandoned that idea, opting for standard SQL for player data and leaving blocks in YAML.
 
-## Considerations
+## Known Quirks
 
-This will be a big change therefore we will be doing it as incrementally as
-possible.
-Changes will be tested while in the PR stage and merged into the Dev releases when possible.
-We may do an experimental release if required.
+- `pool.leak-detection-threshold: 0` is supposed to disable leak detection, but the getter treats `<= 0` as the default value instead.
+- The `StorageConsistencyChecker.startScheduler()` method exists but is never actually called. The block-parsing check inside it is used manually by restores and migrations instead.
+- Backpacks aren't covered by automated tests for the legacy backend due to how `ItemStack` serialization requires a live Bukkit server.
 
-Phases do not (and very likely will not) be done within a single PR. They will also not have any timeframe attached to them.
+## Test Coverage
 
-The current plan looks like this:
+We have over 100 tests covering schemas, backups, checksums, and migrations. They run completely Bukkit-free using `mockbukkit-v1.21`.
 
-* Phase 1 - Implement legacy data backend for [`PlayerProfile`](https://github.com/Slimefun/Slimefun4/blob/bbfb9734b9f549d7e82291eff041f9b666a61b63/src/main/java/io/github/thebusybiscuit/slimefun4/api/player/PlayerProfile.java).
-  * We want to load player data using the new storage layer with the current
-    data system.
-  * We'll want to monitor for any possible issues and generally refine 
-    how this system should look
-* Phase 2 - Implement new experimental binary backend for [`PlayerProfile`](https://github.com/Slimefun/Slimefun4/blob/bbfb9734b9f549d7e82291eff041f9b666a61b63/src/main/java/io/github/thebusybiscuit/slimefun4/api/player/PlayerProfile.java).
-  * Create a new backend for binary storage
-  * Implement in an experimental capacity and allow users to opt-in
-    * Provide a warning that this is **experimental** and there will be bugs.
-  * Implement new metric for storage backend being used
-* Phase 3 - Mark the new backend as stable for [`PlayerProfile`](https://github.com/Slimefun/Slimefun4/blob/bbfb9734b9f549d7e82291eff041f9b666a61b63/src/main/java/io/github/thebusybiscuit/slimefun4/api/player/PlayerProfile.java).
-  * Mark it as stable and remove the warnings once we're sure things are
-    working correctly
-  * Create a migration path for users currently using "legacy".
-  * Enable by default for new servers
-* Phase 4 - Move [`BlockStorage`](https://github.com/Slimefun/Slimefun4/blob/bbfb9734b9f549d7e82291eff041f9b666a61b63/src/main/java/me/mrCookieSlime/Slimefun/api/BlockStorage.java) to new storage layer.
-  * The big one! We're gonna tackle adding this to BlockStorage.
-    This will probably be a large change and we'll want to be as 
-    careful as possible here.
-  * Implement `legacy` and `binary` as experimental storage backends
-    for BlockStorage and allow users to opt-in
-    * Provide a warning that this is **experimental** and there will be bugs.
-* Phase 5 - Mark the new storage layer as stable for [`BlockStorage`](https://github.com/Slimefun/Slimefun4/blob/bbfb9734b9f549d7e82291eff041f9b666a61b63/src/main/java/me/mrCookieSlime/Slimefun/api/BlockStorage.java).
-  * Mark it as stable and remove the warnings once we're sure things are
-    working correctly
-  * Ensure migration path works here too.
-  * Enable by default for new servers
-* Phase 6 - Finish up and move anything else we want over
-  * Move over any other data stores we have to the new layer
-  * We should probably still do experimental -> stable but it should have
-    less of a lead time.
-
-## State of work
-
-* Phase 1: In progress
-  * https://github.com/Slimefun/Slimefun4/pull/4065
-* Phase 2: Not started
-* Phase 3: Not started
-* Phase 4: Not started
-* Phase 5: Not started
-* Phase 6: Not started
+**Important:** You must run builds with `-DskipTests` (or `-Djacoco.skip=true`) because JaCoCo 0.8.12 crashes when trying to read Java 25 classes.

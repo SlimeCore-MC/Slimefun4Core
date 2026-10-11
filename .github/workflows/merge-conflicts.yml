@@ -3,7 +3,7 @@ name: Merge Conflicts
 on:
   push:
     branches:
-    - master
+    - main
 
 permissions:
   contents: read
@@ -11,12 +11,12 @@ permissions:
 
 jobs:
   validate:
-    if: github.repository == 'Slimefun/Slimefun4'
+    if: github.repository == 'SlimeCore-MC/Slimefun4Core'
     name: Check for merge conflicts
     runs-on: ubuntu-latest
 
     steps:
     - uses: mschilde/auto-label-merge-conflicts@master
       with:
-        CONFLICT_LABEL_NAME: '⚡ Merge Conflicts'
+        CONFLICT_LABEL_NAME: 'âš¡ Merge Conflicts'
         GITHUB_TOKEN: "${{ secrets.ACCESS_TOKEN }}"

@@ -136,7 +136,7 @@ public final class SlimefunGuideSettings {
 
         menu.addMenuClickHandler(6, (pl, slot, item, action) -> {
             pl.closeInventory();
-            ChatUtils.sendURL(pl, "https://github.com/Slimefun/Slimefun4");
+            ChatUtils.sendURL(pl, "https://github.com/SlimeCore-MC/Slimefun4Core");
             return false;
         });
 
@@ -153,7 +153,7 @@ public final class SlimefunGuideSettings {
 
         menu.addMenuClickHandler(8, (pl, slot, item, action) -> {
             pl.closeInventory();
-            ChatUtils.sendURL(pl, "https://github.com/Slimefun/Slimefun4/wiki");
+            ChatUtils.sendURL(pl, "https://github.com/SlimeCore-MC/Slimefun4Core/wiki");
             return false;
         });
 
@@ -172,26 +172,27 @@ public final class SlimefunGuideSettings {
 
         menu.addMenuClickHandler(47, (pl, slot, item, action) -> {
             pl.closeInventory();
-            ChatUtils.sendURL(pl, "https://github.com/Slimefun/Slimefun4/wiki/Addons");
+            ChatUtils.sendURL(pl, "https://github.com/SlimeCore-MC/Slimefun4Core/wiki/Addons");
             return false;
         });
 
-        if (Slimefun.getUpdater().getBranch().isOfficial()) {
+        if (AddonGuideMenu.canManage(p)) {
             // @formatter:off
-            menu.addItem(49, CustomItemStack.create(Material.REDSTONE_TORCH,
-                "&4" + locale.getMessage(p, "guide.title.bugs"),
+            menu.addItem(49, CustomItemStack.create(Material.CHEST,
+                "&bAddon Manager",
                 "",
-                "&7&oBug reports have to be made in English!",
+                "&7Manage the addons defined in",
+                "&faddonmanager.yml&7 right here:",
+                "&7download, enable, disable, update,",
+                "&7remove and sync from GitHub.",
                 "",
-                "&7Open Issues: &a" + github.getOpenIssues(),
-                "&7Pending Pull Requests: &a" + github.getPendingPullRequests(),
+                "&7Managed on this Server: &b" + Slimefun.getInstalledAddons().size(),
                 "",
-                "&7\u21E8 &eClick to go to the Slimefun4 Bug Tracker"));
+                "&7\u21E8 &eClick to open the Addon Manager"));
             // @formatter:on
 
             menu.addMenuClickHandler(49, (pl, slot, item, action) -> {
-                pl.closeInventory();
-                ChatUtils.sendURL(pl, "https://github.com/Slimefun/Slimefun4/issues");
+                AddonGuideMenu.open(pl, guide, 0);
                 return false;
             });
         } else {

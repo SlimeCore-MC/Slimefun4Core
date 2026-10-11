@@ -148,12 +148,21 @@ public class BackpackListener implements Listener {
 
     @ParametersAreNonnullByDefault
     private void openBackpack(Player p, ItemStack item, PlayerProfile profile, int size) {
-        List<String> lore = item.getItemMeta().getLore();
+        ItemMeta meta = item.getItemMeta();
+        List<String> lore = meta != null ? meta.getLore() : null;
 
-        for (int line = 0; line < lore.size(); line++) {
-            if (lore.get(line).equals(ChatColor.GRAY + "ID: <ID>")) {
-                setBackpackId(p, item, line, profile.createBackpack(size).getId());
-                break;
+        /*
+         * A backpack that has not been assigned an id yet carries the "ID: <ID>" placeholder in its
+         * lore. getLore() returns null (not an empty list) when an item has no lore at all, which
+         * previously caused a NullPointerException here. Guard against that so a lore-less backpack
+         * ItemStack simply skips id assignment instead of erroring on right-click.
+         */
+        if (lore != null) {
+            for (int line = 0; line < lore.size(); line++) {
+                if (lore.get(line).equals(ChatColor.GRAY + "ID: <ID>")) {
+                    setBackpackId(p, item, line, profile.createBackpack(size).getId());
+                    break;
+                }
             }
         }
 

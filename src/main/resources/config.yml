@@ -76,6 +76,11 @@ storage:
   # Valid values: legacy, sqlite, mysql, mariadb, postgresql
   backend: legacy
   consistency-check-interval-minutes: 60
+  # When true, the periodic consistency check also re-reads every stored block file
+  # under data-storage/Slimefun and warns about any that no longer parse. It only
+  # reads, it never repairs. Leave it off unless you suspect block file corruption,
+  # because a large world means a lot of files.
+  consistency-check-scan-blocks: false
 
 research-ranks:
 - Chicken
@@ -147,3 +152,37 @@ furnaces:
     enhanced-furnace-11: 9
     reinforced-furnace: 10
     carbonado-edged-furnace: 11
+
+# =========================================================================
+#  Monitor & Report System
+#  Controls Discord notifications and in-game broadcasts.
+#  All links (GitHub, Modrinth, Discord invite) are integrated inside SFC.
+# =========================================================================
+monitor:
+  discord:
+    # Enable or disable Discord message broadcasts for core updates and addon events
+    broadcasts: true
+  invite:
+    # Enable or disable the Discord invite broadcast to players on join
+    broadcast-on-join: true
+  auto-report:
+    # Automatically post SEVERE Slimefun/addon errors to the report Discord webhook.
+    # Identical errors are cached and not re-sent within the dedup window.
+    enabled: true
+
+# =========================================================================
+#  Addon Manager GUI
+# =========================================================================
+addon-manager:
+  # Give each addon in the in-game Addon Manager a decorative player-head icon.
+  # Heads are fetched ONCE from minecraft-heads.com (decoration category) and then
+  # cached on disk (addon-head-cache.json); no request is made again while the cache
+  # holds heads. Set to false to keep the plain state-coloured pane icons and make
+  # no outbound request at all.
+  decorative-heads: true
+  # When an addon's detail screen is opened, read its remote source (the GitHub release
+  # API when apiUrl is set, otherwise the download URL metadata) to show which version
+  # the repository currently advertises and whether it differs from the installed jar.
+  # This makes one outbound request per detail-open. Set to false to show only the
+  # locally-known version data and make no request.
+  live-github-check: true

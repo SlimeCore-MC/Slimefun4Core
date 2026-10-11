@@ -12,6 +12,7 @@ import org.mockbukkit.mockbukkit.ServerMock;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.setup.PostSetup;
 
+@SuppressWarnings("removal")
 class TestSlimefunRegistryFinalizedEvent {
 
     private static ServerMock server;

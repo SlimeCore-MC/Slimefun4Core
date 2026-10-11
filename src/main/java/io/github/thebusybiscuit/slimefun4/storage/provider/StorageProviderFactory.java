@@ -71,11 +71,7 @@ public final class StorageProviderFactory {
     public static StorageProvider LegacyStorageAdapter_create(@Nonnull LegacyStorage legacy) {
         return new LegacyStorageAdapter(legacy);
     }
-
-    // -------------------------------------------------------------------------
     // Legacy adapter — wraps LegacyStorage as a StorageProvider
-    // -------------------------------------------------------------------------
-
     /**
      * Adapts the existing {@link LegacyStorage} (YAML-based) to the
      * {@link StorageProvider} interface so it can be used interchangeably with

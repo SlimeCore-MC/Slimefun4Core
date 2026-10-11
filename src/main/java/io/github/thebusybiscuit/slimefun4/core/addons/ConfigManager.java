@@ -27,11 +27,11 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
  */
 public final class ConfigManager {
 
-    private static final String DEFAULT_REMOTE_URL = "https://raw.githubusercontent.com/rutwok-labs/SF4-Addons/main/Addons/java/core/api/config/addonmanager.yml";
+    private static final String DEFAULT_REMOTE_URL = "https://raw.githubusercontent.com/SlimeCore-MC/SF4-Addons/main/Addons/java/core/api/config/addonmanager.yml";
     private static final String DEFAULT_CONFIG_CONTENT = """
         cloud-sync:
           enabled: true
-          url: "https://raw.githubusercontent.com/rutwok-labs/SF4-Addons/main/Addons/java/core/api/config/addonmanager.yml"
+          url: "https://raw.githubusercontent.com/SlimeCore-MC/SF4-Addons/main/Addons/java/core/api/config/addonmanager.yml"
           interval-minutes: 10
           fallback-to-local-on-empty: true
           fallback-to-local-on-failure: true

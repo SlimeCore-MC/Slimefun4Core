@@ -16,6 +16,7 @@ import io.github.thebusybiscuit.slimefun4.test.TestUtilities;
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
 
+@SuppressWarnings("removal")
 class TestResearchCommand {
 
     private static ServerMock server;

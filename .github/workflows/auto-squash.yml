@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     ## Only run this on the main repo
-    if: github.event.pull_request.head.repo.full_name == 'Slimefun/Slimefun4'
+    if: github.event.pull_request.head.repo.full_name == 'SlimeCore-MC/Slimefun4Core'
 
     steps:
     - name: Auto squash
@@ -29,7 +29,7 @@ jobs:
         MERGE_METHOD: squash
         MERGE_FORKS: false
         MERGE_DELETE_BRANCH: true
-        MERGE_LABELS: '📄 Translations Update'
+        MERGE_LABELS: 'ðŸ“„ Translations Update'
         MERGE_COMMIT_MESSAGE: '[CI skip] New locale updates from Crowdin'
 
   autosquash-renovate:
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
 
     ## Only run this on the main repo
-    if: github.event.pull_request.head.repo.full_name == 'Slimefun/Slimefun4'
+    if: github.event.pull_request.head.repo.full_name == 'SlimeCore-MC/Slimefun4Core'
 
     steps:
     - name: Auto squash
@@ -49,5 +49,5 @@ jobs:
         MERGE_METHOD: squash
         MERGE_FORKS: false
         MERGE_DELETE_BRANCH: true
-        MERGE_LABELS: '🚨 Dependency Update'
+        MERGE_LABELS: 'ðŸš¨ Dependency Update'
         MERGE_COMMIT_MESSAGE: '[CI skip] ${{ github.event.pull_request.title }}'

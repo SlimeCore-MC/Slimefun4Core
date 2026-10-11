@@ -202,7 +202,7 @@ public class GitHubService {
     }
 
     /**
-     * Returns the id of Slimefun's GitHub Repository. (e.g. "Slimefun/Slimefun4").
+     * Returns the id of Slimefun's GitHub Repository. (e.g. "SlimeCore-MC/Slimefun4Core").
      * 
      * @return The id of our GitHub Repository
      */

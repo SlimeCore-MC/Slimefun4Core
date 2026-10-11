@@ -349,12 +349,14 @@ public class SlimefunItemStack {
 
     /** @deprecated */
     @Deprecated
+    @SuppressWarnings("removal")
     public MaterialData getData() {
         return this.delegate.getData();
     }
 
     /** @deprecated */
     @Deprecated
+    @SuppressWarnings("removal")
     public void setData(MaterialData data) {
         this.delegate.setData(data);
     }
@@ -437,6 +439,7 @@ public class SlimefunItemStack {
 
     /** @deprecated */
     @Deprecated
+    @SuppressWarnings("removal")
     public String getTranslationKey() {
         return this.delegate.getTranslationKey();
     }
@@ -466,11 +469,14 @@ public class SlimefunItemStack {
     }
 
     /** @deprecated */
+    @Deprecated
     public String getI18NDisplayName() {
         return this.delegate.getI18NDisplayName();
     }
 
     /** @deprecated */
+    @Deprecated
+    @SuppressWarnings("removal")
     public int getMaxItemUseDuration() {
         return this.delegate.getMaxItemUseDuration();
     }
@@ -543,6 +549,7 @@ public class SlimefunItemStack {
 
     /** @deprecated */
     @Deprecated
+    @SuppressWarnings("removal")
     public ItemRarity getRarity() {
         return this.delegate.getRarity();
     }

@@ -22,6 +22,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
 
+@SuppressWarnings("removal")
 class TestResearchUnlocking {
 
     private ServerMock server;

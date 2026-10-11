@@ -1,1487 +1,582 @@
-# Table of contents
-- [Release Candidate 38 (TBD)](#release-candidate-38-tbd)
-- [Release Candidate 37 (25 Feb 2024)](#release-candidate-37-25-feb-2024)
-- [Release Candidate 36 (20 Dec 2023)](#release-candidate-36-20-dec-2023)
-- [Release Candidate 35 (07 Jul 2023)](#release-candidate-35-07-jul-2023)
-- [Release Candidate 34 (20 Jun 2023)](#release-candidate-34-20-jun-2023)
-- [Release Candidate 33 (07 Jan 2023)](#release-candidate-33-07-jan-2023)
-- [Release Candidate 32 (26 Jun 2022)](#release-candidate-32-26-jun-2022)
-- [Release Candidate 31 (14 Mar 2022)](#release-candidate-31-14-mar-2022)
-- [Release Candidate 30 (31 Dec 2021)](#release-candidate-30-31-dec-2021)
-- [Release Candidate 29 (07 Nov 2021)](#release-candidate-29-07-nov-2021)
-- [Release Candidate 28 (06 Sep 2021)](#release-candidate-28-06-sep-2021)
-- [Release Candidate 27 (03 Sep 2021)](#release-candidate-27-03-sep-2021)
-- [Release Candidate 26 (20 Jul 2021)](#release-candidate-26-20-jul-2021)
-- [Release Candidate 25 (20 Jun 2021)](#release-candidate-25-20-jun-2021)
-- [Release Candidate 24 (03 Jun 2021)](#release-candidate-24-03-jun-2021)
-- [Release Candidate 23 (19 May 2021)](#release-candidate-23-19-may-2021)
-- [Release Candidate 22 (18 Apr 2021)](#release-candidate-22-18-apr-2021)
-- [Release Candidate 21 (14 Mar 2021)](#release-candidate-21-14-mar-2021)
-- [Release Candidate 20 (30 Jan 2021)](#release-candidate-20-30-jan-2021)
-- [Release Candidate 19 (11 Jan 2021)](#release-candidate-19-11-jan-2021)
-- [Release Candidate 18 (03 Dec 2020)](#release-candidate-18-03-dec-2020)
-- [Release Candidate 17 (17 Oct 2020)](#release-candidate-17-17-oct-2020)
-- [Release Candidate 16 (07 Sep 2020)](#release-candidate-16-07-sep-2020)
-- [Release Candidate 15 (01 Aug 2020)](#release-candidate-15-01-aug-2020)
-- [Release Candidate 14 (12 Jul 2020)](#release-candidate-14-12-jul-2020)
-- [Release Candidate 13 (16 Jun 2020)](#release-candidate-13-16-jun-2020)
-- [Release Candidate 12 (27 May 2020)](#release-candidate-12-27-may-2020)
-- [Release Candidate 11 (25 Apr 2020)](#release-candidate-11-25-apr-2020)
-- [Release Candidate 10 (28 Mar 2020)](#release-candidate-10-28-mar-2020)
-- [Release Candidate 9 (07 Mar 2020)](#release-candidate-9-07-mar-2020)
-- [Release Candidate 8 (06 Mar 2020)](#release-candidate-8-06-mar-2020)
-- [Release Candidate 7 (06 Mar 2020)](#release-candidate-7-06-mar-2020)
-- [Release Candidate 6 (16 Feb 2020)](#release-candidate-6-16-feb-2020)
-- [Release Candidate 5 (09 Feb 2020)](#release-candidate-5-09-feb-2020)
-- [Release Candidate 4 (06 Jan 2020)](#release-candidate-4-06-jan-2020)
-- [Release Candidate 3 (21 Nov 2019)](#release-candidate-3-21-nov-2019)
-- [Release Candidate 2 (29 Sep 2019)](#release-candidate-2-29-sep-2019)
-- [Release Candidate 1 (26 Sep 2019)](#release-candidate-1-26-sep-2019)
-
-## Release Candidate 38 (TBD)
-
-## Release Candidate 37 (25 Feb 2024)
-
-#### Additions
-* (API) Introduce SlimefunItemRegistryFinalizedEvent (#4099)
-* Add update warning to /sf versions (#4096)
-* Add new analytics service (#4067)
-
-#### Changes
-* Allow blocks to be dropped while in creative mode (#3934)
-* Storage rewrite - Phase 1 (#4065)
-* Temporarily disable senstive blocks check (#4077)
-* Update MockBukkit to 1.20.4 along with existing tests (#4086) 
-* Move PlayerProfile saving off the main thread (#4119)
-
-#### Fixes
-* Fix contributor head being pullable (#4072)
-* Fix backpack IDs not incrementing (#4081)
-* Fix inventory being used when Slimefun block is broken (#4088)
-* Fix items not being able to be placed on ancient altar (#4094) 
-* Update dough to fix item stacking issue (#4100)
-* Fix slimefun block turning into a vanilla block if there are viewers (#4101)
-* Fixes #4123 - Coal Generator will no longer be locked after researching (#4124)
-* Fixes exhaustion when loading large profiles (#4127)
-* Fixes guide search when using colored chat (#4125)
-* Fix dupe glitch with backpacks (#4134)
-
-## Release Candidate 36 (20 Dec 2023)
-
-#### Additions
-* Added e2e testing to PRs to better ensure compatibility
-* Added compatibility to 1.20+
-* Added rainbow armor
-* Added grace periods to radiation
-* Added cherry log to android woodcutter
-* Added blackstone recipes to Grindstone and Ore Crusher (#3912)
-* Added Enchanted Golden Apple recipe (suggestion #2147 from punished_Garett) (#3591)
-* Added new flags for timings (#3246)
-* Added yaw to GPS Waypoints
-* (API) Add MultiBlockCraftEvent (#3928)
-* (API) Add TalismanActivateEvent (#4045)
-
-#### Changes
-* Changed the radiation system
-* Removed backwards compatibility
-* (API) Improve performance for clearAllBlockInfoAtChunk
-* Change Energized GPS Transmitter values to follow the pattern of previous tiers (#3915)
-* Allowed the sword of beheading to drop piglin heads
-* Improvements to BlockStorage handling (#3911)
-* Moved builds to https://blob.build
-
-#### Fixes
-* Fix #3444
-* Fix #3507
-* Fix possible enchantment duplication
-* Fix Different Time of Pan Recipes
-* Fix some of the reported blocks not working (#3848)
-* Fix Soulbound Runes not working (#3932)
-* Fix #3836
-* Fix unable to craft soulbound backpack with woven backpack with id (#3939)
-* Fix getting radiated when not supposed to
-* Fix geo miner voiding resources
-* Fix sensitive blocks attached to sf blocks not dropping (1.19+)
-* Fix breaking sf block with not unlocked item duping contents (#3976)
-* Fix the case of SlimefunItem#itemhandlers
-* Fix taking damage on head collision while wearing elytra cap (#3760)
-* Fix heads showing as steve (#4027)
-* Fix grappling hook not working due to bat dying (#3926)
-* Fix freezer material
-* Fix auto update
-* Fix rate limiting issues (#4042)
-* Fix orebfuscator plugin with blocks when gold panning (#3921)
-
-## Release Candidate 35 (07 Jul 2023)
-
-#### Additions
-* Added `sounds.yml` file to configure sound effects for Slimefun
-* Added preview builds to the repo, PRs will now have a build which testers can use
-* (API) Added SlimefunBlockBreakEvent and SlimefunBlockPlaceEvent events for plugins/addons to implement
-* (API) Added an efficient way to clear BlockStorage within a chunk - BlockStorage.clearAllBlockInfoAtChunk
-* (API) Added DistinctiveItem, a way to distinguish your item with more than just ID
-* (API) Added ExternallyInteractable, a way for addons to define "interactions" for blocks
-
-#### Changes
-* Moved all sound effects to the new sound system
-
-#### Fixes
-* Fixed recipe shift in multiblocks when items are disabled (#3286)
-* Fixed backpack dupe within cargo (#3379)
-
-## Release Candidate 34 (20 Jun 2023)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#34
-
-#### Additions
-* Added "Cobbled Deepslate -> Gravel" recipe to the Grind Stone
-* Added "Cobbled Deepslate -> Sand" recipe to the Ore Crusher
-* (API) Added EnergyNet#getGenerators()
-* (API) Added EnergyNet#getCapacitors()
-* (API) Added EnergyNet#getConsumers()
-* Added Bamboo as a fuel type for Tier 1 Androids
-* Added "Basalt -> Blackstone" recipe to the Grind Stone
-* Added a way to automate salt with the Ore Washer
-* Added compatibility for Minecraft 1.20
-
-#### Changes
-* Removed 1.14.* and 1.15.* support
-* The Climbing Pick now also works on:
-  * Calcite
-  * Deepslate
-  * Dripstone blocks
-  * Smooth Basalt
-  * Tuff
-  * Clay
-  * Skulk
-* Lumber Axe no longer works when shifting
-
-#### Fixes
-* Fixed #3741
-* Fixed #3724
-* Fixed #3462
-* Fixed #3758
-* Fixed #3701
-* Fixed #3361
-* Fixed #3254
-* Fixed #3443
-* Fixed #3511
-* Fixed #3524
-* Fixed #3657
-* Fixed #3768
-* Fixed #3414
-
-## Release Candidate 33 (07 Jan 2023)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#33
-
-#### Additions
-* (API) Added Tinted Glass to "GLASS_BLOCKS" tag
-* (API) Added "WOOL_CARPETS" tag (for compatibility across MC 1.19/1.18 tags)
-* Added a new language: Persian
-* Added a new language: Romanian
-* (API) Added a method for item groups to allow addons to choose if they want to allow items from other addons
-* Added a new option to Eletric Gold Pans: "override-output-limit"
-* Added "Mud -> Clay" recipe to the Auto Drier
-* Added a third tier for Freezers
-* Added Glow Berry Juice
-
-#### Changes
-* Tree Growth Accelerators can now actually cause the Tree to fully grow (1.17+ only)
-* Slimefun now requires Java 16
-* "Connected / Not connected" messages for cargo nodes are now sent via the actionbar
-* "/sf stats" can no longer be used if researching is disabled
-* "/sf research" can no longer be used if researching is disabled
-* Removed the Hercules Pickaxe from Slimefun
-* If CS-CoreLib is present, Slimefun will disable itself (previously it would just error)
-
-#### Fixes
-* Fixed #3597
-* Fixed an issue related to "Bee Wings"
-* Fixed #3573
-* Fixed "round-robin" mode for cargo networks being very unreliable
-* Fixed #3664
-* Fixed #3651
-* Fixed #3677
-* Fixed #3705
-* Fixed BlockPlacer being able to place disabled items
-
-## Release Candidate 32 (26 Jun 2022)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#32
-
-#### Additions
-* Added Organic Food for Seagrass
-* Added Organic Fertilizer for Seagrass
-* Added compatibility for Minecraft 1.19
-
-#### Changes
-* Removed support for ChestTerminal
-
-#### Fixes
-* Fixed #3445
-* Fixed #3504
-* Fixed #3534
-* Fixed #3538
-* Fixed #3548
-* Fixed an issue with machines being placed below y=0
-
-## Release Candidate 31 (14 Mar 2022)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#31
-
-#### Additions
-* Added Armored Jetpack
-* Added Cocoa Beans as a fuel type for the Bio-Generator
-* Added Beetroots and Beetroot seeds as fuel types for the Bio-Generator
-* Added small and big dripleaves as fuel types for the Bio-Generator
-* Added Glow Berries as a fuel type for the Bio-Generator
-* Added Glow Lichen as a fuel type for the Bio-Generator
-* Added Spore Blossom as a fuel type for the Bio-Generator
-* Added a new item setting for Freezers to allow them to use a 9:1 "vanilla" ratio instead of 1:1 (1:1 by default, like before)
-* (API) Added `PlayerProfile#hasUnlockedEverything()` to check if a player has unlocked all researches
-* (API) Added `Research#getUnlocalizedName()`
-* Added support for the plugin "HuskTowns"
-* Added support for Minecraft 1.18.2
-* You can now pick up Slimefun blocks in creative mode using the middle mouse button
-* `/sf search` no longer shows items in hidden item groups (can be overidden by a config setting)
-* Fluid Pumps can now fill bottles with water
-* (API) Added Shulker boxes to `ColoredMaterial` enum
-
-#### Changes
-* (API) `BiomeMapParser` is now `public`
-* (API) `BiomeMap.fromJson` now allows you to specify if you want the BiomeMap to be parsed leniently
-* Some translation updates
-
-#### Fixes
-* Fixed #3390
-* Fixed research issues for vanilla items, e.g. Trident or Totem of Undying
-* Fixed #3368
-* Fixed #1315
-* Fixed #3400
-* Fixed rare issue where Slimefun would not load at all
-* Fixed #3429
-* Fixed "LogBlock" integration
-* Fixed "Lands" integration
-* Fixed #3133
-* Fixed #3483
-* Fixed #3469
-* Fixed #3476
-* Fixed #3487
-* Fixed #3336 (again)
-
-## Release Candidate 30 (31 Dec 2021)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#30
-
-#### Additions
-* Added a ton of wiki links to the guide
-* (API) Added "GRAVITY_AFFECTED_BLOCKS" tag
-* (API) Added "Biome-Maps" for more in-depth GEO resource configuration (developers only for now)
-* (API) Added some utility methods for Biome-Maps
-* Added support for 1.18
-* Added Talisman of Farmer
-
-#### Changes
-* GEO resource distributions have been slightly adjusted
-* Salt can now also generate in the Nether (as a GEO resource)
-
-#### Fixes
-* Crimson and Warped Pressure Plates are now properly recognized as pressure plates
-* Fixed #3336
-* (API) Fixed `Parachute` constructor parameter being ignored
-* Fixed #3385
-* Fixed (Easter) Apple Pie recipe yielding (Christmas) Apple Pies
-
-## Release Candidate 29 (07 Nov 2021)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#29
-
-#### Additions
-* Added support for deepslate ores and copper with the Hercules' Pickaxe
-* The Electric Crucible now also accepts Netherrack
-* The Electric Crucible now also accepts Stone
-* Added the ability to shift-click in the Cheat Sheet menu
-* Added the ability to break blocks normally with a Lumber Axe when sneaking
-* Added an option to allow Solar Generators to operate in "night-mode" in other dimensions
-* Added `/sf debug <test case>` (This allows server owners to get more in-depth logging which they can forward to developers for better bug/lag investigations)
-* Added an option to disable data backups on disable
-
-#### Changes
-* Massive performance improvements for Cargo networks
-* (API) `SolarGenerator` has a new constructor to accept capacity
-
-#### Fixes
-* Fixed #3218
-* Fixed #3241
-* Fixed #3248
-* Fixed #3273
-* Fixed an exploit regarding the Smithing Table
-* Fixed #3265
-* Fixed #3264
-* Fixed extreme knockback caused by the Explosive Bow
-* Fixed #3313
-* Fixed smithing table issue on 1.15 and lower
-
-## Release Candidate 28 (06 Sep 2021)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#28
-
-#### Fixes
-* Fixed Metrics
-* Fixed some naming conventions and localization keys for RC-27
-
-## Release Candidate 27 (03 Sep 2021)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#27
-
-### **Breaking Changes (API)**
-This RC brings a lot of breaking changes to the API. For more info on why we did this and what happened [please refer to our PSA](https://github.com/Slimefun/Slimefun4/pull/3139)
-
-* Category has been renamed to ItemGroup.
-* All Category / ItemGroup variants have been relocated to `io.github.thebusybiscuit.slimefun4.api.items.groups`
-* The SlimefunItem class has been relocated to `io.github.thebusybiscuit.slimefun4.api.items`
-* The SlimefunItemStack class has been relocated to `io.github.thebusybiscuit.slimefun4.api.items`
-* The ItemHandler class has been relocated to `io.github.thebusybiscuit.slimefun4.api.items`
-* The RecipeType class has been relocated to `io.github.thebusybiscuit.slimefun4.api.recipes`
-* Research classes have been moved from `io.github.thebusybiscuit.slimefun4.core.researching` to `io.github.thebusybiscuit.slimefun4.api.researches`
-* The main class `SlimefunPlugin` was renamed to `Slimefun`
-* CS-CoreLib2 was removed and replaced by dough
-
-#### Additions
-* A couple more items have their wiki page linked ingame now
-* Added Orebfuscator compatibility
-* You can now "sneak + left click" to only break one block at a time when using an explosive pickaxe or shovel
-* The luck effect from Enhanced Furnaces now also applies to Raw Ore
-* Locked items will now show the category in which they should be unlocked from
-* Added 4 "Amethyst Shard -> 1 Amethyst Block" recipe to Electric Press
-* Added 9 "Copper Ingot -> 1 Copper Block" recipe to Electric Press
-* Added 9 "Raw Iron -> 1 Raw Iron Block" recipe to Electric Press
-* Added 9 "Raw Gold -> 1 Raw Gold Block" recipe to Electric Press
-* Added 9 "Raw Copper -> 1 Raw Copper Block" recipe to Electric Press
-
-#### Changes
-* Copper wire can no longer be placed down
-* Slimefun chains can no longer be placed down
-* (API) FlexCategories can now also appear in non-survival Slimefun guides
-* Display items from Ancient Altars should no longer despawn so easily/fast
-* Research message was modified to also show the category of the item
-
-#### Fixes
-* Fixed #3164
-* Fixed #3177
-* Fixed unbreakable Flint and Steel still being damaged in Ignition Chambers
-* Fixed #2677
-* Fixed Auto-Disenchanter exploit using mcMMO's "super ability" tools
-* Fixed #3190
-* Fixed #3203
-* Fixed #3225
-* Fixed #3206
-* Fixed androids not respecting Worldborders
-* Fixed Ender Lumps showing an incorrect recipe in the guide
-
-## Release Candidate 26 (20 Jul 2021)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#26
-
-#### Additions
-* Diamonds can now be ground into Carbon using a Grind Stone
-* Deepslate ores can now be doubled using an Ore Crusher
-* Tridents can now be crafted
-* The Industrial Miner can now mine up to the minimum world limit (previously only until y=0)
-* (API) Added SlimefunItemSpawnEvent and ItemSpawnReason
-* Added "Amethyst Block -> 4 Amethyst Shards" recipe to the Grind Stone
-* Added an option to the IndustrialMiner to configure if they can mine deepslate ores
-* (API) Added `LimitedUseItem`
-
-#### Changes
-* The Industrial Miner now properly drops raw ores in 1.17+ instead of ore blocks
-
-#### Fixes
-* Fixed #2966
-* Fixed Auto-Crafters bypassing the `doLimitedCrafting` gamerule
-* Fixed "Talisman of Anvil" having issues with off-hand items
-* Fixed #3136
-
-## Release Candidate 25 (20 Jun 2021)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#25
-
-#### Additions
-* Added "4 Charcoal -> 1 Coal" recipe to the Compressor
-* Added a startup warning for when CS-CoreLib is still installed
-* (API) Added WeaponUseHandler
-* Added support for Minecraft 1.17
-* Added "Deepslate -> Lava" recipe to the Crucible
-* Added "Cobbled Deepslate -> Lava" recipe to the Crucible
-* Added "Tuff -> Lava" recipe to the Crucible
-* Added "Copper Ingot -> Copper Dust" recipe to the Ingot Pulverizer
-* Added Goats as a milk source for the Produce Collector
-* Added "Raw Iron -> Iron Dust" recipe to the Ore Crusher
-* Added "Raw Gold -> Gold Dust" recipe to the Ore Crusher
-* Added "Raw Copper -> Copper Dust" recipe to the Ore Crusher
-* Debug Fish can now read Slimefun Tags for vanilla blocks
-* The Icy Bow now gives a freezing effect on 1.17
-
-#### Changes
-* (API) Removed `SlimefunItem#getID()` (renamed to `SlimefunItem#getId()`)
-* (API) Removed AsyncGeneratorProcessCompleteEvent
-* (API) Removed AsyncMachineProcessCompleteEvent
-* (API) Removed AsyncReactorProcessCompleteEvent
-
-#### Fixes
-* Fixed #3105
-* Fixed #3116
-
-## Release Candidate 24 (03 Jun 2021)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#24
-
-#### Additions
-* (API) Added AsyncMachineOperationFinishEvent
-* The speed of the Ancient Altar can now be configured in the `Items.yml` file
-* The message "You do not have enough knowledge to understand this" now includes the name of the item you need to research.
-
-#### Changes
-* (API) Refactored "Machine Process" API
-* (API) Deprecated AsyncGeneratorProcessCompleteEvent
-* (API) Deprecated AsyncMachineProcessCompleteEvent
-* (API) Deprecated AsyncReactorProcessCompleteEvent
-* Error-Reports now show the date and time they were generated at
-* Some performance optimizations to Cargo networks
-
-#### Fixes
-* Fixed #3064
-* Fixed #2964
-* Fixed #2979
-* Fixed a permissions issue with `/sf charge`
-* Fixed #3053
-* Fixed #3075
-* Fixed recipe types showing missing string message
-* Fixed #3084
-* Fixed #3085
-* Fixed #3088
-* Fixed #3087
-* Fixed #3091
-* Fixed #3086
-* Fixed #3093
-* Fixed #3095
-
-## Release Candidate 23 (19 May 2021)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#23
-
-#### Additions
-* Added "Quartz Block -> 4 Quartz" recipe to Grind Stone
-* Added "8 Coal Blocks -> 9 Carbon" recipe to Compressor
-* Added "8 Coal Blocks -> 9 Carbon" recipe to Carbon Press
-* Added "Magical Lump Tier 2 -> 4 Magical Lump Tier 1" recipe to Grind Stone
-* Added "Magical Lump Tier 3 -> 4 Magical Lump Tier 2" recipe to Grind Stone
-* Added "Ender Lump Tier 2 -> 4 Ender Lump Tier 1" recipe to Grind Stone
-* Added "Ender Lump Tier 3 -> 4 Ender Lump Tier 2" recipe to Grind Stone
-* Added Tier 2 Auto-Enchanter
-* Added Tier 2 Auto-Disenchanter
-* (API) Added AsyncAutoEnchanterProcessEvent
-* (API) Added Category#setTier() to modify a category's position in the guide
-* Added the ability to disable auto (dis)enchanting with a lore - `use-ignored-lores` & `ignored-lores` in Items.yml
-* Added an option to turn off the "researching animation" in the `config.yml`
-* Added the option to turn off the "researching animation" within your Slimefun Guide
-* Added Portable Teleporter
-
-#### Changes
-* Renamed "Solar Panel" to "Photovoltaic Cell" to avoid confusions with solar generators
-* Photovoltaic Cells can no longer be placed
-* Batteries can no longer be placed
-* Tin Cans can no longer be placed
-* Magical Glass can no longer be placed
-* (API) Removed deprecated "SlimefunBlockHandler"
-* Removed Automated Crafting Chamber
-* Memory and performance improvements for Cargo and Energy networks
-
-#### Fixes
-* Fixed #2987
-* Fixed #2989
-* Fixed #2977
-* Fixed #2999
-* Fixed #2593
-* Fixed #2937
-* Fixed #2927
-* Fixed #3007
-* Fixed #3012
-* Fixed #3013
-* Fixed #3027
-* Fixed #2978
-* Fixed #3041
-* Fixed #3036
-* Possibly fixed #2927
-* Fixed #3060
-
-## Release Candidate 22 (18 Apr 2021)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#22
-
-#### Additions
-* Added Vanilla Auto-Crafter
-* Added Enhanced Auto-Crafter
-* Added "Smart-Filling" mode to Cargo Input nodes
-* Added "Netherite Ingot -> Netherite Block" recipe to Electric Press
-* Added "Slimeballs -> Slime Block" recipe to Electric Press
-* Added Armor Forge Auto-Crafter
-* Auto-Crafters can now be turned on and off
-* Added Produce Collector to automate Milk and Mushroom Stew
-* Added a new message when constructing a Multiblock successfully
-* Added Crafting Motor
-* Block Placers can now place down cake
-* Added support for the "FunnyGuilds" plugin
-* Added "magma cream -> slime ball" recipe to the Freezer
-* Added "2 magma blocks -> slime block" recipe to the Freezer
-* Added configurable enchantment level limit for both auto enchanter and auto disenchanter
-* (API) Added AutoEnchantEvent
-
-#### Changes
-* Changed item order in guide for the Villager Rune and Nether Goo (All runes are now grouped together)
-* Ancient Pedestals can now be found under "Magical Gadgets"
-* Removed all functionality from the old Automated Crafting Chamber
-* Changed Cargo Motor texture
-* Lowered "Magma block -> Sulfate" recipe to only require 1 magma block
-* Small performance improvements
-
-#### Fixes
-* Fixed #1161
-* Fixed #2862
-* Fixed #2887
-* Fixed items getting deleted when breaking enhanced furnaces
-* Fixed #2895
-* Fixed #2896
-* Fixed #2899
-* Fixed #2906
-* Fixed #2903
-* Fixed #2913
-* Fixed #2914
-* Fixed Auto-Crafters swallowing buckets when crafting cake
-* Fixed Multimeter not working on Auto-Crafters
-* Fixed #2650
-* Fixed Slimefun items applying damage to items with an `unbreakable` tag
-* Fixed #2930
-* Fixed #2926
-* Fixed Grappling Hook vanishing in creative mode
-* Fixed #2944
-* Fixed #2837
-* Fixed #2942
-
-## Release Candidate 21 (14 Mar 2021)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#21
-
-#### Additions
-* Nether Wart Blocks can now be turned into Nether Warts using a Grind Stone
-* Added an option to allow Talismans to send their notifications via the Actionbar
-* (API) Added support for nested Categories
-* (API) Added ExplosiveToolBreakBlocksEvent
-* Added an option to enable/disable water in the nether via a crucible
-* /sf versions now shows the Java version and some useful tooltips
-
-#### Changes
-* Deprecated Automatic Crafting Chamber
-* Performance Improvements and Optimizations for Cobblestone/Stone/Basalt generators and mining androids
-* Androids operating on a Cobblestone/Stone/Basalt generator now work faster
-* (API) Improvements to the BlockBreakHandler
-* (API) Deprecated SlimefunBlockHandler
-* (API) Improved ItemSetting API and error handling
-
-#### Fixes
-* Fixed #2794
-* Fixed #2793
-* Fixed #2809
-* Fixed a small exception which gets thrown when Slimefun is disabled due to an invalid environment
-* Fixed #2810
-* Fixed #2804
-* Fixed #2817
-* Fixed exceptions with inventories not being printed using the logger of the addon that caused it
-* Fixed #2818
-* Fixed a duplication glitch with the Woodcutter Android
-* Fixed #2839
-* Fixed #2849
-* Fixed #2851
-* Fixed #2852
-* Fixed some issues with the Book Binder
-* Fixed #2805
-* Fixed #2861
-* Fixed #2856
-* Fixed #2876
-* Fixed #2877
-* Fixed #2878
-* Fixed Mining Androids being broken
-* Fixed #2883
-
-## Release Candidate 20 (30 Jan 2021)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#20
-
-#### Additions
-* Added a new language: Bulgarian
-* Added a new language: Hebrew
-* (API) Added AsyncProfileLoadEvent
-* Added Talisman of the Wise
-* Added Book Binder
-* Added Tier 3 Electric Ore Grinder
-
-#### Changes
-* Massive performance improvements to holograms/armorstands
-* Slimefun no longer requires CS-CoreLib to be installed
-
-#### Fixes
-* Fixed elevator floor order
-* Fixed "block-explosions" (e.g. beds in Nether) not properly respecting explosion-resistant blocks
-* Fixed #2560
-* Fixed #2449
-* Fixed #2511
-* Fixed #2636
-* Fixed a threading issue related to BlockStates and persistent data
-* Fixed an error when the server was shutting down
-* Fixed #2721
-* Fixed #2662
-* Fixed #2728
-* Fixed some backpack opening issues
-* Fixed Infused Hopper picking up items with a max pickup delay
-* Fixed duplication issues related to holograms/armorstands
-* Fixed #2754
-* Fixed machines not respecting max size from inventories
-* Fixed #2761
-* Fixed #2460
-* Fixed #2760
-* Fixed #2771
-* Fixed placeholders that did not get loaded yet not having a label
-* Fixed #2679
-
-## Release Candidate 19 (11 Jan 2021)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#19
-
-#### Additions
-* Added Bee Armor (1.15+ only)
-* (API) Added AndroidFarmEvent
-
-#### Changes
-* Performance optimizations for Cargo networks
-* Removed an old version of bStats
-* General performance improvements
-* CraftBukkit is officially no longer supported, Slimefun will now be disabled on old builds of CraftBukkit
-* Removed the deprecated ItemManipulationAPI for BlockMenus
-* Removed the "Written Book" variant of the Slimefun Guide
-* The Elevator has an Inventory menu now
-
-#### Fixes
-* Fixed a couple of compatibility issues with ItemsAdder
-* Fixed #2575
-* Fixed ghost blocks to some extent (ghost blocks will now drop and be replaced)
-* Fixed #2636 (hotfix)
-* Fixed #2647
-* Fixed #2664
-* Fixed #2655
-* Fixed /sf timings --verbose not working correctly
-* Fixed #2675
-
-## Release Candidate 18 (03 Dec 2020)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#18
-
-#### Additions
-* The Smelters Pick now also works on Ancient Debris
-* (API) Added PlayerPreResearchEvent
-* Added a config option to disable network visualizations
-* (API) Added CoolerFeedPlayerEvent
-* Added a config option to delete excess cargo network items
-* Added an item setting to configure the Wind Staff velocity
-* Added an item setting to the Infused Hopper to toggle it with redstone
-* Added an item setting to prevent Reinforced Spawners from being changed by Spawn Eggs
-* Added 4 bricks -> 1 brick block recipe to the Electric Press
-
-#### Changes
-* Removed 1.13 support
-* Cooling Units can no longer be placed down
-* Heating Coils can no longer be placed down
-* Electric Motors can no longer be placed down
-* Cargo Motors can no longer be placed down
-* Magnets can no longer be placed down
-* Electromagnets can no longer be placed down
-* Performance improvements to Cargo network visualizations
-* General performance improvements
-* Improved performance for radioactive items
-* Memory/GC improvements for the profiler
-* Performance improvements for the Fluid Pump
-* Removed EmeraldEnchants integration
-* Memory and performance improvements for ticking blocks
-
-#### Fixes
-* Fixed #2448
-* Fixed #2470
-* Fixed #2478
-* Fixed #2493
-* Fixed a missing slot in the contributors menu
-* Fixed color codes in script downloading screen
-* Fixed #2505
-* Fixed contributors not showing correctly
-* Fixed #2469
-* Fixed #2509
-* Fixed #2499
-* Fixed #2527
-* Fixed #2519
-* Fixed #2517
-* Fixed Magician Talisman sometimes drawing invalid enchantments
-* Fixed id conflicts for external Enchantment sources (e.g. plugins) for the Magician Talisman settings
-* Fixed network visualizers spawning particles for other player heads
-* Fixed #2418
-* Fixed #2446
-* Fixed CoreProtect not recognizing Slimefun blocks getting broken
-* Fixed #2447
-* Fixed #2558
-* Fixed a duplication bug with the Block Placer
-* Fixed Slimefun Guide Settings showing "last activity" as a negative number
-* Fixed Armor Stands getting damaged/pushed by Explosive Bow
-* Fixed Sword of Beheading dropping Zombie/Skeleton Skulls from Zombie/Skeleton subvariants
-* Fixed #2518
-* Fixed #2421
-* Fixed #2574
-* Fixed color in android script downloading screen
-* Fixed #2576
-* Fixed #2496
-* Fixed #2585
-* Fixed #2583
-
-## Release Candidate 17 (17 Oct 2020)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#17
-
-#### Additions
-* Added /sf charge
-* Added Energized Energy Capacitor
-* Added various new fuel types to the Coal Generator
-* Added a config option for Grappling Hooks to not be consumed on use
-* Added Talisman of the Caveman
-* You can now convert any gold ingot into gold dust with slightly less returns
-* Magical Zombie Pills now also work on Zombified Piglins
-* (API) Added SlimefunGuideOpenEvent
-* (API) Added "NotConfigurable" attribute to disable configurability
-* Added Elytra Cap
-* Added Planks to Sticks recipe to the Table Saw
-* Added "slimefun.gps.bypass" permission to open GPS devices anywhere
-* (API) Added custom tags for developers
-* The range of the Seeker Pickaxe is now configurable
-* Added Energy Connector
-* Blackstone can now be turned into lava using a Crucible
-* Basalt can now be turned into lava using a Crucible
-* Added "Tainted Sheep" (You can dye a Sheep using Strange Nether Goo)
-* Added mcMMO support/integration
-
-#### Changes
-* Improved Auto-Updater (Multi-Threading and more)
-* General performance improvements
-* /sf cheat now shows seasonal categories all year through
-* GPS devices now require chest-access in that area to be used
-
-#### Fixes
-* Fixed #2300
-* Fixed #2296
-* Fixed colors of Cheat Sheet Slimefun Guide
-* Fixed Cheat Sheet Slimefun Guide being unable to open the settings menu via shift + right click
-* Fixed #2320
-* Fixed some issues with ChestTerminal
-* Fixed #2325
-* Fixed Climbing Pick having no animation in creative mode
-* Fixed #2322
-* Fixed some cargo incompatibilities with overflowing inventories
-* Fixed #2353
-* Fixed #2359
-* Fixed #2356
-* Fixed #2358
-* Fixed #2360
-* Fixed #2351
-* Fixed #2357
-* Fixed Auto Enchanters being unaffected by speed modifications from addons
-* Fixed Auto Disenchanters being unaffected by speed modifications from addons
-* Fixed radioactive items still being radioactive when disabled
-* Fixed #2391
-* Fixed #2403
-* Fixed #2405
-* Fixed #2412
-* Fixed #2238
-* Fixed #2439
-* Fixed #2420
-* Fixed #2422
-* Fixed #2433
-* Fixed #2455
-* Fixed #2450
-* Fixed Steel Thrusters being used to milk cows
-* Fixed #2424
-* Fixed #2468
-* Fixed #2414
-* Fixed #2454
-* Fixed #2457
-* Fixed #2411
-* Fixed #2423
-* Fixed #2452
-* Fixed a dupe bug with mcMMO
-
-## Release Candidate 16 (07 Sep 2020)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#16
-
-#### Additions
-* Added an option for Industrial Miners to mine Ancient Debris
-* Added a new language: Korean
-* (API) Added support for adding custom Piglin Barter drops
-* (API) Added BlockPlacerPlaceEvent
-* (API) Added ToolUseHandler
-* Added "Sand -> Sandstone" recipe to the Electric Press
-* Added "Red Sand -> Red Sandstone" recipe to the Electric Press
-* Industrial Miners can now also mine Gilded Blackstone
-* Added a config option to disable Players from burning when exposed to radiation
-* Added a config option to drop excess items when using /sf give
-* Added Strange Nether Goo
-* Added Villager Rune
-* Added Synthetic Shulker Shells
-* Added Climbing Pick
-* Added item breaking sounds to some slimefun tools
-
-#### Changes
-* Performance improvement for Programmable Android rotations
-* Removed Gravel -> Flint recipe from the Grind stone
-* Performance improvements for miner talismans
-* Performance improvements for idling Enhanced Furnaces when using Paper
-* Performance improvements for Rainbow Blocks
-* Crafting a Rag now yields two items
-* Small performance improvements for Slimefun guides
-* Small performance improvements for Cargo networks
-* Small performance improvements for Miner Androids
-* Small performance improvements for all machines, especially Electric Smelteries
-* Small performance improvements for Holograms
-* Small performance improvements for Tree Growth Accelerators
-* Small performance improvements for Reactors
-* Electric machines now show their tier in the Inventory name too
-* Removed "Fuel efficiency" attribute for androids, since that was pretty much always at 1.0 anyway...
-* Performance improvements for energy networks
-* (API) Rewritten Block-Energy API
-* Removed "durability" setting from cargo nodes
-* Small performance improvements for radiation
-* Small performance improvements for Auto Disenchanters
-* Magnesium Salt in Magnesium-Salt generators now lasts longer
-
-#### Fixes
-* Fixed Programmable Androids rotating in the wrong direction
-* Fixed #2176
-* Fixed #2164
-* Fixed #2147
-* Fixed #2179
-* Fixed Reinforced Spawners not working sometimes
-* Fixed Explosive Pickaxe not handling normal Shulker boxes correctly
-* Fixed #2103
-* Fixed #2184
-* Fixed #2183
-* Fixed #2181
-* Fixed #2180
-* Fixed #2122
-* Fixed #2168
-* Fixed #2203
-* Fixed #2205
-* Fixed #2209
-* Fixed #2217
-* Fixed Miner Talisman sending messages when drops were not even doubled
-* Fixed #2077
-* Fixed #2207
-* Fixed ChestTerminal timings showing up as cargo nodes
-* Fixed timings reports never arriving sometimes
-* Fixed #2138
-* Fixed #1951 (again)
-* Fixed Electric Press not working
-* Fixed #2240
-* Fixed #2243
-* Fixed #2249
-* Fixed #1022
-* Fixed #2208
-* Fixed Fluid Pump treating low-level fluids like stationary fluids
-* Fixed Fluid Pump not working on Bubble Columns
-* Fixed #2251
-* Fixed #2257
-* Fixed #2260
-* Fixed #2263
-* Fixed #2265
-* Fixed #2269
-* Fixed #2266
-* Fixed #2275
-* Fixed Multi Tools consuming hunger points when holding a Wind Staff in your off hand
-* Fixed Teleports getting stuck sometimes
-
-## Release Candidate 15 (01 Aug 2020)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#15
-
-#### Additions
-* Added "Bone Block -> Bone meal" recipe to the Grind Stone
-* Added a [Metrics module](https://github.com/Slimefun/MetricsModule) which allows us to release updates to metrics (bStats) independently from the main plugin
-* Added "Compressed Carbon -> Carbon" recipe to the Ore Crusher
-* Added "Carbon -> Coal" recipe to the Ore Crusher
-* Added an option to disable the message "Ignoring duplicate block"
-* Added Iron Golem Assembler
-* Added Reinforced Cloth
-* Added Bee protection to Hazmat Suit
-* Added Enchantment Rune
-* Added Tape Measure
-* Added a permission node for /sf debug_fish
-
-#### Changes
-* Refactored and reworked the Generator API
-* Small performance improvements to Energy networks
-* Big performance improvements to Cargo networks when using ChestTerminal
-* Slight changes to /sf timings
-* Changed recipe of Hazmat Suits
-* Uranium can no longer be placed down
-* Huge performance improvements when using Paper
-* Optimized Cargo networks for Paper
-* Optimized Multiblocks for Paper
-* Optimized Enhanced Furnaces for Paper
-* Optimized Programmable Androids for Paper
-* General performance improvements for Talismans
-* General performance improvements for GPS Emergency Transmitters
-* General performance improvements for Infused Magnets
-* Ancient Altars now support for protection plugins
-* Ancient Pedestals now support for protection plugins
-
-#### Fixes
-* Fixed Slimefun Armor sometimes not applying its effects
-* Fixed #2075
-* Fixed #2093
-* Fixed #2086
-* Fixed #1894
-* Fixed #2097
-* Fixed Wither Assembler requiring more items than it actually consumes
-* Fixed Metrics not updating automatically
-* Fixed #2143
-* Fixed #2145
-* Fixed #2151
-* Fixed old Talismans not working
-* Fixed Talismans sometimes not getting consumed properly
-* Fixed old Infused Magnets not working
-* Fixed old GPS Emergency Transmitters not working
-* Fixed #2156
-* Fixed #2165
-* Fixed #2162
-* Fixed #2166
-
-## Release Candidate 14 (12 Jul 2020)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#14
-
-#### Additions
-* Added support for Minecraft 1.16
-* Added a starting sound for the Ancient Altar
-* Added config option to disable backwards compatibility and improve performance
-* Added ReactorExplodeEvent to the API
-* Compatibility mode status is now included in /sf versions
-* Added Nether Quartz Ore Crusher Recipe
-* Added a new language: Tagalog
-* Added Magical Zombie Pills
-* Added 1.13 compatibility to the Auto Drier
-* Added Corals to the fuel list for the Bio Generator
-* Added Clay -> Clay blocks recipe to the Electric Press
-* (1.16+) Slimefun guide can now show Smithing Table recipes
-* (1.16+) Added Nether Gold Ore recipe to the Ore Crusher
-* (1.16+) Added Gilded Blackstone recipe to the Ore Crusher
-* (1.16+) Added Shroomlights to the fuel list for the Bio Generator
-* (1.16+) Added Warped and Crimson Fungus to the fuel list for the Bio Generator
-* Added an AoE damage effect to the Explosive Bow
-* Added runtime deprecation warnings for ItemHandlers and Attributes used by Addons
-* Added a proper lag profiler
-* Added per-plugin lag info to /sf timings
-* Added Indonesian translations
-
-#### Changes
-* Coolant Cells now last twice as long
-* Ticking blocks will now catch more errors caused by addons
-* Changed the texture for the Nuclear Reactor
-* Changed the texture for the Nether Star Reactor
-* Crafting Tin cans now produces 8 items instead of 4
-* Multi Tool lore now says "Crouch" instead of "Hold Shift"
-* Items which cannot be distributed by a Cargo Net will be dropped on the ground now instead of getting deleted
-* Slimefun no longer supports CraftBukkit
-* Item Energy is now also stored persistently via NBT
-* Performance improvements to GPS/GEO machines, especially Oil Pump and GEO Miner
-* Performance improvements for ticking blocks
-* Performance improvements to the Cargo Net
-* performance improvements to the Energy Net
-* Performance improvements to Rainbow Blocks
-* Performance improvements to Androids
-* performance improvements to Generators and Electric Machines
-* Cargo timings will now be attributed to the corresponding node and not the Cargo manager
-* Thunderstorms now count as night time for Solar Generators
-* Coolant Cells can no longer be placed on the ground
-* Crafting Nether Ice Coolant Cells now results in 4 items
-* Moved Soulbound Backpack to the "Magical Gadgets" Category
-
-#### Fixes
-* Fixed #2005
-* Fixed #2009
-* Fixed a chunk caching issue for GEO resources
-* Fixed Infused Magnet working even if you haven't researched it
-* Fixed Rainbow blocks duplication glitch when timing the block break right
-* Fixed #1855
-* Fixed some issues with AsyncWorldEdit
-* Fixed some problems with unregistered or fake worlds
-* Fixed a rare concurrency issue with world saving
-* Fixed some contributors showing up twice
-* Fixed #2062
-* Fixed Grappling hooks disappearing when fired at Item frames or paintings
-* Fixed Grappling hooks not getting removed when the Player leaves
-* Fixed Grappling hooks making Bat sounds
-* Fixed #1959
-* Fixed Melon Juice requiring Melons instead of Melon Slices
-* Fixed Cargo networks not showing up in /sf timings
-* Fixed /sf timings reporting slightly inaccurate timings
-* Fixed concurrency-related issues with the profiling
-* Fixed #2066
-* Fixed Rainbow Glass Panes not properly connecting to blocks
-* Fixed Androids turning in the wrong direction
-* Fixed contributors losing their texture after restarts
-* Fixed "korean" showing up as "null"
-* Fixed an issue with moving androids getting stuck
-* Fixed Cargo nodes sometimes preventing chunks from unloading
-* Fixed #2081
-* Fixed a NullPointerException when Generators throw an Error Report
-
-## Release Candidate 13 (16 Jun 2020)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#13
-
-#### Additions
-* Added Dried Kelp Blocks recipe to the Electric Press
-* Added Bone Blocks recipe to the Electric Press
-* Added thai translations
-* Added Industrial Miner
-* Added Advanced Industrial Miner
-* Added Cocoa Organic Food
-* Added Cocoa Fertilizer
-* Added a configurable limit to the Pickaxe of Vein Mining
-* Added Gold Ingot to Dust recipe to the Electric Ingot Pulverizer
-* Added Saddles to possible fishing loot for the Fishing Android
-* Added Name tags to possible fishing loot for the Fishing Android
-* Added Nautilus Shell to possible fishing loot for the Fishing Android
-* Added Bamboo to possible fishing loot for the Fishing Android
-
-#### Changes
-* Removed Digital Miner
-* Removed Advanced Digital Miner
-* Dried Kelp Blocks can now be used in the Coal Generator
-* Crafting Organic Food/Fertilizer yields more output now
-* Organic Food (Melon) now uses Melon Slices instead of Melon blocks
-* The Seismic Axe now skips the first two blocks to clear your field of view
-* Auto Disenchanting is now a tiny bit faster
-* Small performance improvements
-* Dried Kelp Blocks can now be used as fuel for Tier 1 Androids
-* Androids now have a separate category in the Slimefun Guide
-* Android Interface recipes now require steel ingots
-* Changed and unified a couple of tooltips
-* Changed tooltip on jetpacks and jet boots to say "Crouch" instead of "Hold Shift"
-
-#### Fixes
-* Fixed Ore Washer recipes showing up twice
-* Fixed #1942
-* Fixed a few memory leaks
-* Fixed #1943
-* Fixed Nuclear Reactors accepting Lava as coolant
-* Fixed #1971
-* Fixed #1976
-* Fixed #1988
-* Fixed #1985
-* Fixed a missing texture in the Android Script Editor
-* Fixed #1992
-* Possibly fixed #1951
-* Fixed tab completion for /sf give showing players instead of amounts
-* Fixed #1993
-* Fixed #1907
-* Fixed research fireworks still dealing damage sometimes
-
-## Release Candidate 12 (27 May 2020)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#12
-
-#### Additions
-* Added Ukrainian translations
-* Added /sf backpack to restore lost backpacks
-* Added automated Unit Tests
-* Added WaypointCreateEvent
-* Added an option to call an explosion event when using explosive tools
-
-#### Changes
-* Little performance improvements
-* Bandages, Rags and Splints will no longer be consumed if your health is full and you are not on fire
-* Player Profiles (researches and stuff) are now loaded completely asynchronously
-* The Infused Magnet can no longer be placed down
-* AncientAltar speed can now be changed internally (not available for server owners yet)
-* Finished Italian translations
-
-#### Fixes
-* Fixed #1824
-* Fixed #1833
-* Fixed #1834
-* Fixed #1843
-* Fixed #1873
-* Fixed Electric Smeltery not prioritising recipes
-* Fixed #1851
-* Fixed #1891
-* Fixed #1893
-* Fixed #1897
-* Fixed #1908
-* Fixed #1903
-* Fixed Organic Food/Fertilizer not being recognized
-* Fixed #1883
-* Fixed #1829
-* Fixed some mojang.com connection errors
-* Fixed some very weird SkullMeta serialization problems in 1.15
-* Fixed #1914
-* Fixed file errors with PerWorldSettingsService
-* Fixed ChestTerminals deleting items from Cargo networks (TheBusyBiscuit/ChestTerminal#25)
-* Fixed #1926
-* Fixed #1933
-* Fixed random errors because of Mojang's new player heads backend (Why... Mojang... why?)
-* Fixed Butcher Androids doing incorrect amounts of damage
-* Fixed #1935
-
-## Release Candidate 11 (25 Apr 2020)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#11
-
-#### Additions
-* Added GEOResourceGenerationEvent
-* Added AncientAltarCraftEvent
-* Added SlimefunGuide-Options API
-* Added ItemSettings API
-* Added 1.13 backwards compatibility
-* Added "Magma Cream to Magma Blocks" recipe to the Electric Press
-* Added "Magma Blocks to Sulfate" recipe
-* You can now search for items from within the book variant of the Guide
-* GEO Scans now support endlessly many different resources
-* Added Output Chest support to the Composter
-
-#### Changes
-* Replaced GuideHandlers with FlexCategories
-* Removed support for old EmeraldEnchants versions
-* Updated the book variant of the guide to use the newer API
-* Removed internal /sf elevator command
-* Split whitelist.yml up into individual /world-settings/worldname.yml files
-* Performance improvements
-* Slimefun Guide runs much faster now and can better deal with many Categories and items
-* Lots of API improvements
-* Faulty addons are now identified more easily and will no longer break Slimefun's main content this quickly
-* You can no longer /sf give yourself a Multiblock
-* Addons have no longer access to Slimefuns default categories
-* Updated seasonal Categories to have better icons
-* Even more performance improvements
-* Changed Ignition Chamber Recipe
-* GEO Miner is now 2 seconds faster
-* All Generators will now stop consuming fuel if no energy is needed
-* /sf teleporter will now open your own Teleporter Menu if you specify no Player
-* Added counter-measures against Players who design Cargo networks in a way that intentionally lags out servers
-* API requests to Mojang are now spread across a longer time period to prevent rate-limits
-
-#### Fixes
-* Fixed error message when clicking empty slots in the Slimefun Guide
-* Fixed #1779
-* Fixed localized messages not showing in the book guide
-* Fixed empty categories showing up when items inside were hidden
-* Fixed ghost pages showing up when too many categories were disabled
-* Fixed debug fish not showing the correct chunk timings
-* Fixed heads with missing permissions placing down
-* Fixed unpermitted items still showing up in the guide if researches are disabled
-* Fixed unpermitted items in the book guide triggering the search function
-* Fixed #1803
-* Fixed #1806
-* Fixed #1807
-* Fixed Coolers accepting non-Juice items
-* Fixed #1813
-* Fixed #1814
-* Fixed GEO Scanner being unable to deal with more than 28 different resources
-* Fixed #893
-* Fixed #1798
-* Fixed #1490
-* Fixed GPS Emergency Transmitters not working
-
-## Release Candidate 10 (28 Mar 2020)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#10
-
-#### Additions
-* Added some new charts to bStats
-* Added a new language: Turkish
-* Multiblocks that use Fences or Trap doors now accept all wood types
-* Added Makeshift Smeltery
-* Added Tree Growth Accelerator
-* Added "Glass to Glass Panes" recipe to the Electric Press
-* Added "Snowballs to Snow blocks" recipe to the Electric Press
-* Added "Snow blocks to Ice" recipe to the Freezer
-* You can now use Cooked Salmon in an Auto Drier to craft Fish Jerky
-* The Lumber Axe can now strip logs too
-* The Slimefun Guide can now remember what page of a Category or Minecraft Item you were on
-
-#### Changes
-* Removed some deprecated parts of the API
-* Internal clean up and further documentation
-* Changed Automatic Ignition Chamber to be a Dropper
-* Teleporters are now significantly faster
-* Item permissions have been moved to a separate permissions.yml file
-* Salt now only requires 2 blocks of Sand
-* Fireworks from researching no longer damages entities
-* Very slight performance improvements for Cargo networks
-* 4K-carat gold ingots can now be used in a workbench by default (overridden by Items.yml)
-* The project license is now included in every build
-* Moved EmeraldsEnchants integration from EmeraldEnchants to Slimefun
-
-#### Fixes
-* Fixed some languages showing numbers larger than 100%
-* Fixed #1570
-* Fixed #1686
-* Fixed #1648
-* Fixed #1397
-* Fixed #1706
-* Fixed #1710
-* Fixed #1711
-* Fixed Slimefun Guide showing shaped recipes incorrectly
-* Fixed #1719
-* Fixed death waypoints not having the correct texture
-* Fixed Androids having no texture when moving
-* Fixed Androids not taking fuel from interfaces
-* Fixed #1721
-* Fixed #1619
-* Fixed #1768
-
-## Release Candidate 9 (07 Mar 2020)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#9
-
-#### Fixes
-* Fixed Solar Generators not working
-
-## Release Candidate 8 (06 Mar 2020)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#8
-
-#### Fixes
-* Fixed bStats Metrics not sending properly
-
-## Release Candidate 7 (06 Mar 2020)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#7
-
-#### Additions
-* Added translations for Recipe Types
-* Added Rainbow Concrete
-* Added Rainbow Glazed Terracotta
-* Added more internal documentation
-
-#### Changes
-* Researches now use their namespaced keys in the Researches.yml
-* A lot of API changes
-
-#### Fixes
-* Fixed #1553
-* Fixed #1513
-* Fixed #1557
-* Fixed #1558
-* Fixed a translation not showing properly
-* Fixed #1577
-* Fixed #1597
-* Fixed disabled Slimefun Addons not showing under /sf versions
-* Fixed #1613
-
-## Release Candidate 6 (16 Feb 2020)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#6
-
-#### Additions
-* Added a new language: Japanese
-* Added a new language: Swedish
-* Added a new language: Czech
-* Added a new language: Portuguese (Brazil)
-* Added a new language: Arabic
-
-#### Changes
-* /sf research now uses namespaced keys instead of ids
-
-#### Fixes
-* Fixed #1515
-* Fixed back-button in guide-settings not working via commands
-* Fixed #1516
-* Fixed magician talisman not being able to enchant books
-
-## Release Candidate 5 (09 Feb 2020)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#5
-
-#### Additions
-* Added preset messages.yml files
-* Added user-configurable localization
-* Added many more options to the messages.yml
-* Added custom model data support for Languages
-* Added Grind Stone Recipes for Prismarine
-* Added String to the Bio Reactor
-* Added a config setting to limit how many Nodes a Network can have
-* Added support for Furnaces and Brewing Stands to Cargo Networks
-* Added Organic Food/Fertilizer for Dried Kelp
-* Added many more strings to the messages.yml
-* Added ability to translate messages for Players
-* Added the ability to translate Researches
-* Added StatusEffect API
-* Added translatability to categories
-* Added translatability to geo-resources
-
-#### Changes
-* Removed Solar Array
-* A lot of internal cleanup
-* Performance improvements for GEO Miner and Oil Pump
-* General performance improvements
-* Changed Startup console message
-* Changed GEO-Resources API
-
-#### Fixes
-* Fixed #1355
-* Fixed Localization mistakes
-* Fixed #1366
-* Fixed GitHub cache
-* Fixed #1364
-* Fixed Bio Reactor not accepting melons
-* Fixed Cargo Networks particles being broken
-* Fixed #1379
-* Fixed #1212
-* Fixed #114
-* Fixed #1385
-* Fixed #1390
-* Fixed #1394
-* Fixed #1313
-* Fixed #1396
-* Fixed Backpacks being placeable
-* Fixed wrong file encoding for translations
-* Fixed Minecraft recipes not showing correctly
-* Fixed #1428
-* Fixed #1435
-* Fixed #1438
-* Fixed Multi Tool functioning as unlimited Shears
-* Fixed #1383
-* Fixed Android Script Component textures
-
-## Release Candidate 4 (06 Jan 2020)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#4
-
-#### Additions
-* Added 1.15 support (1.14 and 1.15 are both supported)
-* Added custom model support to Slimefun Guide and some Recipe Types
-* Added Nether Gold Pan
-* Added Iron Nuggets to Gold Pan drops
-* Added CS-CoreLib version to the guide info
-* Added AndroidMineEvent
-* Added Electric Press
-* Added Soulbound Trident
-* Added "Andesite, Granite and Diorite to Gravel" recipes to the Grinder
-* Added "nuggets to ingots and ingots to blocks" recipes to the Electric Press
-* Added Salt to the GEO - Miner
-* Added Magnesium Salt
-* Added Magnesium-powered Generator
-* Added "Gravel to Sand" recipe to the Grinder
-* Added config option for circuit board drops
-* Added player option to toggle research fireworks in the guide settings
-* Added Kelp Cookies
-* Added support for multiple recipes on vanilla items
-* Added a "Craft last" button to the Automated Crafting Chamber
-* Added more ore-doubling Recipes to the Ore Crusher
-* Added Addons to the guide settings
-
-#### Changes
-* Revamped Guide Settings menu
-* Changed some Category icons
-* Changed Grappling Hook recipe
-* Searching the guide now shows the Category of the item
-* Contributors now also show their minecraft username (if possible)
-* Changed teleporter sounds
-* Electric Gold Pan now also supports Nether Gold Pan drops
-* More performance improvements
-* Improved Cargo performance
-* Removed Nether Drill
-* Tweaked Enhanced Furnace Recipes
-* Changed tooltips for Radiation
-* Oil Pump now shows its "Bucket -> Oil" recipe
-
-#### Fixes
-* Fixed Research Titles
-* Fixed #1264
-* Fixed #1261
-* Fixed #1266
-* Fixed #1272
-* Fixed #1273
-* Fixed christmas items
-* Fixed Multi Tools
-* Fixed credits not showing all contributors
-* Fixed exception when viewing the second page of the credits
-* Fixed #1269
-* Fixed #1276
-* Fixed GEO-Miner dupes
-* Fixed Output Chest not working
-* Fixed #1281
-* Fixed #1280
-* Fixed a lot of issues with Crucibles
-* Fixed Grind Stone dupes
-* Fixed #1316
-* Fixed performance issues with Oil Pumps
-* Fixed #1318
-* Fixed #1298
-* Fixed #1325
-* Fixed #1295
-* Fixed MultiBlocks not accepting different fence types
-* Fixed #1337
-* Fixed Applie Pie ID mismatch
-* Fixed #1344
-* Fixed #1349
-* Fixed #1332
-* Fixed #1356 and maybe other concurrency issues
-* Fixed Ore Crusher's missing recipes
-* Fixed #1354
-
-## Release Candidate 3 (21 Nov 2019)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#3
-
-#### Additions
-* Smeltery now shows some recipes in the guide
-* Added Sweet Berry Juice
-* MultiBlocks that require fences will now accept all types of wooden fences
-* Added craftable Totems of Undying
-* Added back some wiki-pages to the guide
-* Added support for all new minecraft recipes to correctly display in the guide
-* Added support for custom model data for items
-* Added Output Chest support to the Table Saw
-* Added Output Chest support to the Automated Panning Machine
-* Added Jerky recipes to the Auto-Drier
-* Added AutoDisenchantEvent
-* Added "Flint to Cobblestone" Recipe to the Compressor
-
-
-#### Changes
-* Changed Ignition Chamber Recipe
-* /sf cheat no longer allows you to spawn in MultiBlocks
-* Removed Heavy Armor
-* Massive performance improvements with a new item-id system
-* Huge performance improvements with skippable tickers
-* Changed Elytra Scale Recipe
-* Revamped Reactor Access Port
-* Performance improvements for multi tools
-* Performance improvements for armor
-* Performance improvements for the Slimefun Guide
-
-#### Fixes
-* Fixed Stone Chunk -> Cobblestone Recipe not working
-* Fixed #1145
-* Fixed #1157
-* Fixed #1180
-* Fixed Backpacks not working
-* Fixed /sf cheat not showing locked categories
-* Fixed #1200
-* Fixed #1196
-* Fixed #1153
-* Fixed some food items
-* Fixed multi tools not working
-* Fixed #1202
-* Fixed #1211
-* Fixed #1219
-* Fixed #1226
-* Fixed #1224
-* Fixed repair-cost getting wiped after disenchanting
-* Fixed GPS transmitters transmitting wrong locations
-* Fixed Ancient Altar allowing you to craft locked items
-
-## Release Candidate 2 (29 Sep 2019)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#2
-
-#### Additions
-* Added GEO - Miner
-* Added more bStats Charts
-
-#### Changes
-* Reworked MultiBlocks
-* Removed the Saw Mill
-
-### Fixes
-* Fixed Basic Machines not showing all recipes
-* Fixed #1129
-* Fixed #1130
-* Fixed Auto-Updater for stable builds
-
-## Release Candidate 1 (26 Sep 2019)
-https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/#1
-
-* First "stable" release since over a year. Stable builds will NOT receive support for bug reports since they are technically outdated. 
+# Changelog
+
+Release history of **SlimefunCore4**, the unofficial fork. Upstream Slimefun4's own
+changelog is not carried here â€” for history before the fork point see
+[SlimeCore-MC/Slimefun4Core](https://github.com/SlimeCore-MC/Slimefun4Core/blob/master/CHANGELOG.md).
+
+Versions are identified by the four-digit build number embedded in the jar name
+(`SlimefunCore4-<build>.jar`), generated from `.mvn/build-number.properties` as
+`YYNN` â€” the build year followed by a per-year counter.
+
+Entries before build 2834 are reconstructed from the repository's commit history and
+build metadata; no changelog was maintained at the time, so they are summaries rather
+than exhaustive lists.
+
+## Build 2879 — 2026-09-24
+
+Branch `update/paper-26.0.x`. Strengthens the mid-apply rollback added in 2878 so it can never itself
+fail; no behaviour change for a successful restore.
+
+### Changed
+
+- **Rename-based transactional storage-restore apply.** `applyPendingStorageRestore` no longer copies
+  a full pre-apply snapshot. Instead it renames every live block section aside onto the same filesystem
+  as the data root (a cheap rename, no extra disk), unpacks the staged archive into the now-empty root,
+  and on any failure deletes the half-written sections and renames the originals back. Because the
+  rollback is rename-only it cannot fail for want of disk, so a mid-apply failure (e.g. disk full during
+  the per-section replace) can never leave a half-applied block tree. If a move-back still fails, the
+  untouched original is preserved in the scratch directory and its exact path is logged for manual
+  recovery. Replaces the snapshot-zip rollback from 2878.
+
+## Build 2878 — 2026-09-24
+
+Branch `update/paper-26.0.x`. Hardening from a review of builds 2875–2876; no behaviour change for a
+successful restore or a healthy schedule.
+
+### Changed
+
+- **Automatic rollback when a staged storage restore fails mid-apply.** `applyPendingStorageRestore`
+  now snapshots the current block tree before the destructive per-section replace and, if the apply
+  throws partway (e.g. disk full after some sections are replaced), restores that snapshot instead of
+  leaving a half-applied tree. The staging directory is also cleaned up on the failure path, so a
+  failed apply no longer orphans `storage-restore-pending/storage.zip`.
+- **Lag-proof fixed-time scheduling.** `DailyBackupSchedule` fires on a `(lastCheck, now]` window
+  instead of an exact-minute match, so a tick-driven poll stretched by low TPS can no longer skip a
+  scheduled UTC time. A large forward clock jump is clamped so it fires once, not once per missed day.
+- The storage-engine task fields are now `volatile` for clean cross-thread visibility between the
+  async schedulers and shutdown.
+
+## Build 2876 — 2026-09-24
+
+Branch `update/paper-26.0.x`. Lets admins schedule automatic checkpoints and world backups at fixed
+UTC clock times instead of only a fixed hour interval.
+
+### Added
+
+- **Fixed-time schedules (`times`) for checkpoints and world backups.** A new `times` list under both
+  `checkpoint:` and `world-backup:` in `database.yml` takes `"HH:mm"` entries in **UTC**. When the list
+  is non-empty it replaces `interval-hours`: a backup fires as each listed time comes round — e.g.
+  `["00:00", "06:00", "12:00", "18:00"]` runs four times a day. An empty list falls back to
+  `interval-hours` (unchanged behaviour). Times are polled once a minute and each configured minute
+  fires at most once. UTC is used throughout so a server's local zone or DST never shifts the schedule.
+- The startup storage banner now shows the active schedule as either `every Nh` or `at HH:mm, … UTC`.
+
+### Notes
+
+- Retention is unchanged: set `checkpoint.max-checkpoints` (checkpoints) or `world-backup.keep` (worlds)
+  to the number to keep — e.g. `2`. A new backup is always written and verified before the oldest is
+  pruned.
+
+
+
+Branch `update/paper-26.0.x`. Fixes a critical defect in the checkpoint **storage** restore: a restore
+reported success and asked for a restart, but after the restart the restored block data was gone and the
+current data remained — the restore effectively did nothing.
+
+### Fixed
+
+- **Checkpoint storage restore is now applied on startup instead of live.** The storage half was
+  previously unpacked over `data-storage/Slimefun` while the server was running. Slimefun holds all
+  block data in memory and re-saves it on shutdown (`onDisable` → `BlockStorage.saveAndRemove`), so the
+  very restart the restore asked for overwrote the just-restored files with the current in-memory
+  state. The restore now **stages** the verified archive into `<dataFolder>/storage-restore-pending/`
+  with a marker and defers the write to `CheckpointService.applyPendingStorageRestore(...)`, called
+  from `Slimefun.onLoad()` before Slimefun loads block data into memory — the same safe pattern the
+  world backup already uses. This is the one point where overwriting the block tree cannot be clobbered
+  by a live save. A restart is required to apply a storage restore (as the command already instructed).
+- **Failed combined restores no longer partially apply.** When a `both`-scope restore stages the
+  storage half and the database half then fails, the staged storage restore is discarded so it does not
+  apply on the next startup, and the database half is rolled back on its own.
+
+
+
+Branch `update/paper-26.0.x`. Adds an optional **world backup** pool to the checkpoint system, so the
+actual Minecraft world folders (overworld, nether, end) can be archived and restored through the same
+`/sf checkpoint` command. This is a separate, opt-in pool with its own retention and directory — world
+data is never mixed into a checkpoint, so a multi-gigabyte world archive can never bloat the tight
+all-or-nothing checkpoint verify. Default **off**: no behaviour changes until an admin enables it.
+
+### Added
+
+- **World backups (`/sf checkpoint worlds`).** A parallel snapshot pool under
+  `<checkpoint directory>/worlds/world-NNN/`, each holding one `worlds.zip` plus a `metadata.json`
+  (checksum, per-world file counts, capture versions). Capture saves each target world on the main
+  thread, then zips the region files off-thread; volatile lock files (`session.lock`, `*.lock`) are
+  excluded so a restored world never carries a stale lock. Sub-commands: `worlds` / `worlds list`,
+  `worlds create` (admin), `worlds info <id>`, and `worlds restore <id> confirm` (console-only).
+- **Safe world restore.** Restore never touches a loaded world: it verifies the archive's checksum,
+  refuses to run while any players are online, unpacks the files (zip-slip guarded) into a fixed
+  `<dataFolder>/world-restore-pending/` staging directory and writes a marker. The staged worlds are
+  applied on the next startup in `Slimefun.onLoad()` — before the server loads its worlds — the one
+  point where overwriting world files is safe. A restart is required to apply a world restore.
+- **`world-backup` block in `database.yml`.** `enabled`/`automatic` (both default false),
+  `interval-hours` (default 6 — four times per day), `keep` (own retention, default 3), and `worlds`
+  (empty = auto-detect the primary world and its `_nether` / `_the_end` companions).
+
+
+
+Branch `update/paper-26.0.x`. A performance and stability pass driven by spark profiles from a busy
+production server (cargo networks and androids ticking heavily, heap under pressure), plus a crash fix
+for servers upgrading from an older Slimefun with an existing `sounds.yml`. Every performance change
+below does strictly less work for an identical result — no cargo/android behaviour was altered.
+
+### Fixed
+
+- **Guide page-turn (and any other) sound no longer crashes on newer server versions.** A `sounds.yml`
+  written by an older Slimefun stored the Bukkit `Sound` **enum name** (e.g. `ITEM_BOOK_PAGE_TURN`)
+  instead of a namespaced key. Because `setDefaultValue` never overwrites an existing value, that
+  legacy string survived every restart and was handed straight to `playSound(Location, String, ...)`,
+  which on MC 26.x rejects uppercase/underscore ids and threw an `IdentifierException` on every guide
+  page turn (during `PlayerRightClickEvent`). `SoundService` now validates each id at load time and
+  translates a legacy enum name back to its registry key (`ITEM_BOOK_PAGE_TURN` → `item.book.page_turn`),
+  falling back to the built-in default if it cannot be resolved. Valid modern configs are unchanged.
+- **`deferredInventories` no longer retains entries for destroyed or moved blocks.** A stored
+  inventory whose `BlockMenuPreset` was not yet registered is parked in `deferredInventories` until a
+  later reconciliation. When such a block was broken it was removed from block storage but its
+  deferred entry lingered; the entry is now dropped on destroy and carried across on move.
+- **The automatic error reporter no longer floods Discord with addon-compatibility noise.** Linkage
+  errors (`NoClassDefFoundError` / `NoSuchMethodError` / `ClassNotFoundException` — an addon built
+  against a different Slimefun API) and plugin enable/disable lifecycle failures are now skipped:
+  they recur on every restart, are already printed to the console, and are not fixable in the core.
+  Genuine runtime `SEVERE` errors (ticking, storage, listeners) still report.
+- **A hard daily quota bounds the auto-reporter.** In addition to the existing 1-hour per-signature
+  dedup and 20-per-10-minute burst cap, a server now posts **at most 2 automatic reports per rolling
+  24 hours**. The counter is in-memory, so a restart opens a fresh day.
+
+### Performance
+
+- **`BlockStorage.getRawStorage()` no longer rebuilds a full world snapshot on every call.** It was
+  the single largest server-thread slice (~16%): each call walked every stored block, allocated a
+  fresh `Location` per entry, filled a `HashMap`, then wrapped it in a Guava `ImmutableMap`. A
+  per-tick caller (an addon) turned that into an allocation storm. The result is now cached and
+  rebuilt lazily only when the block set actually changes (a key is added, removed, or its `Config`
+  object is swapped); in-place edits to an existing block reuse the same snapshot. Verified against
+  all four mutation sites (load, `setBlockInfo`, delete, move).
+- **Cargo stops building a tile-entity snapshot for every vanilla container touch.** The shaded
+  PaperLib resolves to a "before snapshots" environment on this server, so `getBlockState(block,
+  false)` ignored the flag and always deep-copied the container (`CraftBlock.getState()` was ~5% of
+  the cargo tick). The three cargo hot paths now call `Block.getState(false)` directly for a
+  live-backed state and read only its `InventoryHolder` inventory — identical behaviour, no copy.
+- **Cargo filter tests no longer allocate a debug-argument array on every item.** `ItemFilter.test`
+  and `CargoUtils.insert` built a varargs `Object[]` for a debug message once per item per node per
+  tick, even with debug logging off. Both are now guarded behind a cheap `Debug.isEnabled()` check
+  (which mirrors exactly what the logger checks internally), removing the allocation while debug is
+  off and behaving identically when it is on.
+- **Cargo distribution reuses the `ItemStackWrapper` across output nodes.** `distributeItem` built a
+  fresh wrapper (which clones the `ItemMeta` — the expensive `CraftItemStack#getItemMeta`) for every
+  destination, even when an output rejected the item by filter or was full and left the stack
+  untouched. The wrapper is now rebuilt only when the stack's amount actually changes since it was last
+  wrapped, so it still reflects the current amount that presets like `HeatedPressureChamber` read during
+  slot selection — routing behaviour is byte-for-byte identical, with far fewer meta clones.
+
+### Investigated (no change)
+
+- **Cargo item routing (`matchesFilter` / `isItemSimilar`) and the Woodcutter/Programmable androids
+  (`chopTree` → `Level.setBlock`) are legitimate tick work, not leaks or waste.** The cargo filter is
+  already cached per node and does a cheap material pre-check before touching `ItemMeta`; the android
+  cost is real vanilla block placement. There is no safe code change that reduces these without
+  altering behaviour — they scale with node/android count and are tuned via `cargo-ticker-delay` and
+  server load, not code.
+- **A `distributeItem` wrapper hoist was prototyped and reverted.** Wrapping the moving item once
+  outside the output loop would have frozen its stack amount; some machine presets (e.g.
+  `HeatedPressureChamber`) read that amount through an amount-checking `isItemSimilar` during slot
+  selection, so the hoist could change slot selection after a partial insert. The safe amount-tracked
+  reuse above was implemented instead.
+
+## Build 2860 — 2026-09-19
+
+Branch `update/paper-26.0.x`. An in-game reporting pipeline that reaches Discord, automatic
+error detection, and an interactive addon manager inside the guide. Everything here is
+dev-branch work layered on top of build 2836.
+
+### Added
+
+- **`/sf report` — a guided, five-step in-game bug report that posts to Discord.** A player
+  runs the command, picks a category (`Bug`, `Addon Conflict`, `Griefing`, `Performance`,
+  `Other`), then answers in chat: what happened, an optional mclo.gs log link, an optional
+  Discord username so staff can reach them, and whether they are a player or the owner/staff.
+  The chat input is captured and never broadcast. A confirmation summary is shown before
+  anything is sent, and `cancel` at any step aborts. Backed by `ReportSession`,
+  `ReportSessionManager`, `ReportTicket`, `ReportCategory` and `DiagnosticsCollector`.
+- **Reports are delivered as a rich Discord embed** through the report webhook, in forum-thread
+  mode. The embed carries the reporter, Discord handle, role, description, the mclo.gs link, an
+  auto-uploaded server log, and a diagnostics block (server version, build and branch, Java
+  version, RAM, online players and the installed addon list). Colours, emoji field labels, a
+  timestamp and a footer are applied so a report is readable at a glance.
+- **Automatic error reporting — no manual action required.** `AutoErrorReporter` attaches a
+  `SEVERE`-level handler to the root logger. When Slimefun core (`io.github.thebusybiscuit.slimefun4`,
+  `me.mrCookieSlime`) or any installed addon logs an error carrying a stack trace, an automatic
+  report is built from server diagnostics and the throwable and posted to the same webhook under
+  the `Automatic Error Report` category. Addon origin is resolved live against
+  `Slimefun.getInstalledAddons()`, so newly loaded addons are covered.
+- **The auto-reporter cannot flood Discord or loop on itself.** Identical errors are de-duplicated
+  by a stable `exception|class#method:line` signature within a one-hour window, a global cap of 20
+  reports per ten-minute window bounds a crash loop, expired signatures are pruned, and a
+  thread-local re-entrancy guard means the reporter never reports its own failures. It never throws
+  out of a logging call.
+- **An interactive Addon Manager inside the guide settings.** Opening the guide → settings (gear)
+  now shows an **Addon Manager** tile in slot 49 for any player holding `addon.admin`,
+  `addon.update` or `addon.manage` (OPs included); players with none see blank background. It opens
+  a paged `ChestMenu` ([AddonGuideMenu](src/main/java/io/github/thebusybiscuit/slimefun4/core/guide/options/AddonGuideMenu.java))
+  mirroring `/sf addon`: each managed addon is listed with a state icon (loaded, jar present,
+  missing, incompatible) and status lore, a detail screen exposes Download / Check-for-update /
+  Enable / Disable / Remove plus the configured version "folders", and a **Sync from GitHub** button
+  runs `GitHubSyncService.syncNow()` on demand.
+- **A community Discord invite and `/sf report` reminder on join**, boxed and colourised, gated
+  behind `monitor.invite.broadcast-on-join`. Staff (op or `slimefun.monitor.notify`) get an extra
+  support line. This also fixes the previously dead config key — the sink now actually reads it.
+
+### Changed
+
+- **The report system contacts reporters by Discord. ** The session flow collects a Discord
+- **Project links repointed to the fork.** `Slimefun/Slimefun4` references across the source,
+- **Console and in-game report notices are readable**, not raw object dumps: the console sink and
+  the in-game announce sink render a report as `id [category] from name` rather than a `toString()`.
+
+
+### Fixed
+
+  logging that rendered as `âœ¦`-style garbage were corrected or stripped; log lines no longer emit
+  broken glyphs. (The historical CHANGELOG entries below still carry the old mojibake and are a
+  separate cleanup.)
+- **Literal `\n` in the Discord addons field.** The installed-addon list in the report embed
+  interpolated an escaped newline that showed up verbatim; it now uses a real line break per addon.
+
+### Security notes
+
+- The Addon Manager GUI adds **no new privileges**. Every action button re-checks the same
+  `addon.*` node the `/sf addon` command enforces, at click time, so a stale open menu cannot
+  escalate. It introduces no new remote code path — it only calls the already-shipped
+  `AddonService` operations and `GitHubSyncService.syncNow()`.
+- Addon cloud-sync and the Modrinth updater still fetch and stage jars without signature
+  verification; that pre-existing gap is unchanged by this build.
+
+### Known issues
+
+- **Report and auto-report delivery is unverified end-to-end.** The webhook post is fire-and-forget
+  (`sendAsync` with a discarded response body), so a failed delivery is not surfaced beyond a warning
+  log; success is not confirmed against Discord.
+- The report webhook URL and Discord invite are hardcoded in `ReportSessionManager`; only the
+  report webhook is overridable via `monitor.discord.report-webhook-url`.
+
+## Build 2836 | 2026-09-06
+
+Branch `update/paper-26.0.x`. Checkpoints: one command that captures, verifies and restores the
+whole Slimefun state as a single coherent unit.
+
+### Added
+
+- **`/sf checkpoint` â€” a checkpoint is one complete Slimefun backup state.** It holds two
+  independent halves under one `checkpoint-NNN` directory and they are always created,
+  verified, kept and restored together:
+
+  ```
+  plugins/Slimefun/slimefun-checkpoints/
+      checkpoint-001/
+          storage/storage.zip
+          database/database-backup.zip
+          metadata.json
+  ```
+
+  The storage half is a byte-exact ZIP of the block and machine sections under
+  `data-storage/Slimefun`; the database half is database-owned player data only. **Neither half
+  ever contains Minecraft world data** â€” no `region/*.mca`, no `level.dat`, no `entities/`, no
+  `playerdata/`, no other plugin's files. The captured section list comes from the storage
+  implementation itself, not from a hand-written guess.
+  Full runbook: [docs/storage/checkpoints.md](docs/storage/checkpoints.md).
+- **Independent checkpoint restore scopes.** Console administrators can restore only the
+  file-based storage half with `restore storage <id>`, only player data with
+  `restore database <id>`, or both halves with `restore <id> confirm`. Every scope refuses while
+  players are online, verifies only its requested component, takes a scoped safety copy, and
+  rolls back only the component it changed. Checkpoint history remains untouched.
+- **Six forms:** `create`, `list`, `info <id>`, `status`, `restore <id>` (preview) and
+  `restore <id> confirm`. `<id>` accepts `3`, `003` or `checkpoint-003`. Two new permission
+  nodes in `plugin.yml`: `slimefun.command.checkpoint` for `list`, `info` and `status`, and
+  `slimefun.admin.checkpoint` for `create` and `restore`.
+- **Creation is all-or-nothing.** Dirty player profiles and block data are flushed first, both
+  halves are captured, `metadata.json` is written and then **re-parsed**, and every captured
+  half is checksum-verified. If any step fails the incomplete directory is deleted before the
+  command returns, so `list` can never show a half-valid state â€” and no old checkpoint is
+  deleted. A half may legitimately come back `SKIPPED` (an empty tree, a provider with no
+  player data); a `FAILED` half is fatal.
+- **Retention deletes the oldest last, never first.** On the eleventh checkpoint with
+  `max-checkpoints: 10`, the new one is written, checksummed and re-parsed *before* the oldest
+  is removed. One checkpoint is always kept whatever the limit says, and a deletion failure is
+  logged with the id instead of being swallowed.
+- **`restore` is console-only.** It replaces every Slimefun file and every database-owned
+  record at once, so a player is refused even with `slimefun.admin.checkpoint`, and it is not
+  reachable from a command block or the GUI. It also refuses to run while any player is online.
+  Ten ordered stages, each reported as `n/10`: locate, validate metadata, verify the storage
+  checksum, verify the database half, confirm the server state, take a safety copy of the
+  current state, restore storage, restore the database, re-read every block file, report.
+  There is no silent partial restore.
+- **Both halves go back together, or neither does.** A failure after the storage half was
+  written rolls both halves back from the safety copy under
+  `slimefun-checkpoints/safety/pre-restore-<timestamp>/`; if a rollback itself fails the report
+  names the copy so it can be restored by hand. `keep-safety-backups` defaults to `3`.
+- **Restoring an old checkpoint never deletes newer ones.** Only the active Slimefun data
+  changes; the report prints how many checkpoints are still on disk afterwards.
+- **`BackupFormat.PLAYER_FILES`** â€” a byte-exact ZIP of `Players` and `waypoints` only, the
+  database half of a checkpoint on Legacy YAML. It is the mirror image of `BLOCK_FILES`, so the
+  two halves of a checkpoint never overlap and a player restore cannot disturb block data.
+  `BackupMetadata` is unchanged and `fromName` was already lenient, so existing `.meta.json`
+  files still parse.
+- **The `checkpoint` block in `database.yml`**, eight keys: `enabled`, `max-checkpoints`,
+  `directory`, `automatic`, `interval-hours`, `only-when-changed`, `compress` and
+  `keep-safety-backups`. Documented in
+  [docs/configuration.md](docs/configuration.md).
+- **Change detection** marks the storage and database halves dirty and reports
+  `Storage changed / Database changed / Checkpoint required` through `/sf checkpoint status`
+  and the GUI. It never creates a checkpoint on its own.
+- **The checkpoint screens live inside the existing storage panel**, not in a second GUI:
+  `/sf storage gui` â†’ `Checkpoints`, with a paged browser, per-checkpoint detail, the change
+  status, one-click create and a `Checkpoints` page in the in-game guide. Restore is
+  deliberately absent from the GUI. The database password is never rendered.
+
+### Changed
+
+- `CheckpointService` reuses `StorageConsistencyChecker.scanBlockFiles(File)` as stage 9 of a
+  restore, so a damaged storage half is caught at restore time rather than surfacing later as
+  a missing machine. The scan is unconditional there and does not depend on
+  `storage.consistency-check-scan-blocks`, which governs the periodic checker.
+- `TestBlockBackupRetention.everyFormatIsADistinctBucket` now seeds `PLAYER_FILES` as well. It
+  asserts across `BackupFormat.values()`, so a new constant with no seeded backups failed the
+  test; retention itself was correct and is unchanged.
+- `docs/storage/storage-knowledge.md` gains `PLAYER_FILES` in the format table and a
+  checkpoint section contrasting backups with checkpoints; `docs/commands.md` gains the
+  `/sf checkpoint` tree and its two permission nodes.
+
+### Tests
+
+- Three new Bukkit-free JUnit 5 classes, 26 tests: `TestCheckpointMetadata` (14) on the
+  document that is the sole authority on restorability, `TestCheckpointLayout` (4) on the
+  on-disk shape against real temp files, and `TestPlayerFileBackup` (8) on the
+  storage-versus-database boundary. The storage suite is now 103 tests, all passing with
+  `TestLegacyBackend` excluded as the known MockBukkit-versus-Paper-26 casualty.
+
+### Known issues
+
+- **The storage half is only as fresh as the last flush.** Creation flushes dirty profiles and
+  block data first, but if the block flush fails the step list says so and the half may be
+  slightly older than the moment the command ran.
+- **A checkpoint roughly doubles the space its data occupies**, so ten of them are roughly
+  eleven-fold. Check free space before raising `max-checkpoints`.
+- **Backpack item contents pass through Bukkit's `ItemStack` serialization**, which this
+  repository's Bukkit-free test scope cannot exercise. Verify by hand after a restore.
+- **No cross-version guarantee.** Metadata records the Slimefun and server version a checkpoint
+  came from; restoring onto a different one is untested.
+
+## Build 2835 â€” 2026-09-04
+
+Branch `update/paper-26.0.x`. The storage migration layer, which existed as dead code, now
+works.
+
+### Added
+
+- **`/sf storage migrate` â€” data actually moves between providers.** Legacy YAML to any SQL
+  provider, any SQL provider to any other, and SQL back to Legacy YAML. Six forms:
+  `targets`, `check <target>`, `start <target> confirm [overwrite]`, `status` and
+  `apply <target>`. Reading needs `slimefun.command.storage`; everything that writes needs
+  `slimefun.admin.storage`. No new permission node and no `plugin.yml` change.
+  Full runbook: [docs/storage/migration-guide.md](docs/storage/migration-guide.md).
+- **A real run is refused unless the server is empty**, and the online count is read a
+  second time after the source has been read and archived, so a player who joins mid-run
+  stops the copy before the destination is ever opened. A dry run (`check`) is deliberately
+  allowed with players online â€” it opens no destination and writes nothing â€” and the report
+  then carries a warning that its counts are a live reading.
+- **The migration never routes through `PlayerData` or `loadPlayerData`.** Both backends
+  silently drop an unknown research id, a backpack size outside `{9,18,27,36,45,54}`, an
+  item that will not deserialize and a waypoint in an unloaded world while loading. A
+  migration built on that would have shrunk player data and still verified, because both
+  sides drop the same rows. Records are read and written directly as raw ints, raw bytes and
+  raw world names by `PlayerRecords`, `SqlRecordStore`, `LegacyRecordStore` and
+  `SqlTableCopier`. `SQL â†’ SQL` copies `item_data` byte-for-byte with no string round trip.
+- **Two verified backups before the first write:** the source's player data and a
+  `BLOCK_FILES` block archive, both checksum-verified, both taken with `keepLast = 0` so
+  retention can never prune them. A failed backup aborts the migration.
+- **`BackupFormat.BLOCK_FILES`** â€” block data is finally backed up on SQL providers, where
+  `createBackup` previously only ever chose `SQL_JSON` and left `data-storage/Slimefun`
+  untouched. Available on demand as `/sf storage backup blocks`, listable, verifiable,
+  restorable and deletable through the existing `backup` subcommands and the backup browser.
+  `BackupMetadata` is unchanged and `fromName` was already lenient, so every existing
+  `.meta.json` still parses.
+- **A block restore is now checked.** After extraction every block file is re-read, and the
+  restore reports failure with the offending paths if any of them no longer parses.
+- `PlayerIndex` â€” player enumeration over both backend kinds, the primitive whose absence
+  was the actual reason `StorageMigrator` had no caller. A legacy filename that is not a
+  UUID is reported, never silently ignored.
+- `MigrationPreconditions`, `MigrationTargets`, `MigrationReport` and `MigrationException`,
+  the last carrying uuid, section and column or path so a failure names the record it broke
+  on rather than printing a bare stack trace.
+- `storage.consistency-check-scan-blocks` in `config.yml`, the key
+  `StorageConsistencyChecker` already read but which was never documented or shipped.
+- A `Migrate storage` tile on `/sf storage gui` opening a migration screen, and a
+  `Moving your data` page in the in-game guide. The database password is never rendered;
+  credentials show as presence only.
+
+### Changed
+
+- `SqlDialect` extracted from `DatabaseRestoreService`'s private helpers â€” identifier
+  quoting, typed value binding and the column classifiers â€” so restore and migration cannot
+  drift apart. Behaviour is unchanged; the restore path delegates.
+- `AtomicFiles` extracted from `LegacyStorage.atomicSave` for the same reason. Semantics are
+  unchanged; `LegacyStorage` delegates.
+- `StorageConsistencyChecker` no longer starts a repeating task as a constructor side
+  effect. `startScheduler()` is an explicit call, and the block parse check is exposed as
+  the static `scanBlockFiles(File)` used after a migration and after a block restore.
+- `docs/configuration.md` no longer states that switching `provider` has no migration path.
+
+### Removed
+
+- `StorageFactory`. It was superseded, not merely unused: it read the deprecated
+  `storage.backend` key that `StorageEngineService` already migrates away from, knew only
+  legacy and SQLite, and logged *"MySQL storage is not implemented yet"*. Reviving it would
+  have put a second, wrong provider factory next to `StorageProviderFactory`. It had no
+  callers.
+
+### Known issues
+
+- Block data is still not migrated, because there is nothing to migrate: `BlockStorage` was
+  never moved to the storage layer and lives in YAML under `data-storage/Slimefun` on every
+  provider, MySQL included. Migration flushes and archives it, never converts it. Owners
+  who expect switching to MySQL to relocate their machines are told so by the command, the
+  GUI and the guide.
+- `/sf storage migrate targets` reports configuration readiness from `database.yml`, not
+  reachability. Opening a provider commits DDL, so nothing is opened until a real run.
+- The legacy item leg â€” YAML `ItemStack` to `serializeAsBytes()` and back â€” needs Bukkit and
+  cannot be covered by this repository's Bukkit-free test scope. It is verified by hand;
+  see step 4 of the guide's verification section.
+
+## Build 2834 â€” 2026-09-04
+
+Branch `update/paper-26.0.x`. Storage and backup repair, plus a control panel.
+
+### Fixed
+
+- **Backups no longer report success after failing.** On the shipped default
+  `provider: legacy` the backup task could not obtain a JDBC connection, swallowed the
+  failure, wrote an empty `{"tables": {}}` dump, checksummed it, and logged success.
+  The failure now propagates and no file is written.
+- **Retention no longer destroys real backups.** The purge pass previously ran even after
+  a failed or empty backup and deleted a genuine archive to stay under `keep-last`. It now
+  skips a failed or empty run, orders by recorded creation time rather than file
+  modification time, ignores unparseable metadata, and never reduces the store to zero
+  valid backups.
+- **Legacy YAML can be backed up at all.** New byte-exact ZIP archive of the live data
+  tree covering `Players`, `waypoints`, `stored-blocks`, `stored-inventories`,
+  `universal-inventories` and `stored-chunks/chunks.sfc` â€” player data and block data.
+- **Restore no longer corrupts what it restores.** Identifier quoting is now dialect
+  correct (backticks on MySQL and MariaDB, where the previous double quotes were parsed as
+  string literals); values are bound by declared column type, so the `item_data` blob
+  holding serialized backpack items is written with `setBytes` instead of `setString`; the
+  missing JSON unescape is implemented, so names and lore containing `"` or a newline
+  survive; the brace and bracket scanners are string-literal aware, so a `}` or `]` inside
+  a value no longer truncates the parse; the column list is built from the union of all
+  rows rather than the first row alone; and the cache is invalidated after a successful
+  commit.
+- **MariaDB no longer reports a false integrity failure on every boot.** The reflective
+  lookup used `getDeclaredMethod("getConnection")`, which misses a method inherited from
+  `MySQLProvider`.
+- **Schema verification actually runs.** `SchemaManager.verify` was fully implemented but
+  unreachable; the old code path reflected for a method it never called and then set
+  `integrityPassed = true` unconditionally.
+
+- **`EXPLOSIVE_BOW` threw on every arrow hit** on Paper 26.2.
+  `CraftDamageSourceBuilder.build()` now rejects a causing entity with no direct entity.
+  The arrow is the direct entity and its shooter the causing entity.
+- **`SEISMIC_AXE` carried the same defect**, latent because the damage source was only
+  built when the axe was swung. Fixed alongside it.
+- **`Remote addonmanager.yml sync failed: null`.** The log line interpolated
+  `getMessage()`, which is null for the exception being thrown. It now reports the
+  exception class, the root cause and the HTTP status where there is one.
+- The crash reporter linked to upstream's issue tracker for fork-only faults.
+- Four `sendMessage` calls in the storage command ran off the main thread.
+
+### Added
+
+- `/sf storage gui` â€” a 54-slot control panel: live provider health, a paged backup
+  browser with inspect, verify, restore and delete, a database setup wizard, and an
+  in-game guide. Opening needs `slimefun.command.storage`; every destructive button needs
+  `slimefun.admin.storage`, re-checked at click time. No new permission node or
+  `plugin.yml` change was required.
+- `StorageProvider.supportsSql()` and `borrowConnection()`, replacing three copy-pasted
+  reflective walks of a private `dataSource` field.
+- `BackupFormat` (`SQL_JSON`, `LEGACY_FILES`), recorded in `BackupMetadata` so a backup can
+  never be restored into the wrong kind of backend. `BackupMetadata` keeps a 7-argument
+  constructor defaulting to `SQL_JSON`, so metadata already written to disk still parses.
+- `StorageCache.invalidateAll()`, which also repairs `/sf storage cache clear` â€” it
+  previously only evicted players who happened to be online.
+- Zip-slip rejection and a staged extract on the legacy restore path, plus an automatic
+  pre-restore snapshot.
+- First tests for the storage layer: 18 JUnit 5 tests under
+  `src/test/java/.../storage/backup/`, covering the failed-backup-does-not-purge sequence,
+  legacy archive completeness, a real SQLite round trip with a blob and a value containing
+  quotes, newlines and braces, zip-slip rejection, and retention behaviour. All are
+  Bukkit-free, because the test scope still resolves a 1.21 MockBukkit against a 26.x API.
+
+### Changed
+
+- The startup banner tells the truth on file storage: `Tables: n/a (file storage)` and
+  `Integrity: Not applicable (Legacy YAML)` instead of `Passed` beside `0 verified`.
+- The scheduled backup task records its real outcome and stops logging
+  `Automatic backup completed successfully.` when it did not succeed.
+- Documentation rewritten to match the 26.x target: `README`, this changelog,
+  `docs/adr/0001-storage-layer.md`, `docs/sop/update.md`, and new command, configuration
+  and storage references under `docs/`.
+
+### Known issues
+
+- `pool.leak-detection-threshold: 0` is documented as "disabled" but is read through a
+  getter that maps `<= 0` to the default, leaving the guard dead on every SQL backend.
+- `StorageMigrator`, `StorageConsistencyChecker` and `StorageFactory` are never invoked.
+  (Resolved in build 2835: the migrator is live, the checker's block scan is used by the
+  migration and restore paths, and `StorageFactory` was removed.)
+- Backpack persistence is still untested through the legacy backend.
+- The POM targets Paper 26.1.2 while 26.2 servers are in use.
+
+## Build 2800 series â€” 2026-06-19
+
+The 26.x port. Branch `update/paper-26.0.x` was cut from `main` on this date.
+
+- `paper.version` raised to 26.1.2, `plugin.yml` `api-version` to `26.1`, Java release to 25.
+- `MinecraftVersion.MINECRAFT_26` added for Minecraft's year-based `YY.D[.H]` scheme,
+  deliberately matching any drop under year 26.
+- Addon manager caching improved.
+- Builds for 1.21.x remain on their own branch.
+
+## 2026-05-19 â€” SlimefunCore4 improvements
+
+General improvements carried into the 2800 line.
+
+## 2026-05-05 â€” Bug fixes and new features
+
+Includes the multi-backend storage engine, the addon manager and the Cargo Grid Monitor.
+None of this work was recorded in a changelog at the time; the entry is reconstructed from
+commit messages.
+
+## 2026-04-28 â€” Storage layer ADR
+
+`docs/adr/0001-storage-layer.md` carried over from upstream.
+
+## 2026-04-07 â€” Unofficial updater
+
+- Working update check for unofficial builds, with improved startup update logging.
+- Crucible and Composter guide recipes fixed for Paper and Purpur 1.21.1 through 1.21.11
+  on Java 21.
+
+## Build 2605 â€” 2026-04-06
+
+- Jar names switched to the four-digit `SlimefunCore4-YYNN.jar` build code, auto-incremented
+  and persisted per year.
+- bStats kept embedded and correctly relocated in the shaded jar.
+- Unofficial builds began checking the GitHub release page and logging a console notice
+  when a newer release exists. This later became the Modrinth check on project
+  `slimefuncore`.
+- Duplicate `dough-api` dependency declaration removed from `pom.xml`.
+
+## 2026-04-04 â€” Initial fork
+
+Forked from Slimefun4 at a 1.19.4 base and brought up to a Purpur and Paper 1.21.11 build
+on Java 21, published as `4.0-UNOFFICIAL`.
+
+

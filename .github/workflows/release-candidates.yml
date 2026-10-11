@@ -21,19 +21,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        ref: 'stable'
-
-    - name: Merge latest commits into 'stable'
-      uses: devmasx/merge-branch@1.4.0
-      with:
-        type: now
-        from_branch: 'master'
-        target_branch: 'stable'
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        ref: 'main'
 
     - name: Get the latest commit sha
       id: latest
-      run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      run: echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
     - name: Create Release
       id: create_release
@@ -46,20 +38,20 @@ jobs:
         draft: false
         prerelease: false
         body: |
-          ## 💾  Download link
+          ## ðŸ’¾  Download link
           This release candidate of Slimefun4 can be downloaded here:
           https://blob.build/project/Slimefun4/RC
 
-          ### ❓ How to install Slimefun
+          ### â“ How to install Slimefun
           Simply drag & drop the Slimefun4 jar file into the `/plugins/` directory of your server.
-          If you need any help installing Slimefun, feel free to check out our wiki article on [How to install Slimefun](https://github.com/Slimefun/Slimefun4/wiki/Installing-Slimefun).
+          If you need any help installing Slimefun, feel free to check out our wiki article on [How to install Slimefun](https://github.com/SlimeCore-MC/Slimefun4Core/wiki/Installing-Slimefun).
 
-          ## 📝 Change log
+          ## ðŸ“ Change log
           You can find a short summary of all the changes that are included in this release right here:
-          https://github.com/Slimefun/Slimefun4/blob/master/CHANGELOG.md#release-candidate-${{ github.event.inputs.number }}-${{ github.event.inputs.release_date }}
+          https://github.com/SlimeCore-MC/Slimefun4Core/blob/main/CHANGELOG.md#release-candidate-${{ github.event.inputs.number }}-${{ github.event.inputs.release_date }}
 
-          ## 📦  Maven dependency reference
-          If you want to develop an addon for Slimefun ([Developer Reference](https://github.com/Slimefun/Slimefun4/wiki/Developer-Guide)), then you can build your project against this specific version of Slimefun using the following `pom.xml` dependency:
+          ## ðŸ“¦  Maven dependency reference
+          If you want to develop an addon for Slimefun ([Developer Reference](https://github.com/SlimeCore-MC/Slimefun4Core/wiki/Developer-Guide)), then you can build your project against this specific version of Slimefun using the following `pom.xml` dependency:
           ```xml
           <repositories>
             <repository>

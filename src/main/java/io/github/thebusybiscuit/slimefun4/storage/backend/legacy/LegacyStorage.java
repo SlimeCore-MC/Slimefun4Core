@@ -7,6 +7,7 @@ import io.github.thebusybiscuit.slimefun4.api.researches.Research;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.storage.Storage;
 import io.github.thebusybiscuit.slimefun4.storage.data.PlayerData;
+import io.github.thebusybiscuit.slimefun4.storage.util.AtomicFiles;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,10 +18,6 @@ import com.google.common.annotations.Beta;
 import javax.annotation.Nonnull;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.AtomicMoveNotSupportedException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,6 +42,7 @@ public class LegacyStorage implements Storage {
 
         // Load research
         Set<Research> researches = new HashSet<>();
+        Set<Integer> unknownResearchIds = new HashSet<>();
 
         Map<Integer, List<Research>> researchesById = new HashMap<>();
         for (Research research : Slimefun.getRegistry().getResearches()) {
@@ -58,7 +56,13 @@ public class LegacyStorage implements Storage {
                     List<Research> matchedResearches = researchesById.get(researchId);
 
                     if (matchedResearches == null || matchedResearches.isEmpty()) {
-                        Slimefun.logger().log(Level.WARNING, "Skipping unknown Research ID {0} for Player \"{1}\"", new Object[] { researchId, uuid });
+                        /*
+                         * The owning addon may not have registered its researches yet (late/async
+                         * addon load). Preserve the raw ID so it is re-written on save instead of
+                         * being silently discarded, and so it resolves on a later restart.
+                         */
+                        unknownResearchIds.add(researchId);
+                        Slimefun.logger().log(Level.WARNING, "Preserving unresolved Research ID {0} for Player \"{1}\" (owning addon may not be loaded yet)", new Object[] { researchId, uuid });
                         continue;
                     }
 
@@ -121,7 +125,7 @@ public class LegacyStorage implements Storage {
         long end = System.nanoTime();
         Slimefun.getAnalyticsService().recordPlayerProfileDataTime("legacy", true, end - start);
 
-        return new PlayerData(researches, backpacks, waypoints);
+        return new PlayerData(researches, unknownResearchIds, backpacks, waypoints);
     }
 
     // The current design of saving all at once isn't great, this will be refined.
@@ -150,6 +154,14 @@ public class LegacyStorage implements Storage {
             for (Research research : data.getResearches()) {
                 if (savedResearchIds.add(research.getID())) {
                     playerFile.setValue("researches." + research.getID(), true);
+                }
+            }
+
+            // Re-write research IDs that could not be resolved at load time so an addon
+            // that was temporarily missing does not cause permanent research loss.
+            for (int unknownId : data.getUnknownResearchIds()) {
+                if (savedResearchIds.add(unknownId)) {
+                    playerFile.setValue("researches." + unknownId, true);
                 }
             }
         }
@@ -199,33 +211,13 @@ public class LegacyStorage implements Storage {
 
     private boolean atomicSave(@Nonnull Config config) {
         File targetFile = config.getFile();
-        File parent = targetFile.getParentFile();
-        File tmpFile = new File(parent, targetFile.getName() + ".tmp");
 
         try {
-            if (parent != null) {
-                Files.createDirectories(parent.toPath());
-            }
-
-            config.save(tmpFile);
-            moveReplace(tmpFile, targetFile);
+            AtomicFiles.saveConfig(config);
             return true;
         } catch (Exception x) {
-            try {
-                Files.deleteIfExists(tmpFile.toPath());
-            } catch (IOException ignored) {
-            }
-
             Slimefun.logger().log(Level.SEVERE, x, () -> "Could not atomically save player storage file \"" + targetFile.getName() + '"');
             return false;
-        }
-    }
-
-    private void moveReplace(@Nonnull File source, @Nonnull File target) throws IOException {
-        try {
-            Files.move(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-        } catch (AtomicMoveNotSupportedException ignored) {
-            Files.move(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
     }
 }

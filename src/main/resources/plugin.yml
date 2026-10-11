@@ -104,3 +104,18 @@ permissions:
   slimefun.admin.storage:
     description: Allows full storage engine management (backup, restore, repair, migrate, reload)
     default: op
+  slimefun.command.checkpoint:
+    description: Allows viewing the checkpoint list, checkpoint details and change status
+    default: op
+  slimefun.admin.checkpoint:
+    description: Allows creating checkpoints, and restoring them from the console only
+    default: op
+  slimefun.monitor.notify:
+    description: Receive in-game notifications when core updates or addon changes are detected
+    default: op
+  slimefun.report.use:
+    description: Allows players to submit reports via /sf report
+    default: true
+  slimefun.report.view:
+    description: Allows viewing all submitted reports
+    default: op

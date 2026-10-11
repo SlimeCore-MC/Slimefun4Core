@@ -1,11 +1,15 @@
-# ADR
+# Architecture Decision Records (ADRs)
 
-An ADR (Architecture Decision Record) is a document describing large changes, why we made them, etc.
+We use ADRs to document major architectural changes in Slimefun—what changed, why we did it, and how it works. 
 
-## Making a new ADR
+If you're making a significant structural change to the plugin, write an ADR. It saves future contributors (and future you) from having to guess why a system was built a certain way.
 
-If you're making a large change to Slimefun, we recommend creating an ADR
-in order to document why this is being made and how it works for future contributors.
+## Writing a new ADR
 
-Please follow the general format of the former ADRs or use a tool 
-such as [`adr-tools`](https://github.com/npryce/adr-tools) to generate a new document.
+Keep it simple, direct, and practical. 
+You can use the existing ADRs as a template or generate a new one using [`adr-tools`](https://github.com/npryce/adr-tools).
+
+Make sure to cover:
+- What the problem was.
+- What we decided to do about it.
+- How the new system actually works.

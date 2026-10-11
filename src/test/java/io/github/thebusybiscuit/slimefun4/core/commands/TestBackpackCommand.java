@@ -24,6 +24,7 @@ import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
 
+@SuppressWarnings("removal")
 class TestBackpackCommand {
 
     private static ServerMock server;

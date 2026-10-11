@@ -3,9 +3,7 @@ name: Publish build
 on:
   push:
     branches:
-      - master
-      - stable
-      - experimental
+      - main
 
 jobs:
   publish:
@@ -16,43 +14,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@v4.6.0
         with:
-          distribution: 'adopt'
-          java-version: '21'
+          distribution: 'temurin'
+          java-version: '25'
           java-package: jdk
           architecture: x64
 
       - name: Build with Maven
-        run: mvn clean package
+        run: mvn -B clean verify -DskipTests
+
+      - name: Locate the artifact
+        run: |
+          JAR_PATH=$(find target -maxdepth 1 -type f -name 'SlimefunCore4-*.jar' ! -name '*-sources.jar' | sort | head -n 1)
+          test -n "$JAR_PATH"
+          echo "JAR_PATH=$JAR_PATH" >> "$GITHUB_ENV"
 
       - name: Upload Dev build
         uses: WalshyDev/blob-builds/gh-action@ea9ecd9266c902c6627f884e657560d0fa6b61dd
-        if: github.ref == 'refs/heads/master'
         with:
           project: Slimefun4
           releaseChannel: Dev
           apiToken: ${{ secrets.BLOB_BUILDS_API_TOKEN }}
-          file: './target/Slimefun v4.9-UNOFFICIAL.jar'
-          releaseNotes: ${{ github.event.head_commit.message }}
-
-      - name: Upload RC build
-        uses: WalshyDev/blob-builds/gh-action@ea9ecd9266c902c6627f884e657560d0fa6b61dd
-        if: github.ref == 'refs/heads/stable'
-        with:
-          project: Slimefun4
-          releaseChannel: 'RC'
-          apiToken: ${{ secrets.BLOB_BUILDS_API_TOKEN }}
-          file: './target/Slimefun v4.9-UNOFFICIAL.jar'
-          releaseNotes: ${{ github.event.head_commit.message }}
-    
-      - name: Upload Experimental build
-        uses: WalshyDev/blob-builds/gh-action@ea9ecd9266c902c6627f884e657560d0fa6b61dd
-        if: github.ref == 'refs/heads/experimental'
-        with:
-          project: Slimefun4
-          releaseChannel: 'Experimental'
-          apiToken: ${{ secrets.BLOB_BUILDS_API_TOKEN }}
-          file: './target/Slimefun v4.9-UNOFFICIAL.jar'
+          file: ${{ env.JAR_PATH }}
           releaseNotes: ${{ github.event.head_commit.message }}

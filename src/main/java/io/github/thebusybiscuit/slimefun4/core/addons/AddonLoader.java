@@ -23,6 +23,8 @@ import org.bukkit.plugin.UnknownDependencyException;
 
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
+
 /**
  * Responsible for validating and loading managed addon jars.
  */
@@ -68,6 +70,7 @@ public final class AddonLoader {
 
     public void loadManagedAddons(@Nonnull Collection<AddonDefinition> definitions) {
         PluginManager pluginManager = plugin.getServer().getPluginManager();
+        boolean enabledAny = false;
 
         for (AddonDefinition definition : definitions) {
             if (!definition.enabled() || !definition.download()) {
@@ -92,10 +95,22 @@ public final class AddonLoader {
                 if (managedPlugin != null) {
                     pluginManager.enablePlugin(managedPlugin);
                     plugin.getLogger().info("Loaded managed Slimefun addon: " + managedPlugin.getName() + " v" + managedPlugin.getDescription().getVersion());
+                    enabledAny = true;
                 }
             } catch (UnknownDependencyException | InvalidPluginException | InvalidDescriptionException x) {
                 plugin.getLogger().log(Level.WARNING, "Failed to load managed addon \"" + definition.name() + "\"", x);
             }
+        }
+
+        /*
+         * An addon enabled at runtime registers its SlimefunItems/BlockMenuPresets/BlockTickers during
+         * its own onEnable (which enablePlugin() has just run synchronously). Re-run the reconciliation
+         * pass so any stored blocks/inventories that were unresolved until now get bound immediately,
+         * instead of waiting for a server restart. Scheduled 1 tick later to stay on the main thread
+         * and let any deferred addon registration settle.
+         */
+        if (enabledAny) {
+            Slimefun.runSync(BlockStorage::reconcileAllWorlds, 1L);
         }
     }
 

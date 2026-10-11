@@ -15,7 +15,7 @@
 
     <!-- Project Info -->
     <description>Slimefun is a Paper plugin that simulates a modpack-like atmosphere by adding over 500 new items and recipes to your Minecraft Server.</description>
-    <url>https://github.com/Slimefun/Slimefun4</url>
+    <url>https://github.com/SlimeCore-MC/Slimefun4Core</url>
 
     <properties>
         <!-- UTF-8 is our standard encoding for source files -->
@@ -26,15 +26,7 @@
         <!-- Loaded dynamically via properties-maven-plugin from .mvn/build-number.properties -->
 
         <!-- Target Java 25 -->
-        <!-- Java 25 LTS — required by Paper 26.x (class file v69).
-             Temurin 25.0.3 is installed at:
-             C:\Program Files\Eclipse Adoptium\jdk-25.0.3.9-hotspot
-             Set JAVA_HOME to that path before running mvn. -->
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
-        <!-- Run tests using java 25 -->
-        <maven.compiler.testSource>25</maven.compiler.testSource>
-        <maven.compiler.testTarget>25</maven.compiler.testTarget>
+        <maven.compiler.release>25</maven.compiler.release>
 
         <!-- Spigot properties -->
         <!-- The Minecraft drop we compile against. This controls:
@@ -59,14 +51,14 @@
     <issueManagement>
         <!-- Bug Tracker -->
         <system>GitHub Issues</system>
-        <url>https://github.com/Slimefun/Slimefun4/issues</url>
+        <url>https://github.com/SlimeCore-MC/Slimefun4Core/issues</url>
     </issueManagement>
 
     <licenses>
         <license>
             <!-- License -->
             <name>GNU General Public License v3.0</name>
-            <url>https://github.com/Slimefun/Slimefun4/blob/master/LICENSE</url>
+            <url>https://github.com/SlimeCore-MC/Slimefun4Core/blob/master/LICENSE</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -146,27 +138,41 @@
             </plugin>
 
             <plugin>
-                <!-- Compatibility: update the short YYNN build number before packaging. -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.5.0</version>
 
                 <executions>
                     <execution>
-                        <id>update-short-build-number</id>
+                        <id>prepare-short-build-number</id>
                         <phase>initialize</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>powershell</executable>
+                            <executable>java</executable>
                             <arguments>
-                                <argument>-NoProfile</argument>
-                                <argument>-ExecutionPolicy</argument>
-                                <argument>Bypass</argument>
-                                <argument>-File</argument>
-                                <argument>${project.basedir}/build-tools/update-build-number.ps1</argument>
+                                <argument>${project.basedir}/build-tools/BuildNumber.java</argument>
+                                <argument>prepare</argument>
                                 <argument>${project.basedir}/.mvn/build-number.properties</argument>
+                                <argument>${project.build.directory}/build-number-${maven.build.timestamp}.properties</argument>
+                                <argument>${maven.build.timestamp}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>commit-short-build-number</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>${project.basedir}/build-tools/BuildNumber.java</argument>
+                                <argument>commit</argument>
+                                <argument>${project.basedir}/.mvn/build-number.properties</argument>
+                                <argument>${project.build.directory}/build-number-${maven.build.timestamp}.properties</argument>
                                 <argument>${maven.build.timestamp}</argument>
                             </arguments>
                         </configuration>
@@ -189,7 +195,7 @@
                         </goals>
                         <configuration>
                             <files>
-                                <file>${project.basedir}/.mvn/build-number.properties</file>
+                                <file>${project.build.directory}/build-number-${maven.build.timestamp}.properties</file>
                             </files>
                         </configuration>
                     </execution>
@@ -235,7 +241,7 @@
                 <!-- Code Coverage Reports -->
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.12</version>
+                <version>0.8.14</version>
 
                 <executions>
                     <execution>
@@ -297,15 +303,30 @@
                         </relocation>
                     </relocations>
 
-                    <!-- Exclude unneeded metadata files from shaded dependencies -->
+                    <!-- Exclude signatures invalidated by shading and JPMS descriptors that
+                         cannot describe the merged, relocated class path plugin jar. -->
                     <filters>
                         <filter>
                             <artifact>*:*</artifact>
                             <excludes>
-                                <exclude>META-INF/*</exclude>
+                                <exclude>module-info.class</exclude>
+                                <exclude>META-INF/versions/**/module-info.class</exclude>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
                             </excludes>
                         </filter>
                     </filters>
+
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                            <resource>LICENSE</resource>
+                        </transformer>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                            <resource>META-INF/LICENSE.txt</resource>
+                        </transformer>
+                    </transformers>
                 </configuration>
 
                 <executions>
@@ -444,9 +465,9 @@
         <!-- Shaded packages -->
 
         <dependency>
-            <groupId>io.github.baked-libs</groupId>
+            <groupId>com.github.rutwok-labs.dough-core</groupId>
             <artifactId>dough-api</artifactId>
-            <version>1.3.12</version>
+            <version>1.3.16</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -466,6 +487,18 @@
             <artifactId>HikariCP</artifactId>
             <version>4.0.3</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.17</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.xerial</groupId>
@@ -475,12 +508,12 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- JDBC Drivers — bundled and shaded to avoid conflicts with server-provided drivers.
+        <!-- JDBC Drivers â€” bundled and shaded to avoid conflicts with server-provided drivers.
              All three are compile-scoped so they are included in the shaded jar.
              Servers that already provide a driver via lib/ will use the shaded copy
              (relocated package) rather than the system copy, preventing version conflicts. -->
         <dependency>
-            <!-- MySQL Connector/J (GPL v2 with FOSS exception — redistributable) -->
+            <!-- MySQL Connector/J (GPL v2 with FOSS exception â€” redistributable) -->
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>9.3.0</version>
@@ -493,21 +526,21 @@
             </exclusions>
         </dependency>
         <dependency>
-            <!-- MariaDB Connector/J (LGPL v2.1 — permitted for bundling) -->
+            <!-- MariaDB Connector/J (LGPL v2.1 â€” permitted for bundling) -->
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
             <version>3.5.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <!-- PostgreSQL JDBC Driver (BSD 2-clause — freely redistributable) -->
+            <!-- PostgreSQL JDBC Driver (BSD 2-clause â€” freely redistributable) -->
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.7</version>
             <scope>compile</scope>
         </dependency>
 
-        <!-- Paper API — pinned to the latest *stable* build on the 26.x line.
+        <!-- Paper API â€” pinned to the latest *stable* build on the 26.x line.
              26.2 is still in -alpha as of 2026-07-03; 26.1.2.build.72-stable is the
              highest production-ready release. Bump paper.api.version in <properties>
              when a 26.2-stable or 26.3-stable build is published. -->
@@ -533,7 +566,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>2.0.16</version>
+            <version>2.0.17</version>
             <scope>test</scope>
         </dependency>
         <!-- This needs to be before Spigot because MockBukkit will fail otherwise. -->

@@ -10,6 +10,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Projectile;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -49,6 +50,7 @@ public class ExplosiveBow extends SlimefunBow {
 
     @Nonnull
     @Override
+    @SuppressWarnings("removal")
     public BowShootHandler onShoot() {
         return (e, target) -> {
             target.getWorld().spawnParticle(VersionedParticle.EXPLOSION, target.getLocation(), 1);
@@ -56,6 +58,8 @@ public class ExplosiveBow extends SlimefunBow {
             int radius = range.getValue();
 
             Collection<Entity> entities = target.getWorld().getNearbyEntities(target.getLocation(), radius, radius, radius, this::canDamage);
+            DamageSource damageSource = createExplosionSource(e.getDamager());
+
             for (Entity nearby : entities) {
                 LivingEntity entity = (LivingEntity) nearby;
 
@@ -65,7 +69,6 @@ public class ExplosiveBow extends SlimefunBow {
                 double damage = e.getDamage() * (1 - (distanceSquared / (2 * range.getValue() * range.getValue())));
 
                 if (!entity.getUniqueId().equals(target.getUniqueId())) {
-                    DamageSource damageSource = DamageSource.builder(DamageType.EXPLOSION).withCausingEntity(e.getDamager()).build();
                     EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(e.getDamager(), entity, EntityDamageEvent.DamageCause.ENTITY_EXPLOSION, damageSource, damage);
                     Bukkit.getPluginManager().callEvent(event);
 
@@ -78,6 +81,30 @@ public class ExplosiveBow extends SlimefunBow {
                 }
             }
         };
+    }
+
+    /**
+     * Builds the {@link DamageSource} of the fake explosion.
+     *
+     * <p>The damager handed to a bow handler is the arrow itself. A {@link DamageSource} that
+     * names a causing entity has to name a direct entity as well, so the arrow becomes the
+     * direct entity and its shooter, when there is one, becomes the cause.
+     *
+     * @param damager The entity that dealt the arrow hit
+     * @return A damage source that is accepted by the server implementation
+     */
+    @Nonnull
+    private DamageSource createExplosionSource(@Nonnull Entity damager) {
+        Entity causingEntity = damager;
+
+        if (damager instanceof Projectile projectile && projectile.getShooter() instanceof Entity shooter) {
+            causingEntity = shooter;
+        }
+
+        return DamageSource.builder(DamageType.EXPLOSION)
+            .withDirectEntity(damager)
+            .withCausingEntity(causingEntity)
+            .build();
     }
 
     private boolean canDamage(@Nonnull Entity entity) {

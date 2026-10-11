@@ -1,6 +1,7 @@
 package io.github.thebusybiscuit.slimefun4.implementation;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,6 +44,13 @@ import io.github.thebusybiscuit.slimefun4.api.gps.GPSNetwork;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.addons.AddonManager;
+import io.github.thebusybiscuit.slimefun4.core.monitor.MonitorEventBus;
+import io.github.thebusybiscuit.slimefun4.core.monitor.sinks.ConsoleLogSink;
+import io.github.thebusybiscuit.slimefun4.core.monitor.sinks.DiscordWebhookSink;
+import io.github.thebusybiscuit.slimefun4.core.monitor.sinks.InGameAnnounceSink;
+import io.github.thebusybiscuit.slimefun4.core.monitor.watchers.AddonFolderWatcher;
+import io.github.thebusybiscuit.slimefun4.core.report.AutoErrorReporter;
+import io.github.thebusybiscuit.slimefun4.core.report.ReportSessionManager;
 import io.github.thebusybiscuit.slimefun4.core.SlimefunRegistry;
 import io.github.thebusybiscuit.slimefun4.core.commands.SlimefunCommand;
 import io.github.thebusybiscuit.slimefun4.core.networks.NetworkManager;
@@ -195,7 +203,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
     private final CustomItemDataService itemDataService = new CustomItemDataService(this, "slimefun_item");
     private final BlockDataService blockDataService = new BlockDataService(this, "slimefun_block");
     private final CustomTextureService textureService = new CustomTextureService(new Config(this, "item-models.yml"));
-    private final GitHubService gitHubService = new GitHubService("Slimefun/Slimefun4");
+    private final GitHubService gitHubService = new GitHubService("SlimeCore-MC/Slimefun4Core");
     private final UpdaterService updaterService = new UpdaterService(this, getDescription().getVersion(), getFile());
     private final MetricsService metricsService = new MetricsService(this);
     private final AutoSavingService autoSavingService = new AutoSavingService();
@@ -208,6 +216,12 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
     private final ThreadService threadService = new ThreadService(this);
     private final AnalyticsService analyticsService = new AnalyticsService(this);
     private final AddonManager addonManager = new AddonManager(this);
+
+    // Monitor & Report systems (initialized in onPluginStart after config is loaded)
+    private MonitorEventBus monitorEventBus;
+    private ReportSessionManager reportSessionManager;
+    private AddonFolderWatcher addonFolderWatcher;
+    private AutoErrorReporter autoErrorReporter;
 
     // Some other things we need
     private final IntegrationsManager integrations = new IntegrationsManager(this);
@@ -243,6 +257,32 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         // TODO: This is very much a hack and we can hopefully move to a more native way in the future
         if (getClassLoader().getClass().getPackageName().startsWith("be.seeseemelk.mockbukkit")) {
             minecraftVersion = MinecraftVersion.UNIT_TEST;
+        }
+    }
+
+    /**
+     * This is called by Bukkit while plugins are being loaded, before any world is loaded.
+     *
+     * <p>It is the only point at which staged files can be moved over the live data safely, so a
+     * pending checkpoint storage restore and a pending world restore are both applied here, before
+     * Slimefun loads block data into memory and before the server loads its worlds.
+     */
+    @Override
+    public void onLoad() {
+        if (getClassLoader().getClass().getPackageName().startsWith("be.seeseemelk.mockbukkit")) {
+            return;
+        }
+
+        try {
+            io.github.thebusybiscuit.slimefun4.storage.checkpoint.CheckpointService.applyPendingStorageRestore(this);
+        } catch (RuntimeException x) {
+            getLogger().log(Level.SEVERE, "[Checkpoint] Failed to apply a pending storage restore on load.", x);
+        }
+
+        try {
+            io.github.thebusybiscuit.slimefun4.storage.checkpoint.WorldBackupService.applyPendingRestore(this);
+        } catch (RuntimeException x) {
+            getLogger().log(Level.SEVERE, "[WorldBackup] Failed to apply a pending world restore on load.", x);
         }
     }
 
@@ -289,7 +329,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
         // Check if Paper (<3) is installed
         if (PaperLib.isPaper()) {
-            logger.log(Level.INFO, "✦ Paper detected! Performance optimizations applied.");
+            logger.log(Level.INFO, "Paper detected! Performance optimizations applied.");
         } else {
             PaperLib.suggestPaper(this);
         }
@@ -310,14 +350,14 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         isNewlyInstalled = !new File("data-storage/Slimefun").exists();
 
         // Creating all necessary Folders
-        logger.log(Level.INFO, "✦ Creating directories...");
+        logger.log(Level.INFO, "Creating directories...");
         createDirectories();
 
         // Load various config settings into our cache
         registry.load(this, config);
 
         // Set up localization
-        logger.log(Level.INFO, "✦ Loading language files...");
+        logger.log(Level.INFO, "Loading language files...");
         String chatPrefix = config.getString("options.chat-prefix");
         String serverDefaultLanguage = config.getString("options.language");
         local = new LocalizationService(this, chatPrefix, serverDefaultLanguage);
@@ -332,7 +372,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
         networkManager = new NetworkManager(networkSize, config.getBoolean("networks.enable-visualizer"), config.getBoolean("networks.delete-excess-items"));
 
-        // Data storage — the StorageEngineService reads database.yml, builds the
+        // Data storage - the StorageEngineService reads database.yml, builds the
         // configured provider, wraps it in a cache, verifies the schema, and
         // schedules automatic backups. Falls back to LegacyStorage automatically
         // if the configured SQL provider fails to initialize.
@@ -345,29 +385,29 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
         // Starting the Auto-Updater
         if (config.getBoolean("options.auto-update")) {
-            logger.log(Level.INFO, "✦ Starting Auto-Updater...");
+            logger.log(Level.INFO, "Starting Auto-Updater...");
             updaterService.start();
         } else {
             updaterService.disable();
         }
 
         // Registering all GEO Resources
-        logger.log(Level.INFO, "✦ Loading GEO-Resources...");
+        logger.log(Level.INFO, "Loading GEO-Resources...");
         GEOResourcesSetup.setup();
 
-        logger.log(Level.INFO, "✦ Loading Tags...");
+        logger.log(Level.INFO, "Loading Tags...");
         loadTags();
 
-        logger.log(Level.INFO, "✦ Loading items...");
+        logger.log(Level.INFO, "Loading items...");
         loadItems();
 
-        logger.log(Level.INFO, "✦ Loading researches...");
+        logger.log(Level.INFO, "Loading researches...");
         loadResearches();
 
         registry.setResearchingEnabled(getResearchCfg().getBoolean("enable-researching"));
         PostSetup.setupWiki();
 
-        logger.log(Level.INFO, "✦ Registering listeners...");
+        logger.log(Level.INFO, "Registering listeners...");
         registerListeners();
 
         // Initiating various Stuff and all items with a slight delay (0ms after the Server finished loading)
@@ -394,6 +434,52 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
         addonManager.start();
 
+        /*
+         * Reconcile stored blocks against the registered item registry AFTER addons have registered.
+         * The startup task that loads BlockStorage runs on the next tick (runSync delay 0), so this
+         * pass is scheduled with a 1-tick delay to guarantee it observes the loaded blocks. It only
+         * reconnects runtime references (item/preset/ticker/deferred inventory); it never rewrites or
+         * deletes persistent data.
+         */
+        runSync(BlockStorage::reconcileAllWorlds, 1L);
+
+        // -- Monitor Event Bus --
+        logger.log(Level.INFO, "Starting Monitor Event Bus...");
+        monitorEventBus = new MonitorEventBus(this);
+        monitorEventBus.subscribe(new ConsoleLogSink(this));
+        monitorEventBus.subscribe(new InGameAnnounceSink(this));
+
+        // Discord webhook sink - uses hardcoded webhook if broadcasts enabled
+        if (config.getBoolean("monitor.discord.broadcasts")) {
+            monitorEventBus.subscribe(new DiscordWebhookSink(this, ReportSessionManager.REPORT_WEBHOOK_URL));
+            logger.log(Level.INFO, "Discord webhook sink registered.");
+        }
+
+        // Addon folder watcher
+        try {
+            Path addonRepo = getDataFolder().toPath().resolve("addons").resolve("repository");
+            addonRepo.toFile().mkdirs();
+            addonFolderWatcher = new AddonFolderWatcher(this, monitorEventBus, addonRepo);
+            addonFolderWatcher.start();
+            logger.log(Level.INFO, "Addon folder watcher started: {0}", addonRepo);
+        } catch (Exception x) {
+            logger.log(Level.WARNING, "Failed to start addon folder watcher", x);
+        }
+
+        // -- Report System --
+        logger.log(Level.INFO, "Starting Report System...");
+        reportSessionManager = new ReportSessionManager(this);
+        reportSessionManager.setEventBus(monitorEventBus);
+        getServer().getPluginManager().registerEvents(reportSessionManager, this);
+
+        // Automatic error reporting: attach a root-logger handler that posts SEVERE Slimefun/addon
+        // errors to the report webhook. Identical errors are cached so they are not re-sent.
+        if (config.getBoolean("monitor.auto-report.enabled")) {
+            autoErrorReporter = new AutoErrorReporter(this, reportSessionManager);
+            Logger.getLogger("").addHandler(autoErrorReporter);
+            logger.log(Level.INFO, "Automatic error reporting enabled.");
+        }
+
         // Armor Update Task
         if (config.getBoolean("options.enable-armor-effects")) {
             new SlimefunArmorTask().schedule(this, config.getInt("options.armor-update-interval") * 20L);
@@ -412,12 +498,12 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         ticker.start(this);
 
         // Loading integrations
-        logger.log(Level.INFO, "✦ Loading third-party plugin integrations...");
+        logger.log(Level.INFO, "Loading third-party plugin integrations...");
         integrations.start();
         gitHubService.start(this);
 
         // Hooray!
-        logger.log(Level.INFO, "✦ Slimefun4Core loaded successfully in {0}", getStartupTime(timestamp));
+        logger.log(Level.INFO, "Slimefun4Core loaded successfully in {0}", getStartupTime(timestamp));
     }
 
     @Override
@@ -427,7 +513,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
     @Override
     public String getBugTrackerURL() {
-        return "https://github.com/Slimefun/Slimefun4/issues";
+        return "https://github.com/rutwok-labs/SlimefunCore-V.4.0/issues";
     }
 
     /**
@@ -484,6 +570,18 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         // Close and unload any resources from our Metrics Service
         metricsService.cleanUp();
         addonManager.shutdown();
+
+        // Shutdown monitor and report systems
+        if (autoErrorReporter != null) {
+            Logger.getLogger("").removeHandler(autoErrorReporter);
+            autoErrorReporter.close();
+        }
+        if (addonFolderWatcher != null) {
+            addonFolderWatcher.shutdown();
+        }
+        if (monitorEventBus != null) {
+            monitorEventBus.shutdown();
+        }
 
         // Shutdown the storage engine (flushes save queue, closes pool)
         if (storageEngineService != null) {
@@ -558,7 +656,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
             }
 
             // Now check the actual Version of Minecraft.
-            // Try Bukkit.getMinecraftVersion() first — it works reliably on Paper 26.x
+            // Try Bukkit.getMinecraftVersion() first - it works reliably on Paper 26.x
             // even when PaperLib's shaded internals throw a LinkageError.
             int version = -1;
             int patchVersion = -1;
@@ -574,7 +672,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
                     }
                 }
             } catch (NoSuchMethodError | Exception ignored) {
-                // Bukkit.getMinecraftVersion() not available on this server build — fall through.
+                // Bukkit.getMinecraftVersion() not available on this server build - fall through.
             }
 
             // Fall back to PaperLib if Bukkit direct parse did not give us a version.
@@ -647,20 +745,20 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
      *
      * <p>The pattern has two branches:
      * <ul>
-     *   <li>Old "1.x[.y]" — groups 1 (minor) and 2 (patch, nullable)</li>
-     *   <li>New "YY.D[.H]" — groups 3 (year), 4 (drop), 5 (hotfix, nullable)</li>
+     *   <li>Old "1.x[.y]" - groups 1 (minor) and 2 (patch, nullable)</li>
+     *   <li>New "YY.D[.H]" - groups 3 (year), 4 (drop), 5 (hotfix, nullable)</li>
      * </ul>
      *
      * @return int[]{majorVersion, patchVersion} where patchVersion is 0 when absent
      */
     private static int[] extractVersionParts(@Nonnull Matcher matcher) {
         if (matcher.group(1) != null) {
-            // Old "1.x[.y]" branch — group(1) is the minor (treated as "major" by our enum)
+            // Old "1.x[.y]" branch - group(1) is the minor (treated as "major" by our enum)
             int major = Integer.parseInt(matcher.group(1));
             String patch = matcher.group(2);
             return new int[] { major, patch == null ? 0 : Integer.parseInt(patch) };
         } else {
-            // New "YY.D[.H]" branch — group(3) is the year, group(4) is the drop
+            // New "YY.D[.H]" branch - group(3) is the year, group(4) is the drop
             int major = Integer.parseInt(matcher.group(3));
             int drop  = Integer.parseInt(matcher.group(4));
             String hotfix = matcher.group(5);
@@ -1245,5 +1343,25 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
     public static @Nonnull AddonManager getAddonManager() {
         validateInstance();
         return instance.addonManager;
+    }
+
+    /**
+     * Returns the {@link MonitorEventBus} that dispatches addon/build
+     * monitoring events to all registered sinks.
+     *
+     * @return The monitor event bus, or {@code null} during early init
+     */
+    public static @Nullable MonitorEventBus getMonitorEventBus() {
+        return instance != null ? instance.monitorEventBus : null;
+    }
+
+    /**
+     * Returns the {@link ReportSessionManager} that handles active
+     * {@code /sf report} chat wizard sessions.
+     *
+     * @return The report session manager, or {@code null} during early init
+     */
+    public static @Nullable ReportSessionManager getReportSessionManager() {
+        return instance != null ? instance.reportSessionManager : null;
     }
 }

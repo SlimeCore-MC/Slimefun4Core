@@ -23,7 +23,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
  */
 public final class CommandManager implements CommandExecutor, TabCompleter {
 
-    private static final List<String> ACTIONS = List.of("list", "status", "sync", "download", "update", "remove", "enable", "disable");
+    private static final List<String> ACTIONS = List.of("help", "list", "status", "sync", "download", "update", "remove", "enable", "disable");
     private static final Set<String> ACTIONS_WITH_ADDON_ARGUMENTS = Set.of("download", "update", "remove", "enable", "disable");
 
     private final Slimefun plugin;
@@ -42,6 +42,11 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
     }
 
     public boolean handleCommand(@Nonnull CommandSender sender, @Nonnull String label, @Nonnull String[] args) {
+        if (args.length > 0 && (args[0].equalsIgnoreCase("help") || args[0].equals("?"))) {
+            sendHelp(sender, label);
+            return true;
+        }
+
         if (args.length == 0 || args[0].equalsIgnoreCase("list")) {
             if (!hasAnyPermission(sender)) {
                 noPermission(sender);
@@ -134,7 +139,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
                 future = addonService.disable(addonKey);
             }
             default -> {
-                sender.sendMessage(ChatColors.color("&cUnknown subcommand. Try /" + label + " list"));
+                sender.sendMessage(ChatColors.color("&cUnknown subcommand. Try /" + label + " help"));
                 return true;
             }
         }
@@ -173,6 +178,28 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
         }
 
         return List.of();
+    }
+
+    private void sendHelp(@Nonnull CommandSender sender, @Nonnull String label) {
+        sender.sendMessage("");
+        sender.sendMessage(ChatColors.color("&bManaged Slimefun Addon Commands"));
+        sender.sendMessage(ChatColors.color("&7/" + label + " help &8- &fShow this help message"));
+        sender.sendMessage(ChatColors.color("&7/" + label + " list &8- &fList compatible managed addons"));
+        sender.sendMessage(ChatColors.color("&7/" + label + " status &8- &fShow cloud-sync status and loaded addons"));
+
+        if (sender.hasPermission("addon.admin") || sender.hasPermission("addon.update")) {
+            sender.sendMessage(ChatColors.color("&7/" + label + " sync &8- &fSync addonmanager.yml from the remote source"));
+            sender.sendMessage(ChatColors.color("&7/" + label + " download <name> &8- &fDownload an addon jar"));
+            sender.sendMessage(ChatColors.color("&7/" + label + " update <name> &8- &fCheck and download an addon update"));
+        }
+
+        if (sender.hasPermission("addon.admin") || sender.hasPermission("addon.manage")) {
+            sender.sendMessage(ChatColors.color("&7/" + label + " enable <name> &8- &fEnable a managed addon (next restart)"));
+            sender.sendMessage(ChatColors.color("&7/" + label + " disable <name> &8- &fDisable a managed addon (next restart)"));
+            sender.sendMessage(ChatColors.color("&7/" + label + " remove <name> &8- &fRemove a managed addon jar"));
+        }
+
+        sender.sendMessage(ChatColors.color("&8<name> &7= the addon key shown by &f/" + label + " list"));
     }
 
     private void sendList(@Nonnull CommandSender sender) {
